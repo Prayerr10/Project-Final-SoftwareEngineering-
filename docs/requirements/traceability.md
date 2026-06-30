@@ -62,31 +62,31 @@ Traceability ini hanya mencatat relasi yang sudah dapat ditelusuri pada tahap Sk
 
 ## Skill 04 Prioritization Links
 
-Status: Draft for Human Review. Prioritas berikut ditautkan dari `docs/requirements/prioritization.md` dan belum final sampai Human Review Skill 04 disetujui.
+Status: Human Reviewed & Approved. Prioritas berikut ditautkan dari `docs/requirements/prioritization.md` dan sudah disetujui melalui Human Review Skill 04.
 
 | Requirement | User Story | Skill 04 Priority | Status |
 | --- | --- | --- | --- |
-| FR-01 | US-01 | Must | Draft Skill 04 |
-| FR-02 | US-01 | Must | Draft Skill 04 |
-| FR-03 | US-02 | Must | Draft Skill 04 |
-| FR-04 | US-03 | Should | Draft Skill 04 |
-| FR-05 | US-04 | Should | Draft Skill 04 |
-| FR-06 | US-05 | Must | Draft Skill 04 |
-| FR-07 | US-06 | Must | Draft Skill 04 |
-| FR-08 | US-07 | Must | Draft Skill 04 |
-| FR-09 | US-07 | Must | Draft Skill 04 |
-| FR-10 | US-07 | Should | Draft Skill 04 |
-| FR-11 | US-08 | Must | Draft Skill 04 |
-| FR-12 | US-09 | Must | Draft Skill 04 |
-| FR-13 | US-09 | Should | Draft Skill 04 |
-| FR-14 | US-10 | Must | Draft Skill 04 |
-| FR-15 | US-10 | Must | Draft Skill 04 |
-| FR-16 | US-11 | Should | Draft Skill 04 |
-| FR-17 | US-12 | Could | Draft Skill 04 |
-| FR-18 | US-05, US-10 | Must | Draft Skill 04 |
-| FR-19 | US-13 | Must | Draft Skill 04 |
-| FR-20 | US-14 | Must | Draft Skill 04 |
-| FR-21 | US-15 | Should | Draft Skill 04 |
-| FR-22 | US-16 | Should | Draft Skill 04 |
-| FR-23 | US-16 | Could | Draft Skill 04 |
-| FR-24 | US-17 | Must | Draft Skill 04 |
+| FR-01 | US-01 | Must | Approved Skill 04 |
+| FR-02 | US-01 | Must | Approved Skill 04 |
+| FR-03 | US-02 | Must | Approved Skill 04 |
+| FR-04 | US-03 | Should | Approved Skill 04 |
+| FR-05 | US-04 | Should | Approved Skill 04 |
+| FR-06 | US-05 | Must | Approved Skill 04 |
+| FR-07 | US-06 | Must | Approved Skill 04 |
+| FR-08 | US-07 | Must | Approved Skill 04 |
+| FR-09 | US-07 | Must | Approved Skill 04 |
+| FR-10 | US-07 | Should | Approved Skill 04 |
+| FR-11 | US-08 | Must | Approved Skill 04 |
+| FR-12 | US-09 | Must | Approved Skill 04 |
+| FR-13 | US-09 | Should | Approved Skill 04 |
+| FR-14 | US-10 | Must | Approved Skill 04 |
+| FR-15 | US-10 | Must | Approved Skill 04 |
+| FR-16 | US-11 | Should | Approved Skill 04 |
+| FR-17 | US-12 | Could | Approved Skill 04 |
+| FR-18 | US-05, US-10 | Must | Approved Skill 04 |
+| FR-19 | US-13 | Must | Approved Skill 04 |
+| FR-20 | US-14 | Must | Approved Skill 04 |
+| FR-21 | US-15 | Should | Approved Skill 04 |
+| FR-22 | US-16 | Should | Approved Skill 04 |
+| FR-23 | US-16 | Could | Approved Skill 04 |
+| FR-24 | US-17 | Must | Approved Skill 04 |

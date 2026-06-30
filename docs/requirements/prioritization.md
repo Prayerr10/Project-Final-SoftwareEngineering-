@@ -1,13 +1,13 @@
 # Requirements Prioritization
 
-| Review Status | Draft for Human Review |
+| Review Status | Human Reviewed & Approved |
 | --- | --- |
 | Skill AI | Skill 04 - Prioritization (`negotiation-and-prioritization`) |
-| Human decision | Pending Human Review |
+| Human decision | Disetujui |
 
 ## Input Summary
 
-Prioritization ini hanya mencakup Skill 04. Draft ini tidak membuat requirement baru, tidak mengubah FR/NFR/BR/User Story, tidak membuat design, issue planning, kode, test, deployment, change request, atau Skill 05.
+Prioritization ini hanya mencakup Skill 04. Dokumen ini tidak membuat requirement baru, tidak mengubah FR/NFR/BR/User Story, tidak membuat design, issue planning, kode, test, deployment, change request, atau Skill 05.
 
 | Source ID | Input File | Status Used |
 | --- | --- | --- |
@@ -164,12 +164,12 @@ User Story priority follows the highest-priority FR or BR it supports.
 
 | Decision ID | Affected IDs | Original State | Proposed Change | Rationale | Status | Decision Source |
 | --- | --- | --- | --- | --- | --- | --- |
-| D-04-01 | FR-01 through FR-24 | Skill 03 had no MoSCoW priorities. | Assign exactly one MoSCoW category to every FR. | Skill 04 requires transparent prioritization before validation. | PROPOSED | This Skill 04 draft |
+| D-04-01 | FR-01 through FR-24 | Skill 03 had no MoSCoW priorities. | Assign exactly one MoSCoW category to every FR. | Skill 04 requires transparent prioritization before validation. | ACCEPTED | Human Review Skill 04 |
 | D-04-02 | NFR-01 through NFR-09 | Skill 03 listed NFRs without priority. | Treat all NFRs as Must constraints. | Each NFR is tied to assignment constraints, traceability, AI evidence, testing, or repository safety. | PROPOSED | `instruksi-dosen.md`, `CASE.md`, Skill 03 |
 | D-04-03 | BR-01 through BR-12 | Skill 03 listed BRs without priority. | Use BRs as priority evidence and classify their urgency. | BRs determine workflow order and role constraints without changing requirement text. | PROPOSED | Skill 03 |
 | D-04-04 | Out-of-scope features | Out-of-scope items are not FRs in Skill 03. | Keep upload photo, email notification, Google login, QR code room, AI category, inventory spare part, and vendor management outside Must priority. | `CASE.md` states these are not mandatory. | PROPOSED | `instruksi-dosen.md`, `CASE.md` |
 
-No requirement wording changes are proposed in this Skill 04 draft.
+No requirement wording changes are proposed in this Skill 04 document.
 
 ## ASSUMPTIONS
 
