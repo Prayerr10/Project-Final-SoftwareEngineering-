@@ -26,7 +26,7 @@ User stories dan acceptance criteria ini diturunkan dari `instruksi-dosen.md`, `
 
 ### US-02 - View Request List
 
-- Story: As a user with an active role, I want to view service requests, so that I can monitor reports relevant to my work.
+- Story: As a Pelapor, Administrator, Teknisi, or Manajer Fasilitas, I want to view service requests, so that I can monitor reports relevant to my work.
 - Supports: FR-03
 - Source: SRC-02, SRC-03
 - Status: FACT
@@ -38,7 +38,7 @@ User stories dan acceptance criteria ini diturunkan dari `instruksi-dosen.md`, `
 
 ### US-03 - Search Requests
 
-- Story: As a user with an active role, I want to search service requests, so that I can find a specific report.
+- Story: As a Pelapor, Administrator, Teknisi, or Manajer Fasilitas, I want to search service requests, so that I can find a specific report.
 - Supports: FR-04
 - Source: SRC-02, SRC-07
 - Status: FACT
@@ -50,7 +50,7 @@ User stories dan acceptance criteria ini diturunkan dari `instruksi-dosen.md`, `
 
 ### US-04 - Filter Requests
 
-- Story: As a user with an active role, I want to filter service requests, so that I can narrow the list by status and priority.
+- Story: As a Pelapor, Administrator, Teknisi, or Manajer Fasilitas, I want to filter service requests, so that I can narrow the list by status and priority.
 - Supports: FR-05
 - Source: SRC-02, SRC-07
 - Status: FACT
@@ -63,7 +63,7 @@ User stories dan acceptance criteria ini diturunkan dari `instruksi-dosen.md`, `
 
 ### US-05 - View Request Detail
 
-- Story: As a user with an active role, I want to view request detail, so that I can understand the context and current condition of a report.
+- Story: As a Pelapor, Administrator, Teknisi, or Manajer Fasilitas, I want to view request detail, so that I can understand the context and current condition of a report.
 - Supports: FR-06, FR-18
 - Source: SRC-02, SRC-03, SRC-07
 - Status: FACT
@@ -83,7 +83,7 @@ User stories dan acceptance criteria ini diturunkan dari `instruksi-dosen.md`, `
 
 #### Acceptance Criteria
 
-- AC-06.1: Given a report is `SUBMITTED`, when the Administrator reviews it, then the system allows the report to proceed through the workflow.
+- AC-06.1: Given a report is `SUBMITTED`, when the Administrator reviews it, then the report can move to `UNDER_REVIEW`.
 - AC-06.2: Given the active role is not Administrator, when a user attempts to perform Administrator review, then the system does not allow that action.
 
 ### US-07 - Set Category and Priority
@@ -211,7 +211,7 @@ User stories dan acceptance criteria ini diturunkan dari `instruksi-dosen.md`, `
 
 ### US-17 - Use Role-Based Interface
 
-- Story: As a user with an active role, I want the interface to adjust based on the selected role, so that I only see actions relevant to that role.
+- Story: As a Pelapor, Administrator, Teknisi, or Manajer Fasilitas, I want the interface to adjust based on the selected role, so that I only see actions relevant to that role.
 - Supports: FR-24
 - Source: SRC-07
 - Status: FACT
