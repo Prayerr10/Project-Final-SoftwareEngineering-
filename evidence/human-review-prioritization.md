@@ -43,7 +43,7 @@ Catatan: Test otomatis tidak dijalankan karena perubahan hanya pada dokumen requ
 
 ## Keputusan
 
-- [ ] Disetujui
+- [x] Disetujui
 - [ ] Perlu revisi
 - [ ] Ditolak
 - [ ] Terblokir
