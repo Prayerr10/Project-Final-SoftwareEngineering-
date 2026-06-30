@@ -90,3 +90,19 @@ Status: Human Reviewed & Approved. Prioritas berikut ditautkan dari `docs/requir
 | FR-22 | US-16 | Should | Approved Skill 04 |
 | FR-23 | US-16 | Could | Approved Skill 04 |
 | FR-24 | US-17 | Must | Approved Skill 04 |
+
+## Skill 05 Validation Links
+
+Status: Pending Human Review. Validasi Skill 05 ditautkan dari `docs/requirements/validation.md` dan change request ditautkan dari `docs/requirements/change-request.md`. Tabel ini tidak mengubah requirement final; status keputusan tetap menunggu Human Review.
+
+| Requirement | User Story | Skill 05 Validation | Change Request | Status |
+| --- | --- | --- | --- | --- |
+| FR-01 | US-01 | PASS | None | Pending Human Review Skill 05 |
+| FR-08 | US-07 | OPEN QUESTION: OPEN-05 | None | Pending Human Review Skill 05 |
+| FR-09 | US-07 | OPEN QUESTION: OPEN-06 | None | Pending Human Review Skill 05 |
+| FR-13 | US-09 | OPEN QUESTION: OPEN-08 | None | Pending Human Review Skill 05 |
+| FR-18 | US-05, US-10 | PASS | None | Pending Human Review Skill 05 |
+| FR-20 | US-14 | OPEN QUESTION: OPEN-03, OPEN-11 | CR-05-01 | Pending Human Review Skill 05 |
+| FR-21 | US-15 | OPEN QUESTION: OPEN-04 | None | Pending Human Review Skill 05 |
+| FR-23 | US-16 | OPEN QUESTION: OPEN-07 | None | Pending Human Review Skill 05 |
+| FR-24 | US-17 | PASS | None | Pending Human Review Skill 05 |
