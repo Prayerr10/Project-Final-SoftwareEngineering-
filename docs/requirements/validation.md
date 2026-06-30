@@ -8,175 +8,149 @@
 ## Validation Scope
 
 - Inputs reviewed: `instruksi-dosen.md`, `CASE.md`, `docs/requirements/inception.md`, `docs/requirements/elicitation.md`, `docs/requirements/requirements.md`, `docs/requirements/user-stories.md`, `docs/requirements/prioritization.md`, `docs/requirements/traceability.md`, `docs/requirements/grill-session-summary.md`, `evidence/human-review-inception.md`, `evidence/human-review-elicitation.md`, `evidence/human-review-specification.md`, and `evidence/human-review-prioritization.md`.
-- Prerequisite review status: Skill 01, Skill 02, Skill 03, and Skill 04 are recorded as `Human Reviewed & Approved`, with evidence decisions marked `Disetujui`.
-- Selection rationale: Validation focuses on high-priority and higher-risk items from Skill 04, including core lifecycle requirements, controlled categories/priorities, reporter confirmation, close/reopen rules, dashboard workload, and role-based UI. These items were selected because they affect required scope, business rules, acceptance criteria, open questions, and future design/planning decisions.
-- Baseline rule: This document validates existing requirements and proposes corrections only as validation findings. It does not directly change FR, NFR, BR, User Story, or Acceptance Criteria text.
+- Prerequisite review status: Skill 01, Skill 02, Skill 03, and Skill 04 are recorded as `Human Reviewed & Approved`, with evidence files showing `Disetujui`.
+- Validation coverage rule: This Skill 05 draft validates every FR, NFR, BR, and US from `docs/requirements/requirements.md` and `docs/requirements/user-stories.md`.
+- Baseline rule: This document does not directly change approved FR, NFR, BR, User Story, or Acceptance Criteria text. Proposed changes are isolated in `docs/requirements/change-request.md`.
 
-## Validation Results
+## Selection Rationale
 
-### FR-01
+Skill 05 originally requires at least five requirements, but this project review requires full coverage. Therefore, validation covers:
 
-- Original statement: Sistem harus memungkinkan Pelapor membuat laporan masalah fasilitas kampus.
-- Related artifacts: US-01; AC-01.1, AC-01.2, AC-01.3; BR-01; Priority Must.
-- Clarity: PASS - Actor `Pelapor`, behavior `membuat laporan`, and object `laporan masalah fasilitas kampus` are explicit in `docs/requirements/requirements.md`.
-- Completeness: PASS - US-01 and AC-01.1 through AC-01.3 define complete report submission, storage, initial status, and reporter identity storage.
-- Consistency: PASS - Matches mandatory feature "Membuat laporan baru" in `instruksi-dosen.md` and status rule BR-01.
-- Feasibility: PASS - No unsupported technology claim; implementation remains within React, Workers, and D1 constraints.
-- Testability: PASS - AC-01.1 through AC-01.3 define observable storage, `SUBMITTED` status, and `reporter_name`/`reporter_type` persistence.
-- Traceability: PASS - Linked in `traceability.md` to US-01 and in Skill 04 as Must.
-- Proposed revision: None.
-- Revision rationale: None.
-- Affected artifacts: None.
+- FR-01 through FR-24 from `docs/requirements/requirements.md`.
+- NFR-01 through NFR-09 from `docs/requirements/requirements.md`.
+- BR-01 through BR-12 from `docs/requirements/requirements.md`.
+- US-01 through US-17 from `docs/requirements/user-stories.md`.
 
-### FR-08
+Items affected by unresolved policy or data questions are marked `OPEN QUESTION`, not rewritten.
 
-- Original statement: Sistem harus memungkinkan Administrator menentukan kategori laporan dari fixed list sebagai controlled vocabulary.
-- Related artifacts: US-07; AC-07.1; BR-06; OPEN-05; Priority Must.
-- Clarity: PASS - Actor, behavior, and controlled-vocabulary boundary are explicit.
-- Completeness: OPEN QUESTION - OPEN-05 states the final fixed category list is not yet defined.
-- Consistency: PASS - Consistent with `instruksi-dosen.md`, `CASE.md`, and `grill-session-summary.md`, which require category assignment and fixed-list categories.
-- Feasibility: PASS - A fixed list is feasible within the documented web application constraints.
-- Testability: OPEN QUESTION - AC-07.1 is testable for fixed-list behavior, but final category values cannot be fully verified until OPEN-05 is resolved.
-- Traceability: PASS - Linked to US-07, AC-07.1, BR-06, and Skill 04 Must priority.
-- Proposed revision: None.
-- Revision rationale: Final category values require reviewer or stakeholder decision; this validation cannot invent the list.
-- Affected artifacts: OPEN-05; future database/API/UI design.
+## Validation Legend
 
-### FR-09
+- `PASS`: The item is clear enough, consistent with approved artifacts, feasible within known constraints, testable or reviewable through stated criteria, and traceable to related artifacts.
+- `OPEN QUESTION`: The item is valid at the capability level, but one or more details remain unresolved in approved artifacts.
+- `FAIL`: The item conflicts with approved artifacts or lacks a defensible trace. No `FAIL` remains after this draft; unresolved details are preserved as `OPEN QUESTION`.
 
-- Original statement: Sistem harus memungkinkan Administrator menentukan prioritas laporan.
-- Related artifacts: US-07; AC-07.2; BR-04, BR-07; OPEN-06; Priority Must.
-- Clarity: PASS - Actor and action are explicit.
-- Completeness: OPEN QUESTION - OPEN-06 states the criteria for `LOW`, `MEDIUM`, `HIGH`, and `URGENT` are not yet defined.
-- Consistency: PASS - Consistent with mandatory feature "Menentukan prioritas", BR-04, and BR-07.
-- Feasibility: PASS - Priority selection with controlled values is feasible under the current constraints.
-- Testability: PASS - AC-07.2 can verify storage of allowed values. Criteria quality remains an OPEN QUESTION but does not block basic value verification.
-- Traceability: PASS - Linked to US-07, AC-07.2, BR-04, BR-07, and Skill 04 Must priority.
-- Proposed revision: None.
-- Revision rationale: Priority criteria need stakeholder clarification, but the existing requirement remains valid.
-- Affected artifacts: OPEN-06; future UI copy, validation rules, and test cases.
+## FR Validation Matrix
 
-### FR-13
+| ID | Related US/AC/BR | Priority | Clarity | Completeness | Consistency | Feasibility | Testability | Traceability | Finding |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| FR-01 | US-01; AC-01.1-AC-01.3; BR-01 | Must | PASS | PASS | PASS | PASS | PASS | PASS | Creation, storage, initial status, and reporter fields are covered. |
+| FR-02 | US-01; AC-01.3; FR-10 | Must | PASS | OPEN QUESTION | PASS | PASS | PASS | PASS | Approved fields are `reporter_name` and `reporter_type`; OPEN-02 may add extra identity data later. |
+| FR-03 | US-02; AC-02.1-AC-02.2 | Must | PASS | PASS | PASS | PASS | PASS | PASS | List behavior and empty state are covered. |
+| FR-04 | US-03; AC-03.1-AC-03.2 | Should | PASS | PASS | PASS | PASS | PASS | PASS | Search is in scope and not treated as out-of-scope or optional outside the baseline. |
+| FR-05 | US-04; AC-04.1-AC-04.3; BR-02, BR-07 | Should | PASS | PASS | PASS | PASS | PASS | PASS | Combined status and priority filtering is covered. |
+| FR-06 | US-05; AC-05.1-AC-05.3 | Must | PASS | OPEN QUESTION | PASS | PASS | PASS | PASS | Detail view is covered; OPEN-10 affects Manajer Fasilitas detail/internal-note access boundaries. |
+| FR-07 | US-06; AC-06.1-AC-06.2; BR-03 | Must | PASS | PASS | PASS | PASS | PASS | PASS | Review before assignment is explicit and role-restricted. |
+| FR-08 | US-07; AC-07.1; BR-06 | Must | PASS | OPEN QUESTION | PASS | PASS | OPEN QUESTION | PASS | OPEN-05 leaves final category values undefined. |
+| FR-09 | US-07; AC-07.2; BR-04, BR-07 | Must | PASS | OPEN QUESTION | PASS | PASS | PASS | PASS | OPEN-06 leaves priority criteria undefined, but allowed values are testable. |
+| FR-10 | US-07; AC-07.3; BR-05 | Should | PASS | OPEN QUESTION | PASS | PASS | PASS | PASS | Lecturer HIGH suggestion is clear; OPEN-06 still affects priority-policy explanation. |
+| FR-11 | US-08; AC-08.1-AC-08.2; BR-03 | Must | PASS | PASS | PASS | PASS | PASS | PASS | Assignment after review is covered. |
+| FR-12 | US-09; AC-09.1 | Must | PASS | PASS | PASS | PASS | PASS | PASS | Technician task visibility is covered. |
+| FR-13 | US-09; AC-09.2 | Should | PASS | OPEN QUESTION | PASS | PASS | PASS | PASS | OPEN-08 leaves rejection/reassignment behavior unresolved. |
+| FR-14 | US-10; AC-10.1; BR-02, BR-08 | Must | PASS | PASS | PASS | PASS | PASS | PASS | Progress transition to `IN_PROGRESS` is covered. |
+| FR-15 | US-10; AC-10.2; BR-02, BR-08 | Must | PASS | PASS | PASS | PASS | PASS | PASS | Resolution transition to `RESOLVED` is covered. |
+| FR-16 | US-11; AC-11.1-AC-11.2; BR-09 | Should | PASS | PASS | PASS | PASS | PASS | PASS | Public-comment storage and visibility are covered. |
+| FR-17 | US-12; AC-12.1-AC-12.3; BR-10 | Could | PASS | OPEN QUESTION | PASS | PASS | PASS | PASS | Internal-note visibility is covered for Pelapor/Admin/Teknisi; OPEN-10 affects Manajer Fasilitas access. |
+| FR-18 | US-05, US-10; AC-05.2, AC-10.3; BR-08 | Must | PASS | PASS | PASS | PASS | PASS | PASS | Status-history fields are defined by BR-08. |
+| FR-19 | US-13; AC-13.1-AC-13.2; BR-11 | Must | PASS | OPEN QUESTION | PASS | PASS | PASS | PASS | OPEN-11 leaves waiting-confirmation representation unresolved. |
+| FR-20 | US-14; AC-14.1-AC-14.2; BR-11 | Must | PASS | OPEN QUESTION | PASS | PASS | PASS | PASS | OPEN-03 leaves manual override conditions unresolved; OPEN-11 affects confirmation state representation. |
+| FR-21 | US-15; AC-15.1-AC-15.2; BR-12 | Should | PASS | OPEN QUESTION | PASS | PASS | PASS | PASS | OPEN-04 leaves reopen initiation unclear. |
+| FR-22 | US-16; AC-16.1 | Should | PASS | OPEN QUESTION | PASS | PASS | PASS | PASS | Dashboard summary is covered; OPEN-10 may affect detail access. |
+| FR-23 | US-16; AC-16.2 | Could | PASS | OPEN QUESTION | PASS | OPEN QUESTION | OPEN QUESTION | PASS | OPEN-07 leaves technician workload formula undefined. |
+| FR-24 | US-17; AC-17.1-AC-17.2 | Must | PASS | PASS | PASS | PASS | PASS | PASS | Role-based UI is traceable to the approved role simulator decision. |
 
-- Original statement: Sistem harus memungkinkan Teknisi menerima tugas yang diberikan.
-- Related artifacts: US-09; AC-09.2; OPEN-08; Priority Should.
-- Clarity: PASS - Actor `Teknisi` and action `menerima tugas` are explicit.
-- Completeness: OPEN QUESTION - OPEN-08 states whether Teknisi may reject tasks, request reassignment, or only accept/update tasks remains unresolved.
-- Consistency: PASS - Consistent with `CASE.md`, which says Teknisi can accept tasks.
-- Feasibility: PASS - Task acceptance can be represented without adding out-of-scope services.
-- Testability: PASS - AC-09.2 provides an observable result: the system records that a task has been accepted.
-- Traceability: PASS - Linked to US-09 and Skill 04 Should priority.
-- Proposed revision: None.
-- Revision rationale: No revision is supported until OPEN-08 is answered.
-- Affected artifacts: OPEN-08; future assignment workflow and technician task UI.
+## NFR Validation Matrix
 
-### FR-18
+| ID | Priority | Clarity | Completeness | Consistency | Feasibility | Testability | Traceability | Finding |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| NFR-01 | Must | PASS | PASS | PASS | PASS | PASS | PASS | React frontend has location and build verification method. |
+| NFR-02 | Must | PASS | PASS | PASS | PASS | PASS | PASS | Cloudflare Workers API has configuration and endpoint verification method. |
+| NFR-03 | Must | PASS | PASS | PASS | PASS | PASS | PASS | Cloudflare D1 has binding and migration verification method. |
+| NFR-04 | Must | PASS | PASS | PASS | PASS | PASS | PASS | Free-service constraint prevents mandatory paid-service dependencies. |
+| NFR-05 | Must | PASS | PASS | PASS | PASS | PASS | PASS | GitHub branch/commit/PR workflow is observable. |
+| NFR-06 | Must | PASS | OPEN QUESTION | PASS | PASS | PASS | PASS | Minimum 20 automated tests is clear, but final test inventory is future work. |
+| NFR-07 | Must | PASS | PASS | PASS | PASS | PASS | PASS | Traceability matrix exists and is updated as stages progress. |
+| NFR-08 | Must | PASS | PASS | PASS | PASS | PASS | PASS | Human review evidence exists for Skills 01-04 and Skill 05 evidence is prepared for review. |
+| NFR-09 | Must | PASS | PASS | PASS | PASS | PASS | PASS | Secret safety is reviewable by repository scan/manual review. |
 
-- Original statement: Sistem harus menyimpan riwayat perubahan status laporan.
-- Related artifacts: US-05, US-10; AC-05.2, AC-10.3; BR-08; Priority Must.
-- Clarity: PASS - The stored object, status history, is explicit.
-- Completeness: PASS - BR-08 defines required history fields: `from_status`, `to_status`, `changed_by_role`, `timestamp`, and `note`.
-- Consistency: PASS - Consistent with mandatory feature "Menyimpan riwayat status" and strict 6 status workflow.
-- Feasibility: PASS - Status history is feasible with D1 storage and does not require paid services.
-- Testability: PASS - AC-10.3 verifies required fields after a status change.
-- Traceability: PASS - Linked to US-05, US-10, BR-08, and Skill 04 Must priority.
-- Proposed revision: None.
-- Revision rationale: None.
-- Affected artifacts: None.
+## BR Validation Matrix
 
-### FR-20
+| ID | Priority | Clarity | Completeness | Consistency | Feasibility | Testability | Traceability | Finding |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| BR-01 | Must | PASS | PASS | PASS | PASS | PASS | PASS | Initial `SUBMITTED` status is covered by US-01. |
+| BR-02 | Must | PASS | PASS | PASS | PASS | PASS | PASS | Strict 6 statuses are consistent with `CASE.md` and `grill-session-summary.md`. |
+| BR-03 | Must | PASS | PASS | PASS | PASS | PASS | PASS | Review before assignment is covered by US-06 and US-08. |
+| BR-04 | Must | PASS | PASS | PASS | PASS | PASS | PASS | Administrator owns final priority decision. |
+| BR-05 | Should | PASS | OPEN QUESTION | PASS | PASS | PASS | PASS | Lecturer suggestion is clear; OPEN-06 affects priority criteria context. |
+| BR-06 | Must | PASS | OPEN QUESTION | PASS | PASS | OPEN QUESTION | PASS | Controlled vocabulary is clear; OPEN-05 leaves values undefined. |
+| BR-07 | Must | PASS | PASS | PASS | PASS | PASS | PASS | Priority values are enumerated. |
+| BR-08 | Must | PASS | PASS | PASS | PASS | PASS | PASS | Required status-history fields are enumerated. |
+| BR-09 | Should | PASS | PASS | PASS | PASS | PASS | PASS | Public-comment visibility is explicit. |
+| BR-10 | Could | PASS | OPEN QUESTION | PASS | PASS | PASS | PASS | Admin/Teknisi visibility is explicit; OPEN-10 affects Manajer Fasilitas boundary. |
+| BR-11 | Must | PASS | OPEN QUESTION | PASS | PASS | PASS | PASS | OPEN-03 and OPEN-11 affect override conditions and waiting-confirmation representation. |
+| BR-12 | Should | PASS | OPEN QUESTION | PASS | PASS | PASS | PASS | Reopen target status is explicit; OPEN-04 affects trigger/initiator. |
 
-- Original statement: Sistem harus memungkinkan Administrator menutup laporan.
-- Related artifacts: US-14; AC-14.1, AC-14.2; BR-11; OPEN-03, OPEN-11; Priority Must.
-- Clarity: PASS - Actor and action are explicit.
-- Completeness: OPEN QUESTION - Normal close is covered by AC-14.1, but OPEN-03 leaves valid manual override conditions unresolved; OPEN-11 leaves representation of waiting confirmation unresolved.
-- Consistency: PASS - Consistent with mandatory close feature and BR-11 requiring reporter confirmation or Administrator override.
-- Feasibility: PASS - Closure and override note recording are feasible within existing constraints.
-- Testability: PASS - AC-14.1 and AC-14.2 define observable closure behavior and override-note requirement.
-- Traceability: PASS - Linked to US-14, BR-11, and Skill 04 Must priority.
-- Proposed revision: None.
-- Revision rationale: Override conditions require human or stakeholder decision before changing requirement text.
-- Affected artifacts: OPEN-03, OPEN-11; future business rule detail and acceptance tests.
+## User Story Validation Matrix
 
-### FR-21
-
-- Original statement: Sistem harus memungkinkan Administrator membuka kembali laporan jika diperlukan.
-- Related artifacts: US-15; AC-15.1, AC-15.2; BR-12; OPEN-04; Priority Should.
-- Clarity: PASS - Administrator is the actor, and reopen behavior is explicit.
-- Completeness: OPEN QUESTION - OPEN-04 asks whether Pelapor can request reopen or only Administrator can initiate it.
-- Consistency: PASS - Consistent with `CASE.md` and BR-12, which returns reopened reports to `UNDER_REVIEW`.
-- Feasibility: PASS - Reopen behavior uses the existing strict status workflow and status history.
-- Testability: PASS - AC-15.1 and AC-15.2 verify status change and history recording.
-- Traceability: PASS - Linked to US-15, BR-12, and Skill 04 Should priority.
-- Proposed revision: None.
-- Revision rationale: Reopen trigger policy needs clarification; the Administrator reopen capability remains supported.
-- Affected artifacts: OPEN-04; future UI and workflow rules.
-
-### FR-23
-
-- Original statement: Sistem harus menampilkan beban tugas per Teknisi pada dashboard.
-- Related artifacts: US-16; AC-16.2; OPEN-07; Priority Could.
-- Clarity: PASS - Dashboard content and subject `beban tugas per Teknisi` are explicit.
-- Completeness: OPEN QUESTION - OPEN-07 states the workload calculation formula is not defined.
-- Consistency: PASS - Consistent with approved `grill-session-summary.md`, which requires dashboard workload visibility.
-- Feasibility: OPEN QUESTION - Display is feasible, but formula feasibility and data requirements cannot be confirmed until OPEN-07 is resolved.
-- Testability: OPEN QUESTION - AC-16.2 verifies display exists, but correctness of workload values cannot be verified without a formula.
-- Traceability: PASS - Linked to US-16 and Skill 04 Could priority.
-- Proposed revision: None.
-- Revision rationale: Workload formula requires stakeholder or reviewer decision.
-- Affected artifacts: OPEN-07; future dashboard design, database fields, and tests.
-
-### FR-24
-
-- Original statement: Sistem harus mengubah tampilan dan aksi UI secara dinamis berdasarkan role yang dipilih.
-- Related artifacts: US-17; AC-17.1, AC-17.2; Priority Must.
-- Clarity: PASS - Behavior and trigger are explicit: UI changes by selected role.
-- Completeness: PASS - AC-17.1 and AC-17.2 cover visible actions and role switching behavior.
-- Consistency: PASS - Consistent with approved `grill-session-summary.md` role simulator decision and avoids adding full authentication.
-- Feasibility: PASS - Role-based conditional UI is feasible in React without paid services.
-- Testability: PASS - Acceptance criteria define observable visible actions before and after role changes.
-- Traceability: PASS - Linked to US-17 and Skill 04 Must priority.
-- Proposed revision: None.
-- Revision rationale: None.
-- Affected artifacts: None.
+| ID | Supports | Priority | Clarity | Completeness | Consistency | Feasibility | Testability | Traceability | Finding |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| US-01 | FR-01, FR-02, BR-01 | Must | PASS | OPEN QUESTION | PASS | PASS | PASS | PASS | ACs cover creation and reporter fields; OPEN-02 may add extra identity data. |
+| US-02 | FR-03 | Must | PASS | PASS | PASS | PASS | PASS | PASS | List and empty state are covered. |
+| US-03 | FR-04 | Should | PASS | PASS | PASS | PASS | PASS | PASS | Search result and empty result are observable. |
+| US-04 | FR-05 | Should | PASS | PASS | PASS | PASS | PASS | PASS | Status, priority, and combined filters are covered. |
+| US-05 | FR-06, FR-18 | Must | PASS | OPEN QUESTION | PASS | PASS | PASS | PASS | Detail/history are covered; OPEN-10 affects Manajer Fasilitas visibility. |
+| US-06 | FR-07, BR-03 | Must | PASS | PASS | PASS | PASS | PASS | PASS | Administrator review and role restriction are covered. |
+| US-07 | FR-08, FR-09, FR-10, BR-04, BR-05, BR-06, BR-07 | Must | PASS | OPEN QUESTION | PASS | PASS | OPEN QUESTION | PASS | OPEN-05 and OPEN-06 affect category values and priority criteria. |
+| US-08 | FR-11, BR-03 | Must | PASS | PASS | PASS | PASS | PASS | PASS | Assignment after review and `ASSIGNED` transition are covered. |
+| US-09 | FR-12, FR-13 | Must | PASS | OPEN QUESTION | PASS | PASS | PASS | PASS | Viewing and accepting tasks are covered; OPEN-08 affects rejection/reassignment. |
+| US-10 | FR-14, FR-15, FR-18, BR-02, BR-08 | Must | PASS | PASS | PASS | PASS | PASS | PASS | Progress, resolution, and history fields are covered. |
+| US-11 | FR-16, BR-09 | Should | PASS | PASS | PASS | PASS | PASS | PASS | Public-comment storage and visibility are covered. |
+| US-12 | FR-17, BR-10 | Could | PASS | OPEN QUESTION | PASS | PASS | PASS | PASS | Internal-note visibility is covered for named roles; OPEN-10 affects Manajer Fasilitas boundary. |
+| US-13 | FR-19, BR-11 | Must | PASS | OPEN QUESTION | PASS | PASS | PASS | PASS | Confirmation is covered; OPEN-11 affects waiting-confirmation representation. |
+| US-14 | FR-20, BR-11 | Must | PASS | OPEN QUESTION | PASS | PASS | PASS | PASS | Closure and override note are covered; OPEN-03 and OPEN-11 remain unresolved. |
+| US-15 | FR-21, BR-12 | Should | PASS | OPEN QUESTION | PASS | PASS | PASS | PASS | Reopen behavior is covered; OPEN-04 affects initiator/trigger. |
+| US-16 | FR-22, FR-23 | Should | PASS | OPEN QUESTION | PASS | OPEN QUESTION | OPEN QUESTION | PASS | Dashboard summary is covered; OPEN-07 and OPEN-10 affect workload formula and access boundaries. |
+| US-17 | FR-24 | Must | PASS | PASS | PASS | PASS | PASS | PASS | Role-based action visibility and role switching are covered. |
 
 ## Coverage Against Mandatory Features
 
 | Mandatory feature from `instruksi-dosen.md` | Covered by | Validation result |
 | --- | --- | --- |
-| Membuat laporan baru | FR-01, FR-02, US-01 | Covered |
-| Melihat daftar laporan | FR-03, US-02 | Covered |
-| Mencari dan menyaring laporan | FR-04, FR-05, US-03, US-04 | Covered |
-| Melihat detail laporan | FR-06, US-05 | Covered |
-| Memeriksa laporan | FR-07, US-06 | Covered |
-| Menentukan prioritas | FR-09, FR-10, US-07 | Covered; priority criteria remain OPEN-06 |
-| Menugaskan teknisi | FR-11, US-08 | Covered |
-| Mengubah status pekerjaan | FR-14, FR-15, US-10 | Covered |
-| Menambahkan komentar atau catatan | FR-16, FR-17, US-11, US-12 | Covered |
-| Menyimpan riwayat status | FR-18, US-05, US-10, BR-08 | Covered |
-| Menutup atau membuka kembali laporan | FR-20, FR-21, US-14, US-15 | Covered; override and reopen trigger remain OPEN-03 and OPEN-04 |
-| Menampilkan dashboard sederhana | FR-22, FR-23, US-16 | Covered; workload formula remains OPEN-07 |
+| Membuat laporan baru | FR-01, FR-02, US-01 | Covered; OPEN-02 only affects extra identity data. |
+| Melihat daftar laporan | FR-03, US-02 | Covered. |
+| Mencari dan menyaring laporan | FR-04, FR-05, US-03, US-04 | Covered. |
+| Melihat detail laporan | FR-06, US-05 | Covered; OPEN-10 affects access boundary. |
+| Memeriksa laporan | FR-07, US-06 | Covered. |
+| Menentukan prioritas | FR-09, FR-10, US-07 | Covered; OPEN-06 affects criteria. |
+| Menugaskan teknisi | FR-11, US-08 | Covered. |
+| Mengubah status pekerjaan | FR-14, FR-15, US-10 | Covered. |
+| Menambahkan komentar atau catatan | FR-16, FR-17, US-11, US-12 | Covered; OPEN-10 affects Manajer Fasilitas internal-note boundary. |
+| Menyimpan riwayat status | FR-18, US-05, US-10, BR-08 | Covered. |
+| Menutup atau membuka kembali laporan | FR-20, FR-21, US-14, US-15 | Covered; OPEN-03, OPEN-04, and OPEN-11 remain. |
+| Menampilkan dashboard sederhana | FR-22, FR-23, US-16 | Covered; OPEN-07 and OPEN-10 remain. |
 
 Out-of-scope features from `instruksi-dosen.md` were not validated as mandatory: upload foto, email notification, Google login, QR code ruangan, AI category, inventory spare part, and vendor management.
 
-## Priority Validation
+## Priority Validation Against Skill 04
 
-- PASS - Must priorities in Skill 04 align with core workflow prerequisites: create, list/detail, review, category/priority, assignment, technician visibility, progress/resolved, status history, confirmation, close, and role-based UI.
-- PASS - Should priorities are defensible for features that are in scope but can follow the first core lifecycle slice: search, filter, Lecturer priority suggestion, task acceptance detail, public comments, reopen, and dashboard summary.
-- PASS - Could priorities are defensible where unresolved access or calculation detail increases risk: internal notes and technician workload.
-- OPEN QUESTION - Some mandatory-scope features are prioritized as Should/Could for sequencing rather than exclusion. Human Review should confirm this sequencing is acceptable because the features remain in scope and are not removed.
+- PASS - Every FR-01 through FR-24 has a Skill 04 priority and is validated above.
+- PASS - Every NFR-01 through NFR-09 is treated as a Must constraint and is validated above.
+- PASS - Every BR-01 through BR-12 has a Skill 04 priority and is validated above.
+- PASS - Every US-01 through US-17 has a Skill 04 priority and is validated above.
+- OPEN QUESTION - Skill 04 sequences some mandatory-scope features as Should or Could for delivery order, not scope removal. Human Review should confirm that sequencing remains acceptable before Skill 06.
 
 ## Contradictions, Ambiguities, Incompleteness, and Unverifiable Items
 
 | ID | Type | Affected items | Finding | Status |
 | --- | --- | --- | --- | --- |
-| VAL-01 | Incompleteness | FR-08, BR-06, US-07 | Final category fixed list is not defined. | OPEN QUESTION via OPEN-05 |
-| VAL-02 | Incompleteness | FR-09, FR-10, BR-04, BR-05, BR-07, US-07 | Criteria for LOW, MEDIUM, HIGH, and URGENT are not defined. | OPEN QUESTION via OPEN-06 |
-| VAL-03 | Ambiguity | FR-20, BR-11, US-14 | Valid conditions for Administrator manual override are not defined. | OPEN QUESTION via OPEN-03 |
-| VAL-04 | Ambiguity | FR-21, BR-12, US-15 | Reopen initiation is unclear: Administrator-only action or Pelapor request plus Administrator decision. | OPEN QUESTION via OPEN-04 |
-| VAL-05 | Unverifiable detail | FR-23, US-16 | Technician workload display cannot be correctness-tested until workload formula is defined. | OPEN QUESTION via OPEN-07 |
-| VAL-06 | Ambiguity | FR-13, US-09 | Technician acceptance is defined, but rejection/reassignment handling is unresolved. | OPEN QUESTION via OPEN-08 |
-| VAL-07 | Ambiguity | FR-19, FR-20, US-13, US-14 | Waiting-for-confirmation representation without adding a seventh status remains unclear. | OPEN QUESTION via OPEN-11 |
+| VAL-01 | Incompleteness | FR-02, US-01 | Extra reporter identity data beyond `reporter_name` and `reporter_type` remains undefined. | OPEN QUESTION via OPEN-02 |
+| VAL-02 | Incompleteness | FR-08, BR-06, US-07 | Final category fixed list is not defined. | OPEN QUESTION via OPEN-05 |
+| VAL-03 | Incompleteness | FR-09, FR-10, BR-04, BR-05, BR-07, US-07 | Criteria for `LOW`, `MEDIUM`, `HIGH`, and `URGENT` are not defined. | OPEN QUESTION via OPEN-06 |
+| VAL-04 | Ambiguity | FR-13, US-09 | Technician acceptance is defined, but rejection/reassignment handling is unresolved. | OPEN QUESTION via OPEN-08 |
+| VAL-05 | Ambiguity | FR-20, BR-11, US-14 | Valid conditions for Administrator manual override are not defined. | OPEN QUESTION via OPEN-03 |
+| VAL-06 | Ambiguity | FR-21, BR-12, US-15 | Reopen initiation is unclear: Administrator-only action or Pelapor request plus Administrator decision. | OPEN QUESTION via OPEN-04 |
+| VAL-07 | Unverifiable detail | FR-23, US-16 | Technician workload display cannot be correctness-tested until workload formula is defined. | OPEN QUESTION via OPEN-07 |
+| VAL-08 | Ambiguity | FR-06, FR-17, FR-22, US-05, US-12, US-16 | Manajer Fasilitas detail access and Catatan Internal visibility are not fully defined. | OPEN QUESTION via OPEN-10 |
+| VAL-09 | Ambiguity | FR-19, FR-20, US-13, US-14 | Waiting-for-confirmation representation without adding a seventh status remains unclear. | OPEN QUESTION via OPEN-11 |
 
 ## Requirements Needing Revision
 
@@ -184,35 +158,43 @@ No existing FR, NFR, BR, User Story, or Acceptance Criteria is changed by this v
 
 Potential future revisions after Human Review:
 
-1. Add approved category values to the specification, design, and tests after OPEN-05 is answered.
+1. Add approved category values after OPEN-05 is answered.
 2. Add priority criteria after OPEN-06 is answered.
 3. Add manual override conditions for close after OPEN-03 is answered.
 4. Clarify reopen initiation and decision authority after OPEN-04 is answered.
 5. Define technician workload formula after OPEN-07 is answered.
-6. Clarify whether task rejection or reassignment exists after OPEN-08 is answered.
-7. Decide how to represent waiting reporter confirmation without adding a status after OPEN-11 is answered.
+6. Clarify task rejection or reassignment after OPEN-08 is answered.
+7. Clarify Manajer Fasilitas access boundaries after OPEN-10 is answered.
+8. Decide how to represent waiting reporter confirmation without adding a status after OPEN-11 is answered.
+
+## Change Request Check
+
+- PASS - `docs/requirements/change-request.md` contains `CR-05-01`.
+- PASS - `CR-05-01` separates proposed change, reason/rationale, affected artifacts, impact analysis, risks, decision recommendation, conditions, follow-up updates, and human approval status.
+- PASS - The decision recommendation is `NEEDS CLARIFICATION`, so the proposed change is not treated as accepted or implemented.
+- PASS - The change request preserves BR-02 strict statuses and does not add out-of-scope features.
 
 ## Unresolved Open Questions
 
 | Open ID | Question | Validation impact |
 | --- | --- | --- |
-| OPEN-02 | Data identitas Pelapor apa saja yang wajib disimpan selain `reporter_name` dan `reporter_type`? | Does not invalidate FR-02; may affect future data model and UI. |
-| OPEN-03 | Apa kondisi sah Administrator memakai manual override untuk menutup laporan tanpa konfirmasi Pelapor? | Affects completeness of FR-20, BR-11, US-14. |
-| OPEN-04 | Apakah reopen hanya dapat dilakukan oleh Administrator, atau Pelapor juga dapat meminta reopen? | Affects completeness of FR-21 and US-15. |
-| OPEN-05 | Apa daftar final kategori fixed list yang akan digunakan? | Affects completeness and test data for FR-08 and US-07. |
-| OPEN-06 | Apa kriteria prioritas `LOW`, `MEDIUM`, `HIGH`, dan `URGENT`? | Affects priority policy for FR-09 and FR-10. |
-| OPEN-07 | Bagaimana beban tugas per Teknisi dihitung untuk dashboard? | Affects verifiability of FR-23 and AC-16.2. |
-| OPEN-08 | Apakah Teknisi boleh menolak tugas atau hanya menerima dan memperbarui tugas yang diberikan? | Affects scope of FR-13 and US-09. |
-| OPEN-10 | Apakah Manajer Fasilitas hanya melihat dashboard/ringkasan, dapat membuka detail laporan, atau juga dapat melihat Catatan Internal? | Affects access boundaries for FR-06, FR-17, and FR-22. |
-| OPEN-11 | Apakah enam status strict boleh memiliki sub-state non-status, seperti flag menunggu konfirmasi? | Affects representation of FR-19 and FR-20 without violating BR-02. |
+| OPEN-02 | Data identitas Pelapor apa saja yang wajib disimpan selain `reporter_name` dan `reporter_type`? | Affects FR-02 and US-01 future data model detail. |
+| OPEN-03 | Apa kondisi sah Administrator memakai manual override untuk menutup laporan tanpa konfirmasi Pelapor? | Affects FR-20, BR-11, and US-14 completeness. |
+| OPEN-04 | Apakah reopen hanya dapat dilakukan oleh Administrator, atau Pelapor juga dapat meminta reopen? | Affects FR-21, BR-12, and US-15 completeness. |
+| OPEN-05 | Apa daftar final kategori fixed list yang akan digunakan? | Affects FR-08, BR-06, US-07, test data, and UI values. |
+| OPEN-06 | Apa kriteria prioritas `LOW`, `MEDIUM`, `HIGH`, dan `URGENT`? | Affects FR-09, FR-10, BR-04, BR-05, BR-07, and US-07 policy detail. |
+| OPEN-07 | Bagaimana beban tugas per Teknisi dihitung untuk dashboard? | Affects FR-23 and AC-16.2 verifiability. |
+| OPEN-08 | Apakah Teknisi boleh menolak tugas atau hanya menerima dan memperbarui tugas yang diberikan? | Affects FR-13 and US-09 workflow scope. |
+| OPEN-10 | Apakah Manajer Fasilitas hanya melihat dashboard/ringkasan, dapat membuka detail laporan, atau juga dapat melihat Catatan Internal? | Affects FR-06, FR-17, FR-22, US-05, US-12, and US-16 access boundaries. |
+| OPEN-11 | Apakah enam status strict boleh memiliki sub-state non-status, seperti flag menunggu konfirmasi? | Affects FR-19, FR-20, US-13, US-14, and CR-05-01. |
 
 ## Validation Summary
 
-- Minimum validation requirement met: 9 functional requirements were validated across clarity, completeness, consistency, feasibility, testability, and traceability.
-- Coverage result: Mandatory features from `instruksi-dosen.md` are covered by the approved FR/User Story set.
-- Priority result: Skill 04 priorities are internally consistent with dependencies and do not move out-of-scope features into mandatory scope.
-- Main validation risk: Several requirements are valid at the capability level but need policy detail before design, implementation, and testing can be fully precise.
-- Baseline readiness: Ready for Human Review as a validation draft. Not ready to be treated as a final baseline until the reviewer decides whether the listed open questions can remain deferred or must be answered before Skill 06.
+- Coverage result: PASS after revision. FR-01 through FR-24, NFR-01 through NFR-09, BR-01 through BR-12, and US-01 through US-17 are all validated in this document.
+- Mandatory feature result: PASS. Required features from `instruksi-dosen.md` are covered and out-of-scope features are not validated as mandatory.
+- Priority result: PASS with one reviewer-facing open question about whether Skill 04 sequencing of some mandatory-scope items as Should/Could remains acceptable.
+- Change management result: PASS for minimum artifact presence. `CR-05-01` exists and is marked `NEEDS CLARIFICATION`, not accepted.
+- Baseline readiness: Ready for Human Review as a complete Skill 05 draft. This document does not approve the requirements baseline by itself.
 
 ## Human Review Status
 
