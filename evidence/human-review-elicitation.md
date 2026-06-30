@@ -40,5 +40,3 @@ Catatan: Test otomatis tidak dijalankan karena perubahan hanya pada dokumen requ
 - [ ] Perlu revisi
 - [ ] Ditolak
 - [ ] Terblokir
-
-Reviewer: Prayer Yosua Immanuel Kaawoan
