@@ -1,148 +1,153 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import cloudflareLogo from './assets/cloudflare.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useEffect, useState } from "react";
+import "./App.css";
 
-function App() {
-  const [count, setCount] = useState(0)
-  const [name, setName] = useState('unknown')
+type ServiceRequest = {
+	id: string;
+	request_number: string;
+	title: string;
+	location: string;
+	category: string;
+	priority: string;
+	status: string;
+};
 
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started with Cloudflare</h1>
-          <p>
-            Edit <code>src/App.tsx</code> or <code>worker/index.ts</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <ul style={{ display: 'flex', gap: '1rem', listStyle: 'none', padding: 0 }}>
-          <li>
-            <button
-              className="counter"
-              onClick={() => setCount((count) => count + 1)}
-            >
-              Count is {count}
-            </button>
-          </li>
-          <li>
-          <button
-            className="counter"
-            onClick={() => {
-              fetch('/api/')
-                .then((res) => res.json())
-                .then((data) => setName(data.name))
-            }}
-            aria-label='get name'
-          >
-            Name from API is: {name}
-          </button>
-          </li>
-        </ul>
+export default function App() {
+	const [requests, setRequests] = useState<ServiceRequest[]>([]);
+	const [title, setTitle] = useState("");
+	const [description, setDescription] = useState("");
+	const [location, setLocation] = useState("");
+	const [category, setCategory] = useState("Internet");
+	const [message, setMessage] = useState("");
 
+	async function loadRequests() {
+		const response = await fetch("/api/requests");
+		const result = await response.json();
+		setRequests(result.data ?? []);
+	}
 
-      </section>
+	useEffect(() => {
+		loadRequests();
+	}, []);
 
-      <div className="ticks"></div>
+	async function submitRequest(event: React.FormEvent) {
+		event.preventDefault();
+		setMessage("");
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-            <li>
-              <a href="https://workers.cloudflare.com/" target="_blank">
-                <img className="button-icon" src={cloudflareLogo} alt="" />
-                Workers Docs
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+		const response = await fetch("/api/requests", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({
+				title,
+				description,
+				location,
+				category,
+			}),
+		});
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+		const result = await response.json();
+
+		if (!response.ok) {
+			setMessage(result.error ?? "Laporan gagal dibuat.");
+			return;
+		}
+
+		setMessage(`Laporan berhasil dibuat: ${result.requestNumber}`);
+		setTitle("");
+		setDescription("");
+		setLocation("");
+		await loadRequests();
+	}
+
+	return (
+		<main className="app-shell">
+			<section className="page-header">
+				<p className="eyebrow">Campus Maintenance</p>
+				<h1>Campus Service Request</h1>
+				<p>Laporkan masalah fasilitas kampus dan pantau statusnya.</p>
+			</section>
+
+			<section className="content-grid">
+				<form className="request-form" onSubmit={submitRequest}>
+					<h2>Buat Laporan Baru</h2>
+
+					<label>
+						Judul
+						<input
+							value={title}
+							onChange={(event) => setTitle(event.target.value)}
+							placeholder="Contoh: Proyektor ruang 302 rusak"
+						/>
+					</label>
+
+					<label>
+						Deskripsi
+						<textarea
+							value={description}
+							onChange={(event) => setDescription(event.target.value)}
+							placeholder="Jelaskan masalah minimal 20 karakter."
+						/>
+					</label>
+
+					<label>
+						Lokasi
+						<input
+							value={location}
+							onChange={(event) => setLocation(event.target.value)}
+							placeholder="Contoh: Gedung A, Ruang 302"
+						/>
+					</label>
+
+					<label>
+						Kategori
+						<select
+							value={category}
+							onChange={(event) => setCategory(event.target.value)}
+						>
+							<option>Internet</option>
+							<option>AC</option>
+							<option>Peralatan Kelas</option>
+							<option>Kebersihan</option>
+							<option>Lainnya</option>
+						</select>
+					</label>
+
+					<button type="submit">Kirim Laporan</button>
+					{message && <p className="form-message">{message}</p>}
+				</form>
+
+				<section className="request-list">
+					<h2>Daftar Laporan</h2>
+
+					{requests.length === 0 ? (
+						<p className="empty-state">Belum ada laporan.</p>
+					) : (
+						<div className="table-wrap">
+							<table>
+								<thead>
+									<tr>
+										<th>Nomor</th>
+										<th>Judul</th>
+										<th>Lokasi</th>
+										<th>Kategori</th>
+										<th>Status</th>
+									</tr>
+								</thead>
+								<tbody>
+									{requests.map((item) => (
+										<tr key={item.id}>
+											<td>{item.request_number}</td>
+											<td>{item.title}</td>
+											<td>{item.location}</td>
+											<td>{item.category}</td>
+											<td>{item.status}</td>
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</div>
+					)}
+				</section>
+			</section>
+		</main>
+	);
 }
-
-export default App
