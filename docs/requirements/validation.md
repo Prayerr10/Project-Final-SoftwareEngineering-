@@ -1,9 +1,9 @@
 # Requirements Validation
 
-| Review Status | Human Review Pending |
+| Review Status | Human Reviewed & Approved |
 | --- | --- |
 | Skill AI | Skill 05 - Validation dan Change (`requirements-validation-change-management`) |
-| Human decision | Pending |
+| Human decision | Disetujui |
 
 ## Validation Scope
 
@@ -198,6 +198,6 @@ Potential future revisions after Human Review:
 
 ## Human Review Status
 
-- Status: Pending Human Review.
-- Required reviewer action: approve, request revision, reject, or mark blocked before Skill 06 begins.
+- Status: Human Reviewed & Approved.
+- Human decision: Disetujui melalui `evidence/human-review-validation.md` dan Pull Request Skill 05.
 - This document does not approve any requirement change by itself.

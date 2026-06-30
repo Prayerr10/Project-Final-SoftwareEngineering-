@@ -1,9 +1,9 @@
 # Requirement Change Request
 
-| Review Status | Human Review Pending |
+| Review Status | Human Reviewed & Approved |
 | --- | --- |
 | Skill AI | Skill 05 - Validation dan Change (`requirements-validation-change-management`) |
-| Human decision | Pending |
+| Human decision | Disetujui |
 
 ## Change Description
 
@@ -78,5 +78,6 @@ If rejected or deferred:
 
 ## Human Approval Status
 
-- Status: Pending Human Review.
+- Status: Human Reviewed & Approved.
+- Human decision: Disetujui melalui `evidence/human-review-validation.md` dan Pull Request Skill 05.
 - This change request is analysis only and does not modify the approved requirement baseline.

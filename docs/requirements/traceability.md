@@ -93,81 +93,81 @@ Status: Human Reviewed & Approved. Prioritas berikut ditautkan dari `docs/requir
 
 ## Skill 05 Validation Links
 
-Status: Pending Human Review. Validasi Skill 05 ditautkan dari `docs/requirements/validation.md` dan change request ditautkan dari `docs/requirements/change-request.md`. Tabel ini tidak mengubah requirement final; status keputusan tetap menunggu Human Review.
+Status: Human Reviewed & Approved. Validasi Skill 05 ditautkan dari `docs/requirements/validation.md` dan change request ditautkan dari `docs/requirements/change-request.md`. Tabel ini tidak mengubah requirement final; `CR-05-01` tetap berupa analisis change request dan tidak langsung mengubah baseline requirement.
 
 ### Functional Requirement Validation Links
 
 | Requirement | User Story | Skill 05 Validation | Change Request | Status |
 | --- | --- | --- | --- | --- |
-| FR-01 | US-01 | PASS | None | Pending Human Review Skill 05 |
-| FR-02 | US-01 | OPEN QUESTION: OPEN-02 | None | Pending Human Review Skill 05 |
-| FR-03 | US-02 | PASS | None | Pending Human Review Skill 05 |
-| FR-04 | US-03 | PASS | None | Pending Human Review Skill 05 |
-| FR-05 | US-04 | PASS | None | Pending Human Review Skill 05 |
-| FR-06 | US-05 | OPEN QUESTION: OPEN-10 | None | Pending Human Review Skill 05 |
-| FR-07 | US-06 | PASS | None | Pending Human Review Skill 05 |
-| FR-08 | US-07 | OPEN QUESTION: OPEN-05 | None | Pending Human Review Skill 05 |
-| FR-09 | US-07 | OPEN QUESTION: OPEN-06 | None | Pending Human Review Skill 05 |
-| FR-10 | US-07 | OPEN QUESTION: OPEN-06 | None | Pending Human Review Skill 05 |
-| FR-11 | US-08 | PASS | None | Pending Human Review Skill 05 |
-| FR-12 | US-09 | PASS | None | Pending Human Review Skill 05 |
-| FR-13 | US-09 | OPEN QUESTION: OPEN-08 | None | Pending Human Review Skill 05 |
-| FR-14 | US-10 | PASS | None | Pending Human Review Skill 05 |
-| FR-15 | US-10 | PASS | None | Pending Human Review Skill 05 |
-| FR-16 | US-11 | PASS | None | Pending Human Review Skill 05 |
-| FR-17 | US-12 | OPEN QUESTION: OPEN-10 | None | Pending Human Review Skill 05 |
-| FR-18 | US-05, US-10 | PASS | None | Pending Human Review Skill 05 |
-| FR-19 | US-13 | OPEN QUESTION: OPEN-11 | CR-05-01 | Pending Human Review Skill 05 |
-| FR-20 | US-14 | OPEN QUESTION: OPEN-03, OPEN-11 | CR-05-01 | Pending Human Review Skill 05 |
-| FR-21 | US-15 | OPEN QUESTION: OPEN-04 | None | Pending Human Review Skill 05 |
-| FR-22 | US-16 | OPEN QUESTION: OPEN-10 | None | Pending Human Review Skill 05 |
-| FR-23 | US-16 | OPEN QUESTION: OPEN-07 | None | Pending Human Review Skill 05 |
-| FR-24 | US-17 | PASS | None | Pending Human Review Skill 05 |
+| FR-01 | US-01 | PASS | None | Approved Skill 05 |
+| FR-02 | US-01 | OPEN QUESTION: OPEN-02 | None | Approved Skill 05 |
+| FR-03 | US-02 | PASS | None | Approved Skill 05 |
+| FR-04 | US-03 | PASS | None | Approved Skill 05 |
+| FR-05 | US-04 | PASS | None | Approved Skill 05 |
+| FR-06 | US-05 | OPEN QUESTION: OPEN-10 | None | Approved Skill 05 |
+| FR-07 | US-06 | PASS | None | Approved Skill 05 |
+| FR-08 | US-07 | OPEN QUESTION: OPEN-05 | None | Approved Skill 05 |
+| FR-09 | US-07 | OPEN QUESTION: OPEN-06 | None | Approved Skill 05 |
+| FR-10 | US-07 | OPEN QUESTION: OPEN-06 | None | Approved Skill 05 |
+| FR-11 | US-08 | PASS | None | Approved Skill 05 |
+| FR-12 | US-09 | PASS | None | Approved Skill 05 |
+| FR-13 | US-09 | OPEN QUESTION: OPEN-08 | None | Approved Skill 05 |
+| FR-14 | US-10 | PASS | None | Approved Skill 05 |
+| FR-15 | US-10 | PASS | None | Approved Skill 05 |
+| FR-16 | US-11 | PASS | None | Approved Skill 05 |
+| FR-17 | US-12 | OPEN QUESTION: OPEN-10 | None | Approved Skill 05 |
+| FR-18 | US-05, US-10 | PASS | None | Approved Skill 05 |
+| FR-19 | US-13 | OPEN QUESTION: OPEN-11 | CR-05-01 | Approved Skill 05 |
+| FR-20 | US-14 | OPEN QUESTION: OPEN-03, OPEN-11 | CR-05-01 | Approved Skill 05 |
+| FR-21 | US-15 | OPEN QUESTION: OPEN-04 | None | Approved Skill 05 |
+| FR-22 | US-16 | OPEN QUESTION: OPEN-10 | None | Approved Skill 05 |
+| FR-23 | US-16 | OPEN QUESTION: OPEN-07 | None | Approved Skill 05 |
+| FR-24 | US-17 | PASS | None | Approved Skill 05 |
 
 ### Non-Functional Requirement and Business Rule Validation Links
 
 | Item | Related Artifact | Skill 05 Validation | Change Request | Status |
 | --- | --- | --- | --- | --- |
-| NFR-01 | All user stories | PASS | None | Pending Human Review Skill 05 |
-| NFR-02 | All user stories | PASS | None | Pending Human Review Skill 05 |
-| NFR-03 | All user stories | PASS | None | Pending Human Review Skill 05 |
-| NFR-04 | All user stories | PASS | None | Pending Human Review Skill 05 |
-| NFR-05 | All user stories | PASS | None | Pending Human Review Skill 05 |
-| NFR-06 | All user stories | OPEN QUESTION: final test inventory is future work | None | Pending Human Review Skill 05 |
-| NFR-07 | All user stories | PASS | None | Pending Human Review Skill 05 |
-| NFR-08 | All user stories | PASS | None | Pending Human Review Skill 05 |
-| NFR-09 | All user stories | PASS | None | Pending Human Review Skill 05 |
-| BR-01 | FR-01 | PASS | None | Pending Human Review Skill 05 |
-| BR-02 | FR-07, FR-11, FR-14, FR-15, FR-20, FR-21 | PASS | CR-05-01 protects strict statuses | Pending Human Review Skill 05 |
-| BR-03 | FR-07, FR-11 | PASS | None | Pending Human Review Skill 05 |
-| BR-04 | FR-09 | PASS | None | Pending Human Review Skill 05 |
-| BR-05 | FR-10 | OPEN QUESTION: OPEN-06 | None | Pending Human Review Skill 05 |
-| BR-06 | FR-08 | OPEN QUESTION: OPEN-05 | None | Pending Human Review Skill 05 |
-| BR-07 | FR-09 | PASS | None | Pending Human Review Skill 05 |
-| BR-08 | FR-18 | PASS | None | Pending Human Review Skill 05 |
-| BR-09 | FR-16 | PASS | None | Pending Human Review Skill 05 |
-| BR-10 | FR-17 | OPEN QUESTION: OPEN-10 | None | Pending Human Review Skill 05 |
-| BR-11 | FR-19, FR-20 | OPEN QUESTION: OPEN-03, OPEN-11 | CR-05-01 | Pending Human Review Skill 05 |
-| BR-12 | FR-21 | OPEN QUESTION: OPEN-04 | None | Pending Human Review Skill 05 |
+| NFR-01 | All user stories | PASS | None | Approved Skill 05 |
+| NFR-02 | All user stories | PASS | None | Approved Skill 05 |
+| NFR-03 | All user stories | PASS | None | Approved Skill 05 |
+| NFR-04 | All user stories | PASS | None | Approved Skill 05 |
+| NFR-05 | All user stories | PASS | None | Approved Skill 05 |
+| NFR-06 | All user stories | OPEN QUESTION: final test inventory is future work | None | Approved Skill 05 |
+| NFR-07 | All user stories | PASS | None | Approved Skill 05 |
+| NFR-08 | All user stories | PASS | None | Approved Skill 05 |
+| NFR-09 | All user stories | PASS | None | Approved Skill 05 |
+| BR-01 | FR-01 | PASS | None | Approved Skill 05 |
+| BR-02 | FR-07, FR-11, FR-14, FR-15, FR-20, FR-21 | PASS | CR-05-01 protects strict statuses | Approved Skill 05 |
+| BR-03 | FR-07, FR-11 | PASS | None | Approved Skill 05 |
+| BR-04 | FR-09 | PASS | None | Approved Skill 05 |
+| BR-05 | FR-10 | OPEN QUESTION: OPEN-06 | None | Approved Skill 05 |
+| BR-06 | FR-08 | OPEN QUESTION: OPEN-05 | None | Approved Skill 05 |
+| BR-07 | FR-09 | PASS | None | Approved Skill 05 |
+| BR-08 | FR-18 | PASS | None | Approved Skill 05 |
+| BR-09 | FR-16 | PASS | None | Approved Skill 05 |
+| BR-10 | FR-17 | OPEN QUESTION: OPEN-10 | None | Approved Skill 05 |
+| BR-11 | FR-19, FR-20 | OPEN QUESTION: OPEN-03, OPEN-11 | CR-05-01 | Approved Skill 05 |
+| BR-12 | FR-21 | OPEN QUESTION: OPEN-04 | None | Approved Skill 05 |
 
 ### User Story Validation Links
 
 | User Story | Supports | Skill 05 Validation | Change Request | Status |
 | --- | --- | --- | --- | --- |
-| US-01 | FR-01, FR-02, BR-01 | OPEN QUESTION: OPEN-02 | None | Pending Human Review Skill 05 |
-| US-02 | FR-03 | PASS | None | Pending Human Review Skill 05 |
-| US-03 | FR-04 | PASS | None | Pending Human Review Skill 05 |
-| US-04 | FR-05 | PASS | None | Pending Human Review Skill 05 |
-| US-05 | FR-06, FR-18 | OPEN QUESTION: OPEN-10 | None | Pending Human Review Skill 05 |
-| US-06 | FR-07, BR-03 | PASS | None | Pending Human Review Skill 05 |
-| US-07 | FR-08, FR-09, FR-10, BR-04, BR-05, BR-06, BR-07 | OPEN QUESTION: OPEN-05, OPEN-06 | None | Pending Human Review Skill 05 |
-| US-08 | FR-11, BR-03 | PASS | None | Pending Human Review Skill 05 |
-| US-09 | FR-12, FR-13 | OPEN QUESTION: OPEN-08 | None | Pending Human Review Skill 05 |
-| US-10 | FR-14, FR-15, FR-18, BR-02, BR-08 | PASS | None | Pending Human Review Skill 05 |
-| US-11 | FR-16, BR-09 | PASS | None | Pending Human Review Skill 05 |
-| US-12 | FR-17, BR-10 | OPEN QUESTION: OPEN-10 | None | Pending Human Review Skill 05 |
-| US-13 | FR-19, BR-11 | OPEN QUESTION: OPEN-11 | CR-05-01 | Pending Human Review Skill 05 |
-| US-14 | FR-20, BR-11 | OPEN QUESTION: OPEN-03, OPEN-11 | CR-05-01 | Pending Human Review Skill 05 |
-| US-15 | FR-21, BR-12 | OPEN QUESTION: OPEN-04 | None | Pending Human Review Skill 05 |
-| US-16 | FR-22, FR-23 | OPEN QUESTION: OPEN-07, OPEN-10 | None | Pending Human Review Skill 05 |
-| US-17 | FR-24 | PASS | None | Pending Human Review Skill 05 |
+| US-01 | FR-01, FR-02, BR-01 | OPEN QUESTION: OPEN-02 | None | Approved Skill 05 |
+| US-02 | FR-03 | PASS | None | Approved Skill 05 |
+| US-03 | FR-04 | PASS | None | Approved Skill 05 |
+| US-04 | FR-05 | PASS | None | Approved Skill 05 |
+| US-05 | FR-06, FR-18 | OPEN QUESTION: OPEN-10 | None | Approved Skill 05 |
+| US-06 | FR-07, BR-03 | PASS | None | Approved Skill 05 |
+| US-07 | FR-08, FR-09, FR-10, BR-04, BR-05, BR-06, BR-07 | OPEN QUESTION: OPEN-05, OPEN-06 | None | Approved Skill 05 |
+| US-08 | FR-11, BR-03 | PASS | None | Approved Skill 05 |
+| US-09 | FR-12, FR-13 | OPEN QUESTION: OPEN-08 | None | Approved Skill 05 |
+| US-10 | FR-14, FR-15, FR-18, BR-02, BR-08 | PASS | None | Approved Skill 05 |
+| US-11 | FR-16, BR-09 | PASS | None | Approved Skill 05 |
+| US-12 | FR-17, BR-10 | OPEN QUESTION: OPEN-10 | None | Approved Skill 05 |
+| US-13 | FR-19, BR-11 | OPEN QUESTION: OPEN-11 | CR-05-01 | Approved Skill 05 |
+| US-14 | FR-20, BR-11 | OPEN QUESTION: OPEN-03, OPEN-11 | CR-05-01 | Approved Skill 05 |
+| US-15 | FR-21, BR-12 | OPEN QUESTION: OPEN-04 | None | Approved Skill 05 |
+| US-16 | FR-22, FR-23 | OPEN QUESTION: OPEN-07, OPEN-10 | None | Approved Skill 05 |
+| US-17 | FR-24 | PASS | None | Approved Skill 05 |
