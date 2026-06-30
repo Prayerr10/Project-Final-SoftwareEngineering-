@@ -1,9 +1,9 @@
 # User Stories
 
-| Review Status | Draft for Human Review |
+| Review Status | Human Reviewed & Approved |
 | --- | --- |
 | Skill AI | Skill 03 - Specification (`requirements-elaboration-and-specification`) |
-| Human decision | Menunggu Human Review Skill 03 |
+| Human decision | Disetujui |
 
 ## Source Summary
 
