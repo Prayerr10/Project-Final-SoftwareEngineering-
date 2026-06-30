@@ -1,169 +1,244 @@
 # User Stories
 
-| Review Status | Human Reviewed Draft |
+| Review Status | Draft for Human Review |
 | --- | --- |
-| AI assistance | Draft awal dibuat dengan bantuan AI, diperiksa melalui sesi `grill-with-docs`, lalu dirapikan memakai skill `03-specification`. |
-| Human decision | Keputusan final tetap berada pada project owner. |
+| Skill AI | Skill 03 - Specification (`requirements-elaboration-and-specification`) |
+| Human decision | Menunggu Human Review Skill 03 |
 
-## US-01 - Create Service Request
+## Source Summary
 
-- Story: As a Pelapor, I want to create a service request, so that campus facility problems can be recorded and processed.
-- Supports: FR-01, FR-02, FR-19, FR-20
-- Source: EL-01, EL-04, EL-15
-- Status: FACT, ASSUMPTION
+User stories dan acceptance criteria ini diturunkan dari `instruksi-dosen.md`, `CASE.md`, `docs/requirements/inception.md`, `docs/requirements/elicitation.md`, dan `docs/requirements/grill-session-summary.md`. Item yang bergantung pada informasi yang belum rinci tetap ditandai `ASSUMPTION` atau dicatat di bagian `Open Questions`.
 
-### Acceptance Criteria
+## User Stories and Acceptance Criteria
 
-- AC-US01-01: Given the active role is Pelapor, when the Pelapor submits a complete valid report, then the system stores the report with status `SUBMITTED`.
-- AC-US01-02: Given required report fields are missing, when the Pelapor submits the form, then the system rejects the report and shows a validation message.
-- AC-US01-03: Given a valid report is submitted, when the record is stored, then reporter name and reporter type are stored with the report.
-- AC-US01-04: Given the active role is not Pelapor, when the user views the UI, then the create report action is not available and the API rejects create attempts.
+### US-01 - Create Service Request
 
-## US-02 - View Request List
+- Story: As a Pelapor, I want to create a service request, so that a campus facility problem can be recorded and processed.
+- Supports: FR-01, FR-02, BR-01
+- Source: SRC-02, SRC-03, SRC-07
+- Status: FACT
+
+#### Acceptance Criteria
+
+- AC-01.1: Given the active role is Pelapor, when the Pelapor submits a complete report, then the system stores the report.
+- AC-01.2: Given the system stores a new report, when the report is created, then the report status is `SUBMITTED`.
+- AC-01.3: Given the report is created by a Pelapor, when the system stores the report, then `reporter_name` and `reporter_type` are stored with the report.
+
+### US-02 - View Request List
 
 - Story: As a user with an active role, I want to view service requests, so that I can monitor reports relevant to my work.
-- Supports: FR-03, FR-19
-- Source: EL-02, EL-05, EL-10, EL-13, EL-15
-- Status: FACT, ASSUMPTION
+- Supports: FR-03
+- Source: SRC-02, SRC-03
+- Status: FACT
 
-### Acceptance Criteria
+#### Acceptance Criteria
 
-- AC-US02-01: Given requests exist in the database, when the list is opened, then the system displays request number, title, location, category, priority, and status.
-- AC-US02-02: Given no requests exist, when the list is opened, then the system displays an empty state.
+- AC-02.1: Given service requests exist, when the request list is opened, then the system displays the stored requests.
+- AC-02.2: Given no service requests exist, when the request list is opened, then the system displays an empty state.
 
-## US-03 - Search Requests
+### US-03 - Search Requests
 
-- Story: As a user with an active role, I want to search service requests, so that I can find a specific report quickly.
+- Story: As a user with an active role, I want to search service requests, so that I can find a specific report.
 - Supports: FR-04
-- Source: EL-18
-- Status: ASSUMPTION
+- Source: SRC-02, SRC-07
+- Status: FACT
 
-### Acceptance Criteria
+#### Acceptance Criteria
 
-- AC-US03-01: Given a search keyword matches a request title, when the search is applied, then matching requests are shown.
-- AC-US03-02: Given a search keyword matches a request number, location, or category, when the search is applied, then matching requests are shown.
-- AC-US03-03: Given a search keyword matches no request, when the search is applied, then the system displays an empty result state.
+- AC-03.1: Given a search keyword matches a stored report, when the search is applied, then matching reports are displayed.
+- AC-03.2: Given a search keyword does not match any stored report, when the search is applied, then the system displays an empty result state.
 
-## US-04 - Filter Requests
+### US-04 - Filter Requests
 
-- Story: As a user with an active role, I want to filter service requests, so that I can narrow the list by operational criteria.
+- Story: As a user with an active role, I want to filter service requests, so that I can narrow the list by status and priority.
 - Supports: FR-05
-- Source: EL-18
-- Status: ASSUMPTION
+- Source: SRC-02, SRC-07
+- Status: FACT
 
-### Acceptance Criteria
+#### Acceptance Criteria
 
-- AC-US04-01: Given a status filter is selected, when the list is loaded, then only requests with that status are shown.
-- AC-US04-02: Given category, priority, or technician filters are selected, when the list is loaded, then only matching requests are shown.
-- AC-US04-03: Given a search keyword and filters are applied together, when the list is loaded, then only requests matching both the keyword and filters are shown.
+- AC-04.1: Given a status filter is selected, when the request list is displayed, then only reports with that status are shown.
+- AC-04.2: Given a priority filter is selected, when the request list is displayed, then only reports with that priority are shown.
+- AC-04.3: Given status and priority filters are selected together, when the request list is displayed, then only reports matching both filters are shown.
 
-## US-05 - View Request Detail
+### US-05 - View Request Detail
 
-- Story: As a user with an active role, I want to view request detail, so that I can understand the full report context.
-- Supports: FR-06, FR-14, FR-19
-- Source: EL-02, EL-10, EL-13, EL-17
-- Status: FACT, ASSUMPTION
+- Story: As a user with an active role, I want to view request detail, so that I can understand the context and current condition of a report.
+- Supports: FR-06, FR-18
+- Source: SRC-02, SRC-03, SRC-07
+- Status: FACT
 
-### Acceptance Criteria
+#### Acceptance Criteria
 
-- AC-US05-01: Given a request is selected, when the detail panel opens, then the system displays description, location, category, priority, and status.
-- AC-US05-02: Given a request has comments or status history, when the detail panel opens, then the system displays comments and status history.
-- AC-US05-03: Given a request has an assigned technician, when the detail panel opens, then the assigned technician is displayed.
+- AC-05.1: Given a report is selected, when the detail view is opened, then the system displays the report detail.
+- AC-05.2: Given a report has status history, when the detail view is opened, then the system displays the status history.
+- AC-05.3: Given a report has comments visible to the active role, when the detail view is opened, then the system displays those comments.
 
-## US-06 - Review Submitted Request
+### US-06 - Review Submitted Request
 
-- Story: As an Administrator, I want to review submitted reports, so that valid reports can proceed through the workflow.
-- Supports: FR-07, FR-14, FR-19, FR-20
-- Source: EL-05, EL-17
-- Status: FACT, ASSUMPTION
+- Story: As an Administrator, I want to review submitted reports, so that valid reports can move to the next workflow step.
+- Supports: FR-07, BR-03
+- Source: SRC-02, SRC-03
+- Status: FACT
 
-### Acceptance Criteria
+#### Acceptance Criteria
 
-- AC-US06-01: Given the active role is Administrator and a report is `SUBMITTED`, when the Administrator reviews it, then the status changes to `UNDER_REVIEW`.
-- AC-US06-02: Given a review status change succeeds, when the status history is inspected, then it contains status origin, target status, role, note, and timestamp.
-- AC-US06-03: Given the active role is not Administrator, when a user attempts to review a report, then the API rejects the action.
+- AC-06.1: Given a report is `SUBMITTED`, when the Administrator reviews it, then the system allows the report to proceed through the workflow.
+- AC-06.2: Given the active role is not Administrator, when a user attempts to perform Administrator review, then the system does not allow that action.
 
-## US-07 - Set Category and Priority
+### US-07 - Set Category and Priority
 
-- Story: As an Administrator, I want to set category and priority, so that reports can be classified and ordered by urgency.
-- Supports: FR-08, FR-09
-- Source: EL-06, EL-C-02
-- Status: FACT, ASSUMPTION
+- Story: As an Administrator, I want to set category and priority, so that reports can be classified and handled according to campus maintenance needs.
+- Supports: FR-08, FR-09, FR-10, BR-04, BR-05, BR-06, BR-07
+- Source: SRC-02, SRC-03, SRC-07
+- Status: FACT
 
-### Acceptance Criteria
+#### Acceptance Criteria
 
-- AC-US07-01: Given the active role is Administrator, when a valid category is selected, then the system stores the category on the report.
-- AC-US07-02: Given the active role is Administrator, when a valid priority is selected, then the system stores the priority on the report.
-- AC-US07-03: Given an invalid category or priority is submitted, when the API receives the request, then the API rejects the update.
+- AC-07.1: Given the active role is Administrator, when a category from the fixed list is selected, then the system stores the selected category on the report.
+- AC-07.2: Given the active role is Administrator, when a priority value is selected, then the system stores `LOW`, `MEDIUM`, `HIGH`, or `URGENT` on the report.
+- AC-07.3: Given a report has `reporter_type` `LECTURER`, when priority is being decided, then the system provides a `HIGH` priority suggestion while leaving the final decision to Administrator.
 
-## US-08 - Assign Technician
+### US-08 - Assign Technician
 
-- Story: As an Administrator, I want to assign a technician, so that each report has a responsible handler.
-- Supports: FR-10, FR-14, FR-20
-- Source: EL-07, EL-C-04
-- Status: FACT, ASSUMPTION
+- Story: As an Administrator, I want to assign a technician, so that the report has a responsible handler.
+- Supports: FR-11, BR-03
+- Source: SRC-02, SRC-03
+- Status: FACT
 
-### Acceptance Criteria
+#### Acceptance Criteria
 
-- AC-US08-01: Given the active role is Administrator and a registered technician is selected, when the assignment is saved, then the report stores the technician assignment.
-- AC-US08-02: Given a technician is assigned to a reviewed report, when the assignment succeeds, then the report status becomes `ASSIGNED`.
-- AC-US08-03: Given an unknown technician is submitted, when the API receives the assignment, then the API rejects the assignment.
+- AC-08.1: Given a report has been reviewed, when the Administrator assigns it to a Teknisi, then the system stores the technician assignment.
+- AC-08.2: Given a report is assigned to a Teknisi, when the assignment is saved, then the report can move to `ASSIGNED`.
 
-## US-09 - Update Work Progress
+### US-09 - View and Accept Assigned Tasks
 
-- Story: As a Teknisi, I want to update work progress, so that report handling status stays current.
-- Supports: FR-11, FR-14, FR-20
-- Source: EL-10, EL-11, EL-17
-- Status: FACT, ASSUMPTION
+- Story: As a Teknisi, I want to view and accept assigned tasks, so that I know which maintenance work I am responsible for.
+- Supports: FR-12, FR-13
+- Source: SRC-02, SRC-03
+- Status: FACT
 
-### Acceptance Criteria
+#### Acceptance Criteria
 
-- AC-US09-01: Given the active role is Teknisi and a report is assigned, when work starts, then the status changes to `IN_PROGRESS`.
-- AC-US09-02: Given the active role is Teknisi and work is complete, when the technician marks the work resolved, then the status changes to `RESOLVED`.
-- AC-US09-03: Given a work status update succeeds, when status history is inspected, then the change is recorded.
+- AC-09.1: Given tasks have been assigned to a Teknisi, when the Teknisi opens the task list, then the system displays those assigned tasks.
+- AC-09.2: Given a task is assigned to a Teknisi, when the Teknisi accepts the task, then the system records that the task has been accepted.
 
-## US-10 - Add Comments and Internal Notes
+### US-10 - Update Work Progress
 
-- Story: As a user with an active role, I want to add comments or notes, so that communication around a report is documented.
-- Supports: FR-12, FR-13, FR-19, FR-20
-- Source: EL-03, EL-12, EL-C-05
-- Status: FACT, ASSUMPTION
+- Story: As a Teknisi, I want to update work progress, so that the report status reflects current maintenance work.
+- Supports: FR-14, FR-15, FR-18, BR-02, BR-08
+- Source: SRC-02, SRC-03, SRC-07
+- Status: FACT
 
-### Acceptance Criteria
+#### Acceptance Criteria
 
-- AC-US10-01: Given a user adds a public comment to a request, when the comment is saved, then it appears in the request detail.
-- AC-US10-02: Given Administrator or Teknisi adds an internal note, when the note is saved, then it appears only to Administrator and Teknisi.
-- AC-US10-03: Given the active role is Pelapor, when request detail is displayed, then internal notes are not shown.
+- AC-10.1: Given a report is assigned, when the Teknisi starts work, then the report can move to `IN_PROGRESS`.
+- AC-10.2: Given the work is completed, when the Teknisi marks the work as finished, then the report can move to `RESOLVED`.
+- AC-10.3: Given a status change occurs, when the system records the change, then status history includes `from_status`, `to_status`, `changed_by_role`, `timestamp`, and `note`.
 
-## US-11 - Close or Reopen Request
+### US-11 - Add Public Comment
 
-- Story: As an Administrator, I want to close or reopen reports, so that final report status can be managed accurately.
-- Supports: FR-15, FR-16, FR-14, FR-20
-- Source: EL-08, EL-09, EL-C-03
-- Status: FACT, ASSUMPTION
+- Story: As a Pelapor, Administrator, or Teknisi, I want to add a public comment, so that communication about a report is documented.
+- Supports: FR-16, BR-09
+- Source: SRC-02, SRC-07
+- Status: FACT
 
-### Acceptance Criteria
+#### Acceptance Criteria
 
-- AC-US11-01: Given a report is `RESOLVED` and reporter confirmation is recorded, when the Administrator closes it, then the status changes to `CLOSED`.
-- AC-US11-02: Given reporter confirmation is unavailable, when the Administrator closes a resolved report with manual override, then the system requires an override note.
-- AC-US11-03: Given a closed report needs to be reopened, when the Administrator reopens it, then the status changes to `UNDER_REVIEW`.
-- AC-US11-04: Given close or reopen succeeds, when status history is inspected, then the change is recorded.
+- AC-11.1: Given a user adds a Komentar Publik to a report, when the comment is saved, then the comment is stored with the report.
+- AC-11.2: Given a Komentar Publik exists, when Pelapor, Administrator, or Teknisi opens the report, then the comment is visible.
 
-## US-12 - View Operational Dashboard
+### US-12 - Add Internal Note
 
-- Story: As a Manajer Fasilitas, I want to view an operational dashboard, so that I can monitor campus maintenance workload.
-- Supports: FR-17, FR-18
-- Source: EL-13, EL-14
-- Status: FACT, ASSUMPTION
+- Story: As an Administrator or Teknisi, I want to add an internal note, so that technical coordination can be documented separately from public comments.
+- Supports: FR-17, BR-10
+- Source: SRC-02, SRC-07
+- Status: FACT
 
-### Acceptance Criteria
+#### Acceptance Criteria
 
-- AC-US12-01: Given service requests exist, when the dashboard opens, then the system displays counts by status.
-- AC-US12-02: Given service requests exist, when the dashboard opens, then the system displays summaries by category and priority.
-- AC-US12-03: Given technicians have assigned reports, when the dashboard opens, then the system displays workload per technician.
+- AC-12.1: Given Administrator or Teknisi adds a Catatan Internal, when the note is saved, then the note is stored with the report.
+- AC-12.2: Given a Catatan Internal exists, when Administrator or Teknisi opens the report, then the note is visible.
+- AC-12.3: Given a Catatan Internal exists, when Pelapor opens the report, then the note is not visible.
+
+### US-13 - Confirm Resolved Work
+
+- Story: As a Pelapor, I want to confirm resolved work, so that the result can be accepted before the report is closed.
+- Supports: FR-19, BR-11
+- Source: SRC-02, SRC-07
+- Status: FACT
+
+#### Acceptance Criteria
+
+- AC-13.1: Given a report is `RESOLVED`, when the Pelapor confirms the result, then the system records the confirmation.
+- AC-13.2: Given Pelapor confirmation has been recorded, when Administrator closes the report, then the system allows the report to move to `CLOSED`.
+
+### US-14 - Close Request
+
+- Story: As an Administrator, I want to close resolved reports, so that completed maintenance work has a final status.
+- Supports: FR-20, BR-11
+- Source: SRC-02, SRC-03, SRC-07
+- Status: FACT
+
+#### Acceptance Criteria
+
+- AC-14.1: Given a report is `RESOLVED` and Pelapor confirmation exists, when Administrator closes the report, then the report status becomes `CLOSED`.
+- AC-14.2: Given Pelapor confirmation is not available, when Administrator uses manual override to close the report, then the system requires an override note.
+
+### US-15 - Reopen Request
+
+- Story: As an Administrator, I want to reopen a report when needed, so that the report can be reviewed again.
+- Supports: FR-21, BR-12
+- Source: SRC-02, SRC-03, SRC-07
+- Status: FACT
+
+#### Acceptance Criteria
+
+- AC-15.1: Given a report needs to be reopened, when Administrator reopens it, then the report status becomes `UNDER_REVIEW`.
+- AC-15.2: Given a report is reopened, when the system records the status change, then the status history records the change.
+
+### US-16 - View Operational Dashboard
+
+- Story: As a Manajer Fasilitas, I want to view an operational dashboard, so that I can monitor the condition of campus maintenance reports.
+- Supports: FR-22, FR-23
+- Source: SRC-02, SRC-03, SRC-07
+- Status: FACT
+
+#### Acceptance Criteria
+
+- AC-16.1: Given reports exist, when Manajer Fasilitas opens the dashboard, then the system displays a report summary.
+- AC-16.2: Given technicians have assigned work, when Manajer Fasilitas opens the dashboard, then the system displays workload per Teknisi.
+
+### US-17 - Use Role-Based Interface
+
+- Story: As a user with an active role, I want the interface to adjust based on the selected role, so that I only see actions relevant to that role.
+- Supports: FR-24
+- Source: SRC-07
+- Status: FACT
+
+#### Acceptance Criteria
+
+- AC-17.1: Given a role is selected, when the UI is displayed, then the visible actions match the selected role.
+- AC-17.2: Given the selected role changes, when the UI refreshes its available actions, then the visible actions update for the new role.
 
 ## Open Questions
 
-- OPEN QUESTION: Apakah Pelapor melihat semua laporan atau hanya laporan yang dibuat sendiri?
-- OPEN QUESTION: Apakah role simulation perlu selalu ditampilkan sebagai known limitation pada README dan deployment docs?
-- OPEN QUESTION: Fitur roadmap seperti suggested priority, SLA, dan personalized dashboard tetap dokumentasi-only atau sebagian diimplementasikan jika waktu cukup?
+| Open ID | Open Question | Affected Stories |
+| --- | --- | --- |
+| OPEN-02 | Data identitas Pelapor apa saja yang wajib disimpan selain `reporter_name` dan `reporter_type`? | US-01 |
+| OPEN-03 | Apa kondisi sah Administrator memakai manual override untuk menutup laporan tanpa konfirmasi Pelapor? | US-14 |
+| OPEN-04 | Apakah reopen hanya dapat dilakukan oleh Administrator, atau Pelapor juga dapat meminta reopen? | US-15 |
+| OPEN-05 | Apa daftar final kategori fixed list yang akan digunakan? | US-07 |
+| OPEN-06 | Apa kriteria prioritas `LOW`, `MEDIUM`, `HIGH`, dan `URGENT`? | US-07 |
+| OPEN-07 | Bagaimana beban tugas per Teknisi dihitung untuk dashboard? | US-16 |
+| OPEN-08 | Apakah Teknisi boleh menolak tugas atau hanya menerima dan memperbarui tugas yang diberikan? | US-09 |
+| OPEN-10 | Apakah Manajer Fasilitas hanya melihat dashboard/ringkasan, dapat membuka detail laporan, atau juga dapat melihat Catatan Internal? | US-05, US-16 |
+| OPEN-11 | Apakah enam status strict boleh memiliki sub-state non-status, seperti flag menunggu konfirmasi? | US-13, US-14 |
+
+## Quality Check
+
+- Minimum 10 user stories: terpenuhi dengan 17 user stories.
+- Minimum 2 acceptance criteria per user story: terpenuhi.
+- Acceptance criteria menggunakan format ID `AC-01.1`.
+- Tidak ada prioritas MoSCoW.
+- Tidak ada design, issue planning, kode, test, deployment, atau change request.

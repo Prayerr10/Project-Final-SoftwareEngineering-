@@ -1,13 +1,23 @@
 # Requirements Specification
 
-| Review Status | Human Reviewed Draft |
+| Review Status | Draft for Human Review |
 | --- | --- |
-| AI assistance | Draft awal dibuat dengan bantuan AI, diperiksa melalui sesi `grill-with-docs`, lalu dirapikan memakai skill `03-specification`. |
-| Human decision | Keputusan final tetap berada pada project owner. |
+| Skill AI | Skill 03 - Specification (`requirements-elaboration-and-specification`) |
+| Human decision | Menunggu Human Review Skill 03 |
 
 ## Source Summary
 
-Specification ini diturunkan dari `docs/requirements/elicitation.md`, `CASE.md`, `instruksi-dosen.md`, dan hasil human review pada `evidence/2026-06-30-grill-with-docs-requirements-review.md`. Item berstatus `FACT` berasal dari instruksi resmi atau case. Item berstatus `ASSUMPTION` berasal dari keputusan human-reviewed yang masih perlu dijaga dalam validasi akhir.
+Dokumen ini hanya mencakup Skill 03: Specification. Isi diturunkan dari sumber yang sudah tersedia dan tidak membuat prioritas, desain, issue planning, kode, test, deployment, atau change request.
+
+| Source ID | Source | Usage |
+| --- | --- | --- |
+| SRC-01 | `instruksi-dosen.md` | Instruksi utama project, minimum work product, template, batas Skill 03, dan constraint penggunaan AI. |
+| SRC-02 | `CASE.md` | Studi kasus, aktor, fitur wajib, fitur tidak wajib, alur status, batasan teknis, dan aturan bisnis awal. |
+| SRC-03 | `docs/requirements/inception.md` | Inception yang sudah `Human Reviewed & Approved`, termasuk scope, stakeholder, assumptions, constraints, decisions, dan open questions. |
+| SRC-04 | `docs/requirements/elicitation.md` | Elicitation yang sudah `Human Reviewed & Approved`, termasuk register pertanyaan dan gap yang masih terbuka. |
+| SRC-05 | `evidence/human-review-inception.md` | Bukti Human Review Skill 01. |
+| SRC-06 | `evidence/human-review-elicitation.md` | Bukti Human Review Skill 02. |
+| SRC-07 | `docs/requirements/grill-session-summary.md` | Keputusan domain yang berstatus `Human Reviewed & Approved`. |
 
 ## Functional Requirements
 
@@ -15,301 +25,346 @@ Specification ini diturunkan dari `docs/requirements/elicitation.md`, `CASE.md`,
 
 - Statement: Sistem harus memungkinkan Pelapor membuat laporan masalah fasilitas kampus.
 - Stakeholder: Pelapor
-- Source: EL-01
+- Source: SRC-02, SRC-03
 - Status: FACT
 
-### FR-02 - Store Reporter Data
+### FR-02 - Store Reporter Identity
 
-- Statement: Sistem harus menyimpan nama pelapor dan tipe pelapor pada laporan.
+- Statement: Sistem harus menyimpan `reporter_name` dan `reporter_type` pada laporan yang dibuat Pelapor.
 - Stakeholder: Pelapor
-- Source: EL-04
-- Status: ASSUMPTION
+- Source: SRC-07
+- Status: FACT
 
 ### FR-03 - View Request List
 
-- Statement: Sistem harus menampilkan daftar laporan yang tersimpan.
+- Statement: Sistem harus menampilkan daftar laporan fasilitas kampus yang tersimpan.
 - Stakeholder: Pelapor, Administrator, Teknisi, Manajer Fasilitas
-- Source: EL-02, EL-05, EL-10, EL-13
+- Source: SRC-02, SRC-03
 - Status: FACT
 
 ### FR-04 - Search Requests
 
-- Statement: Sistem harus memungkinkan pengguna mencari laporan berdasarkan nomor laporan, judul, lokasi, atau kategori.
+- Statement: Sistem harus memungkinkan pengguna mencari laporan.
 - Stakeholder: Pelapor, Administrator, Teknisi, Manajer Fasilitas
-- Source: EL-18
-- Status: ASSUMPTION
+- Source: SRC-02, SRC-07
+- Status: FACT
 
 ### FR-05 - Filter Requests
 
-- Statement: Sistem harus memungkinkan pengguna menyaring laporan dengan kombinasi status, kategori, prioritas, atau teknisi.
+- Statement: Sistem harus memungkinkan pengguna menyaring laporan dengan kombinasi status dan prioritas.
 - Stakeholder: Pelapor, Administrator, Teknisi, Manajer Fasilitas
-- Source: EL-18
-- Status: ASSUMPTION
+- Source: SRC-02, SRC-07
+- Status: FACT
 
 ### FR-06 - View Request Detail
 
-- Statement: Sistem harus menampilkan detail laporan yang dipilih, termasuk deskripsi, lokasi, kategori, prioritas, status, komentar, riwayat status, dan penugasan teknisi jika tersedia.
+- Statement: Sistem harus menampilkan detail laporan yang dipilih.
 - Stakeholder: Pelapor, Administrator, Teknisi, Manajer Fasilitas
-- Source: EL-02, EL-10, EL-13
+- Source: SRC-02, SRC-03
 - Status: FACT
 
 ### FR-07 - Review Submitted Request
 
-- Statement: Sistem harus memungkinkan Administrator memeriksa laporan baru sebelum laporan diproses lanjut.
+- Statement: Sistem harus memungkinkan Administrator memeriksa laporan yang masuk sebelum laporan ditugaskan kepada Teknisi.
 - Stakeholder: Administrator
-- Source: EL-05
+- Source: SRC-02, SRC-03
 - Status: FACT
 
-### FR-08 - Set Category
+### FR-08 - Set Request Category
 
-- Statement: Sistem harus memungkinkan Administrator menentukan kategori laporan dari controlled vocabulary.
+- Statement: Sistem harus memungkinkan Administrator menentukan kategori laporan dari fixed list sebagai controlled vocabulary.
 - Stakeholder: Administrator
-- Source: EL-06, EL-C-02
+- Source: SRC-02, SRC-07
 - Status: FACT
 
-### FR-09 - Set Priority
+### FR-09 - Set Request Priority
 
-- Statement: Sistem harus memungkinkan Administrator menentukan prioritas laporan dari controlled vocabulary.
+- Statement: Sistem harus memungkinkan Administrator menentukan prioritas laporan.
 - Stakeholder: Administrator
-- Source: EL-06
+- Source: SRC-02, SRC-03
 - Status: FACT
 
-### FR-10 - Assign Technician
+### FR-10 - Suggest Lecturer Priority
 
-- Statement: Sistem harus memungkinkan Administrator menugaskan laporan kepada teknisi yang terdaftar.
-- Stakeholder: Administrator, Teknisi
-- Source: EL-07, EL-C-04
-- Status: FACT
-
-### FR-11 - Update Work Status
-
-- Statement: Sistem harus memungkinkan Teknisi memperbarui status pekerjaan menjadi in progress dan resolved sesuai alur kerja.
-- Stakeholder: Teknisi
-- Source: EL-11
-- Status: FACT
-
-### FR-12 - Add Public Comment
-
-- Statement: Sistem harus memungkinkan pengguna menambahkan komentar publik pada laporan.
-- Stakeholder: Pelapor, Administrator, Teknisi
-- Source: EL-03, EL-12
-- Status: FACT
-
-### FR-13 - Add Internal Note
-
-- Statement: Sistem harus memungkinkan Administrator dan Teknisi menambahkan catatan internal pada laporan.
-- Stakeholder: Administrator, Teknisi
-- Source: EL-12, EL-C-05
-- Status: ASSUMPTION
-
-### FR-14 - Record Status History
-
-- Statement: Sistem harus menyimpan riwayat setiap perubahan status, termasuk status asal, status tujuan, role pengubah, catatan, dan waktu perubahan.
-- Stakeholder: Semua role
-- Source: EL-17
-- Status: ASSUMPTION
-
-### FR-15 - Close Request
-
-- Statement: Sistem harus memungkinkan Administrator menutup laporan setelah pekerjaan selesai dan hasil dikonfirmasi atau melalui manual override dengan catatan.
+- Statement: Sistem harus memberikan saran prioritas `HIGH` untuk laporan dengan `reporter_type` bernilai `LECTURER`, tanpa mengubah keputusan akhir Administrator.
 - Stakeholder: Administrator, Pelapor
-- Source: EL-08, EL-09
-- Status: ASSUMPTION
-
-### FR-16 - Reopen Request
-
-- Statement: Sistem harus memungkinkan Administrator membuka kembali laporan yang sudah ditutup dan mengembalikannya ke status under review.
-- Stakeholder: Administrator
-- Source: EL-08, EL-C-03
-- Status: ASSUMPTION
-
-### FR-17 - Show Operational Dashboard
-
-- Statement: Sistem harus menampilkan dashboard operasional berisi ringkasan laporan.
-- Stakeholder: Manajer Fasilitas
-- Source: EL-13
+- Source: SRC-07
 - Status: FACT
 
-### FR-18 - Show Technician Workload
+### FR-11 - Assign Technician
 
-- Statement: Sistem harus menampilkan beban tugas per teknisi pada dashboard.
+- Statement: Sistem harus memungkinkan Administrator menugaskan laporan kepada Teknisi.
+- Stakeholder: Administrator, Teknisi
+- Source: SRC-02, SRC-03
+- Status: FACT
+
+### FR-12 - View Assigned Tasks
+
+- Statement: Sistem harus memungkinkan Teknisi melihat tugas yang diberikan.
+- Stakeholder: Teknisi
+- Source: SRC-02, SRC-03
+- Status: FACT
+
+### FR-13 - Accept Assigned Task
+
+- Statement: Sistem harus memungkinkan Teknisi menerima tugas yang diberikan.
+- Stakeholder: Teknisi
+- Source: SRC-02, SRC-03
+- Status: FACT
+
+### FR-14 - Update Work Progress
+
+- Statement: Sistem harus memungkinkan Teknisi memperbarui progres pekerjaan.
+- Stakeholder: Teknisi
+- Source: SRC-02, SRC-03
+- Status: FACT
+
+### FR-15 - Mark Work Resolved
+
+- Statement: Sistem harus memungkinkan Teknisi menandai pekerjaan selesai.
+- Stakeholder: Teknisi
+- Source: SRC-02, SRC-03
+- Status: FACT
+
+### FR-16 - Add Public Comment
+
+- Statement: Sistem harus memungkinkan Pelapor, Administrator, dan Teknisi menambahkan Komentar Publik pada laporan.
+- Stakeholder: Pelapor, Administrator, Teknisi
+- Source: SRC-02, SRC-07
+- Status: FACT
+
+### FR-17 - Add Internal Note
+
+- Statement: Sistem harus memungkinkan Administrator dan Teknisi menambahkan Catatan Internal pada laporan.
+- Stakeholder: Administrator, Teknisi
+- Source: SRC-02, SRC-07
+- Status: FACT
+
+### FR-18 - Record Status History
+
+- Statement: Sistem harus menyimpan riwayat perubahan status laporan.
+- Stakeholder: Pelapor, Administrator, Teknisi, Manajer Fasilitas
+- Source: SRC-02, SRC-07
+- Status: FACT
+
+### FR-19 - Confirm Resolved Work
+
+- Statement: Sistem harus memungkinkan Pelapor mengonfirmasi hasil pekerjaan yang sudah diselesaikan.
+- Stakeholder: Pelapor
+- Source: SRC-02, SRC-07
+- Status: FACT
+
+### FR-20 - Close Request
+
+- Statement: Sistem harus memungkinkan Administrator menutup laporan.
+- Stakeholder: Administrator
+- Source: SRC-02, SRC-03
+- Status: FACT
+
+### FR-21 - Reopen Request
+
+- Statement: Sistem harus memungkinkan Administrator membuka kembali laporan jika diperlukan.
+- Stakeholder: Administrator
+- Source: SRC-02, SRC-03, SRC-07
+- Status: FACT
+
+### FR-22 - View Operational Dashboard
+
+- Statement: Sistem harus menampilkan dashboard sederhana dan laporan ringkas.
 - Stakeholder: Manajer Fasilitas
-- Source: EL-14, EL-C-04
-- Status: ASSUMPTION
+- Source: SRC-02, SRC-03
+- Status: FACT
 
-### FR-19 - Apply Role-Based UI
+### FR-23 - View Technician Workload
 
-- Statement: Sistem harus menyesuaikan aksi dan informasi pada UI berdasarkan role aktif pada simulasi role.
-- Stakeholder: Semua role
-- Source: EL-15
-- Status: ASSUMPTION
+- Statement: Sistem harus menampilkan beban tugas per Teknisi pada dashboard.
+- Stakeholder: Manajer Fasilitas, Administrator, Teknisi
+- Source: SRC-07
+- Status: FACT
 
-### FR-20 - Apply Role-Based API Validation
+### FR-24 - Apply Role-Based UI
 
-- Statement: API harus menolak aksi yang tidak sesuai dengan role aktif pada simulasi role.
-- Stakeholder: Semua role
-- Source: EL-15
-- Status: ASSUMPTION
+- Statement: Sistem harus mengubah tampilan dan aksi UI secara dinamis berdasarkan role yang dipilih.
+- Stakeholder: Pelapor, Administrator, Teknisi, Manajer Fasilitas
+- Source: SRC-07
+- Status: FACT
 
 ## Non-Functional Requirements
 
 ### NFR-01 - React Frontend
 
-- Statement: Frontend aplikasi harus dibangun menggunakan React.
-- Measure and threshold: Source code UI utama berada di `src/` dan build client berhasil.
-- Operating context: Local development and production build.
-- Verification method: `npm run build`.
-- Source: EL-CON-01
+- Statement: Frontend aplikasi harus menggunakan React.
+- Measure and threshold: Source code frontend berada di folder `src/` dan build frontend berhasil.
+- Operating context: Local development dan production build.
+- Verification method: Pemeriksaan repository dan perintah build pada tahap testing/deployment.
+- Source: SRC-01, SRC-02
 - Status: CONSTRAINT
 
-### NFR-02 - Cloudflare Worker API
+### NFR-02 - Cloudflare Workers API
 
-- Statement: Backend/API aplikasi harus berjalan menggunakan Cloudflare Workers.
-- Measure and threshold: Worker entrypoint dikonfigurasi di `wrangler.jsonc` dan API health mengembalikan status ok.
-- Operating context: Local Worker dev server and Cloudflare deployment.
-- Verification method: `npm run build` and `GET /api/health`.
-- Source: EL-CON-02
+- Statement: Backend/API aplikasi harus menggunakan Cloudflare Workers.
+- Measure and threshold: Worker entrypoint terkonfigurasi di project dan endpoint API dapat dijalankan.
+- Operating context: Local development dan Cloudflare deployment.
+- Verification method: Pemeriksaan konfigurasi Worker dan API pada tahap testing/deployment.
+- Source: SRC-01, SRC-02
 - Status: CONSTRAINT
 
 ### NFR-03 - Cloudflare D1 Database
 
-- Statement: Data aplikasi harus disimpan menggunakan Cloudflare D1.
-- Measure and threshold: Binding D1 tersedia sebagai `DB` dan migration database dapat dijalankan.
-- Operating context: Local D1 and production D1.
-- Verification method: Wrangler D1 execute command and integration test.
-- Source: EL-CON-03
+- Statement: Database aplikasi harus menggunakan Cloudflare D1.
+- Measure and threshold: Binding D1 tersedia dan migration database dapat dijalankan.
+- Operating context: Local D1 dan production D1.
+- Verification method: Pemeriksaan konfigurasi D1 dan eksekusi migration pada tahap database/deployment.
+- Source: SRC-01, SRC-02
 - Status: CONSTRAINT
 
-### NFR-04 - Free Cloudflare Deployment
+### NFR-04 - Free Cloudflare Services
 
-- Statement: Aplikasi harus dapat dideploy ke Cloudflare tanpa layanan berbayar.
-- Measure and threshold: Deployment menghasilkan URL publik Cloudflare dan tidak memerlukan layanan berbayar.
-- Operating context: Final deployment.
-- Verification method: Deployment checklist and public URL verification.
-- Source: EL-CON-04
+- Statement: Project harus menggunakan Cloudflare Workers dan D1 pada paket gratis tanpa layanan berbayar.
+- Measure and threshold: Tidak ada fitur wajib yang membutuhkan layanan Cloudflare berbayar.
+- Operating context: Perencanaan fitur, implementasi, dan deployment.
+- Verification method: Review konfigurasi dan checklist deployment.
+- Source: SRC-01, SRC-02
 - Status: CONSTRAINT
 
-### NFR-05 - GitHub Repository and Planning
+### NFR-05 - GitHub Workflow
 
-- Statement: Project harus disimpan dan dikelola melalui GitHub.
-- Measure and threshold: Repository publik atau terakses dosen tersedia, dengan issue, branch, commit, pull request, dan CI.
-- Operating context: Development workflow.
-- Verification method: GitHub repository inspection.
-- Source: EL-CON-05, EL-CON-06
+- Statement: Project harus dikelola melalui GitHub dengan branch, commit, dan pull request.
+- Measure and threshold: Perubahan pekerjaan disimpan di branch terpisah dan diajukan melalui Pull Request.
+- Operating context: Semua tahap project.
+- Verification method: Pemeriksaan history Git dan Pull Request.
+- Source: SRC-01, SRC-02
 - Status: CONSTRAINT
 
-### NFR-06 - Automated Tests and CI
+### NFR-06 - Automated Testing and CI
 
-- Statement: Project harus memiliki automated tests dan GitHub Actions.
-- Measure and threshold: Minimal 20 automated tests tersedia sebelum final submission dan CI menjalankan test serta build.
-- Operating context: Pull request and push workflow.
-- Verification method: `npm test -- --run`, `npm run build`, and GitHub Actions result.
-- Source: EL-CON-06
+- Statement: Project harus memiliki automated test dan GitHub Actions.
+- Measure and threshold: Minimal 20 automated tests tersedia sebelum final submission, dan CI menjalankan test serta build.
+- Operating context: Pull Request dan final submission.
+- Verification method: Pemeriksaan test suite dan hasil GitHub Actions.
+- Source: SRC-01, SRC-02
 - Status: CONSTRAINT
 
 ### NFR-07 - Traceability
 
-- Statement: Project harus menjaga traceability dari requirement sampai user story, design, issue, code, dan test.
-- Measure and threshold: Traceability matrix memuat ID requirement dan status terkait untuk work product yang selesai.
-- Operating context: Requirements, design, implementation, and testing.
+- Statement: Project harus menjaga traceability dari requirement sampai test.
+- Measure and threshold: Traceability matrix memuat hubungan requirement, user story, design, issue, code, test, dan status ketika item tersebut tersedia.
+- Operating context: Requirements, design, planning, coding, dan testing.
 - Verification method: Review `docs/requirements/traceability.md`.
-- Source: EL-CON-06
+- Source: SRC-01, SRC-02
 - Status: CONSTRAINT
 
 ### NFR-08 - AI Human Review Evidence
 
-- Statement: Output AI penting harus disimpan dan diperiksa manusia sebelum dianggap final.
-- Measure and threshold: Evidence file mencatat skill/prompt, keputusan manusia, koreksi, dan file yang berubah.
-- Operating context: Requirements, design, coding, and testing.
-- Verification method: Review files in `evidence/` and human review documents.
-- Source: EL-CON-06, EL-CON-07
+- Statement: Output AI penting harus disimpan, diperiksa, diperbaiki bila perlu, dan disetujui manusia sebelum dianggap final.
+- Measure and threshold: Evidence Human Review tersedia untuk work product yang dibuat dengan bantuan AI.
+- Operating context: Semua tahap yang menggunakan AI.
+- Verification method: Review file di folder `evidence/`.
+- Source: SRC-01, SRC-03, SRC-04, SRC-05, SRC-06
 - Status: CONSTRAINT
 
 ### NFR-09 - Secret Safety
 
 - Statement: Repository tidak boleh menyimpan token, password, atau secret.
-- Measure and threshold: No known secret value appears in tracked files.
-- Operating context: Source control and deployment configuration.
-- Verification method: Manual review and repository search before submission.
-- Source: CASE.md technical risk, EL-CON-06
-- Status: ASSUMPTION
+- Measure and threshold: Tidak ada token, password, atau secret yang diketahui di tracked files.
+- Operating context: Source control dan deployment configuration.
+- Verification method: Manual review dan pencarian repository sebelum submission.
+- Source: SRC-01, SRC-02
+- Status: CONSTRAINT
 
 ## Business Rules
 
 ### BR-01 - Initial Status
 
-- Rule: Laporan baru selalu dimulai dengan status `SUBMITTED`.
-- Source: EL-16
+- Rule: Setiap laporan baru harus dimulai dengan status `SUBMITTED`.
+- Source: SRC-02, SRC-03
 - Status: FACT
 
-### BR-02 - Official Status Workflow
+### BR-02 - Strict Status Workflow
 
-- Rule: Status workflow hanya menggunakan `SUBMITTED`, `UNDER_REVIEW`, `ASSIGNED`, `IN_PROGRESS`, `RESOLVED`, dan `CLOSED`.
-- Source: EL-16, EL-C-03
+- Rule: Status utama laporan hanya menggunakan `SUBMITTED`, `UNDER_REVIEW`, `ASSIGNED`, `IN_PROGRESS`, `RESOLVED`, dan `CLOSED`.
+- Source: SRC-02, SRC-07
 - Status: FACT
 
 ### BR-03 - Review Before Assignment
 
 - Rule: Laporan harus diperiksa Administrator sebelum ditugaskan kepada Teknisi.
-- Source: EL-05, EL-07
+- Source: SRC-02, SRC-03
 - Status: FACT
 
-### BR-04 - Registered Technician Assignment
+### BR-04 - Administrator Owns Priority Decision
 
-- Rule: Laporan hanya dapat ditugaskan kepada teknisi yang terdaftar.
-- Source: EL-07, EL-C-04
-- Status: ASSUMPTION
+- Rule: Administrator menentukan prioritas akhir laporan.
+- Source: SRC-02, SRC-07
+- Status: FACT
 
-### BR-05 - Controlled Category
+### BR-05 - Lecturer Priority Suggestion
 
-- Rule: Kategori laporan harus berasal dari controlled vocabulary yang ditentukan sistem.
-- Source: EL-C-02
-- Status: ASSUMPTION
+- Rule: Laporan dari `LECTURER` memberikan saran prioritas `HIGH`, tetapi keputusan akhir tetap berada pada Administrator.
+- Source: SRC-07
+- Status: FACT
 
-### BR-06 - Controlled Priority
+### BR-06 - Controlled Category Vocabulary
 
-- Rule: Prioritas laporan harus bernilai `LOW`, `MEDIUM`, `HIGH`, atau `URGENT`, dengan default `MEDIUM` untuk laporan baru.
-- Source: EL-06, EL-SRC-04
-- Status: ASSUMPTION
+- Rule: Kategori laporan harus berasal dari fixed list sebagai controlled vocabulary.
+- Source: SRC-07
+- Status: FACT
 
-### BR-07 - Status History Required
+### BR-07 - Controlled Priority Values
 
-- Rule: Setiap perubahan status harus membuat entri riwayat status.
-- Source: EL-17
-- Status: ASSUMPTION
+- Rule: Prioritas laporan harus menggunakan nilai `LOW`, `MEDIUM`, `HIGH`, atau `URGENT`.
+- Source: SRC-07
+- Status: FACT
 
-### BR-08 - Reopen Target Status
+### BR-08 - Status History Fields
 
-- Rule: Laporan yang dibuka kembali dari `CLOSED` harus kembali ke status `UNDER_REVIEW`.
-- Source: EL-C-03
-- Status: ASSUMPTION
+- Rule: Status history harus mencatat `from_status`, `to_status`, `changed_by_role`, `timestamp`, dan `note`.
+- Source: SRC-07
+- Status: FACT
 
-### BR-09 - Comment Visibility
+### BR-09 - Public Comment Visibility
 
-- Rule: Komentar publik dapat dilihat semua role, sedangkan catatan internal hanya dapat dilihat Administrator dan Teknisi.
-- Source: EL-12, EL-C-05
-- Status: ASSUMPTION
+- Rule: Komentar Publik dapat dilihat oleh Pelapor, Administrator, dan Teknisi.
+- Source: SRC-07
+- Status: FACT
 
-### BR-10 - Role Simulation Scope
+### BR-10 - Internal Note Visibility
 
-- Rule: Simulasi role hanya menggunakan Pelapor, Administrator, Teknisi, dan Manajer Fasilitas.
-- Source: EL-15
-- Status: ASSUMPTION
+- Rule: Catatan Internal hanya dapat dilihat oleh Administrator dan Teknisi.
+- Source: SRC-07
+- Status: FACT
 
-### BR-11 - Reporter Data
+### BR-11 - Reporter Confirmation Before Closed
 
-- Rule: Laporan harus mencatat nama pelapor dan tipe pelapor.
-- Source: EL-04
-- Status: ASSUMPTION
+- Rule: Pelapor wajib mengonfirmasi hasil sebelum laporan menjadi `CLOSED`, kecuali Administrator menggunakan manual override.
+- Source: SRC-07
+- Status: FACT
 
-### BR-12 - Close with Confirmation or Override
+### BR-12 - Reopen Target Status
 
-- Rule: Laporan berstatus `RESOLVED` sebaiknya dikonfirmasi Pelapor sebelum ditutup, kecuali Administrator menggunakan manual override dengan catatan.
-- Source: EL-09
-- Status: ASSUMPTION
+- Rule: Laporan yang dibuka kembali harus kembali ke status `UNDER_REVIEW` untuk validasi ulang Administrator.
+- Source: SRC-07
+- Status: FACT
 
 ## Open Questions
 
-- OPEN QUESTION: Apakah Pelapor melihat semua laporan atau hanya laporan yang dibuat sendiri?
-- OPEN QUESTION: Apakah role simulation perlu selalu ditampilkan sebagai known limitation pada README dan deployment docs?
-- OPEN QUESTION: Fitur roadmap seperti suggested priority, SLA, dan personalized dashboard tetap dokumentasi-only atau sebagian diimplementasikan jika waktu cukup?
+| Open ID | Open Question | Source |
+| --- | --- | --- |
+| OPEN-02 | Data identitas Pelapor apa saja yang wajib disimpan selain `reporter_name` dan `reporter_type`? | SRC-03, SRC-04 |
+| OPEN-03 | Apa kondisi sah Administrator memakai manual override untuk menutup laporan tanpa konfirmasi Pelapor? | SRC-03, SRC-04 |
+| OPEN-04 | Apakah reopen hanya dapat dilakukan oleh Administrator, atau Pelapor juga dapat meminta reopen? | SRC-03, SRC-04 |
+| OPEN-05 | Apa daftar final kategori fixed list yang akan digunakan? | SRC-03, SRC-04 |
+| OPEN-06 | Apa kriteria prioritas `LOW`, `MEDIUM`, `HIGH`, dan `URGENT`? | SRC-03, SRC-04 |
+| OPEN-07 | Bagaimana beban tugas per Teknisi dihitung untuk dashboard? | SRC-03, SRC-04 |
+| OPEN-08 | Apakah Teknisi boleh menolak tugas atau hanya menerima dan memperbarui tugas yang diberikan? | SRC-03, SRC-04 |
+| OPEN-10 | Apakah Manajer Fasilitas hanya melihat dashboard/ringkasan, dapat membuka detail laporan, atau juga dapat melihat Catatan Internal? | SRC-03, SRC-04 |
+| OPEN-11 | Apakah enam status strict boleh memiliki sub-state non-status, seperti flag menunggu konfirmasi? | SRC-03, SRC-04 |
+
+## Quality Check
+
+- Minimum 12 functional requirements: terpenuhi dengan 24 FR.
+- Minimum 6 non-functional requirements: terpenuhi dengan 9 NFR.
+- Minimum 5 business rules: terpenuhi dengan 12 BR.
+- Tidak ada prioritas MoSCoW.
+- Tidak ada design, issue planning, kode, test, deployment, atau change request.
+- Item yang belum jelas tetap dicatat sebagai `OPEN QUESTION`.
