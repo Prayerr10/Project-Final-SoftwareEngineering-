@@ -282,7 +282,7 @@ Setelah install skill, user diberi tahu bahwa Codex perlu di-restart agar skill 
     - `requirements.md`
     - `user-stories.md`
     - `prioritization.md`
-    - `validation-change.md`
+    - `validation-change.md` (draft lama; sudah diarsipkan ke `evidence/archive/obsolete-validation-change-draft.md`)
     - `traceability.md`
 51. User mengoreksi bahwa requirements tersebut bukan final dan skills harus mengikuti arahan Matt Pocock/repo user.
 52. Skill installer digunakan untuk install skill dari GitHub.
@@ -598,12 +598,17 @@ Setelah install skill, user diberi tahu bahwa Codex perlu di-restart agar skill 
   - Menggunakan Must/Should/Could/Won't.
   - Status: draft v1, bukan final.
 
-- `docs/requirements/validation-change.md`
-  - Draft awal validation dan change.
+- `evidence/archive/obsolete-validation-change-draft.md`
+  - Arsip draft awal validation dan change; bukan artefak aktif Skill 05.
   - Berisi checklist validasi.
   - Berisi change request:
     - `CR-01 Simulasi Role untuk Versi Awal`
   - Status: draft v1, bukan final.
+
+- Artefak aktif Skill 05 setelah Human Review:
+  - `docs/requirements/validation.md`
+  - `docs/requirements/change-request.md`
+  - `evidence/human-review-validation.md`
 
 - `docs/requirements/traceability.md`
   - Draft awal traceability matrix.

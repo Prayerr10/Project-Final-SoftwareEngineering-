@@ -1,9 +1,13 @@
-# Requirements Validation and Change Management
+# Obsolete Draft - Requirements Validation and Change Management
 
-| Review Status | Human Reviewed Draft |
+> Archived obsolete draft. This file is kept only as historical evidence from an early requirements draft and is not an active Skill 05 work product.
+>
+> Active Skill 05 artifacts are `docs/requirements/validation.md`, `docs/requirements/change-request.md`, `docs/requirements/traceability.md`, and `evidence/human-review-validation.md`.
+
+| Review Status | Obsolete / Archived |
 | --- | --- |
 | AI assistance | Draft awal dibuat dengan bantuan AI, diperiksa melalui sesi `grill-with-docs`, lalu dirapikan memakai skill `05-validation-change`. |
-| Human decision | Keputusan final tetap berada pada project owner. |
+| Human decision | Superseded by approved Skill 05 artifacts. |
 
 ## Validation Scope
 
@@ -28,9 +32,9 @@
 | Acceptance criteria | 2 per user story | Minimum 2 for every story | PASS |
 | Change request | 1 | CR-01 | PASS |
 | Automated test | 20 | 2 existing tests; additional tests pending | OPEN QUESTION |
-| GitHub Issues | 10 | Pending | OPEN QUESTION |
-| Pull Request | 6 | Pending | OPEN QUESTION |
-| Deployment URL | 1 | Pending | OPEN QUESTION |
+| GitHub Issues | 10 | Superseded by later planning work | OBSOLETE |
+| Pull Request | 6 | Superseded by later PR history | OBSOLETE |
+| Deployment URL | 1 | Superseded by later deployment work | OBSOLETE |
 
 ## Validation Results
 
@@ -167,8 +171,8 @@
 
 ## Human Review Status
 
-- Status: Human Reviewed Draft.
-- Human decision still required before marking this requirements baseline final.
+- Status: Obsolete / Archived.
+- Human decision: Superseded by approved Skill 05 artifacts in `docs/requirements/validation.md` and `docs/requirements/change-request.md`.
 
 ---
 
