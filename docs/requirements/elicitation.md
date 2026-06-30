@@ -17,6 +17,7 @@ Catatan batas kerja:
 
 | Source ID | File | Location or Item | Evidence Label |
 |---|---|---|---|
+| EL-SRC-00 | `instruksi-dosen.md` | Instruksi utama project, urutan kerja, definisi Skill 02, work product, dan template review | FACT / CONSTRAINT |
 | EL-SRC-01 | `CASE.md` | Studi kasus, aktor, scope wajib, out of scope, alur status, data utama, aturan bisnis awal, batasan teknis | FACT / CONSTRAINT / ASSUMPTION |
 | EL-SRC-02 | `ringkasan-sesi-pertama.md` | Ringkasan konteks project, instruksi dosen, status kerja, preferensi urutan skill | FACT / CONSTRAINT |
 | EL-SRC-03 | `docs/requirements/grill-session-summary.md` | Keputusan domain yang sudah Human Reviewed & Approved | FACT / DECISION |

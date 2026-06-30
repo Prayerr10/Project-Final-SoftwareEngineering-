@@ -30,9 +30,9 @@ Skill 02 - Elicitation (`requirements-elicitation`)
 - [x] Tidak menambah fitur di luar scope
 - [ ] Test lulus
 - [x] Tidak ada secret
-- [x] Traceability diperbarui
+- [ ] Traceability diperbarui
 
-Catatan: Test otomatis tidak dijalankan karena perubahan hanya pada dokumen requirements dan evidence, bukan kode aplikasi.
+Catatan: Test otomatis tidak dijalankan karena perubahan hanya pada dokumen requirements dan evidence, bukan kode aplikasi. Traceability belum diperbarui karena Skill 02 belum menghasilkan requirement, user story, acceptance criteria, design, issue, kode, atau test yang dapat dimasukkan ke traceability matrix.
 
 ## Keputusan
 
