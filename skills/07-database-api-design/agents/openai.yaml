@@ -1,0 +1,4 @@
+interface:
+  display_name: "07 Database and API Design"
+  short_description: "Design database schema and API endpoints."
+  default_prompt: "Use this skill to create the database and API design document for the Campus Service Request and Maintenance System."
