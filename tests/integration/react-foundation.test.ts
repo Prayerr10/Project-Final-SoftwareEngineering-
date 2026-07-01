@@ -86,14 +86,14 @@ describe("React foundation shell", () => {
 		expect(html).toContain("Catatan Reopen");
 	});
 
-	it("renders the read-only operational dashboard surface with workload source-data guardrails", () => {
+	it("renders the read-only operational dashboard surface with clean workload messaging", () => {
 		const html = renderToString(createElement(App));
 
 		expect(html).toContain("Dashboard Operasional");
 		expect(html).toContain("Total Laporan");
-		expect(html).toContain("Workload Source Data per Teknisi");
-		expect(html).toContain("final workload formula remains OPEN-07");
-		expect(html).toContain("OPEN-10: dashboard tidak menampilkan konten Catatan Internal");
-		expect(html).toContain("Belum ada source data assignment aktif untuk Teknisi.");
+		expect(html).toContain("Beban Kerja Teknisi");
+		expect(html).toContain("Belum ada assignment aktif untuk ditampilkan.");
+		expect(html).not.toContain("OPEN-07");
+		expect(html).not.toContain("OPEN-10");
 	});
 });

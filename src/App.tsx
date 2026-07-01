@@ -721,9 +721,11 @@ export default function App() {
 	return (
 		<main className="app-shell">
 			<section className="page-header">
-				<p className="eyebrow">Campus Maintenance</p>
-				<h1>Campus Service Request</h1>
-				<p>Laporkan masalah fasilitas kampus dan pantau statusnya.</p>
+				<div className="hero-copy">
+					<p className="eyebrow">Campus Maintenance</p>
+					<h1>Campus Service Request</h1>
+					<p>Laporkan masalah fasilitas kampus dan pantau statusnya.</p>
+				</div>
 				<section className="role-switcher" aria-labelledby="role-switcher-title">
 					<div>
 						<h2 id="role-switcher-title">Simulasi Role</h2>
@@ -1011,17 +1013,11 @@ export default function App() {
 					</div>
 
 					<section className="workload-summary">
-						<h3>Workload Source Data per Teknisi</h3>
-						<p className="open-question-note">
-							{dashboardSummary.workloadBasis}
-						</p>
-						<p className="open-question-note">
-							OPEN-10: dashboard tidak menampilkan konten Catatan Internal.
-						</p>
+						<h3>Beban Kerja Teknisi</h3>
 
 						{dashboardSummary.technicianWorkload.length === 0 ? (
 							<p className="empty-state">
-								Belum ada source data assignment aktif untuk Teknisi.
+								Belum ada assignment aktif untuk ditampilkan.
 							</p>
 						) : (
 							<div className="request-stack">
