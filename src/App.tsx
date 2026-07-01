@@ -11,6 +11,14 @@ type ServiceRequest = {
 	status: string;
 };
 
+type HealthResponse = {
+	status?: string;
+	checks?: {
+		api?: string;
+		d1?: string;
+	};
+};
+
 export default function App() {
 	const [requests, setRequests] = useState<ServiceRequest[]>([]);
 	const [title, setTitle] = useState("");
@@ -18,6 +26,9 @@ export default function App() {
 	const [location, setLocation] = useState("");
 	const [category, setCategory] = useState("Internet");
 	const [message, setMessage] = useState("");
+	const [foundationStatus, setFoundationStatus] = useState(
+		"Memeriksa koneksi API dan D1",
+	);
 
 	async function loadRequests() {
 		const response = await fetch("/api/requests");
@@ -25,7 +36,29 @@ export default function App() {
 		setRequests(result.data ?? []);
 	}
 
+	async function loadFoundationStatus() {
+		try {
+			const response = await fetch("/api/health");
+			const result = (await response.json()) as HealthResponse;
+
+			if (
+				response.ok &&
+				result.status === "healthy" &&
+				result.checks?.api === "ok" &&
+				result.checks?.d1 === "ok"
+			) {
+				setFoundationStatus("API dan D1 siap digunakan");
+				return;
+			}
+
+			setFoundationStatus("Koneksi fondasi belum sehat");
+		} catch {
+			setFoundationStatus("Koneksi API atau D1 belum tersedia");
+		}
+	}
+
 	useEffect(() => {
+		loadFoundationStatus();
 		loadRequests();
 	}, []);
 
@@ -64,6 +97,10 @@ export default function App() {
 				<p className="eyebrow">Campus Maintenance</p>
 				<h1>Campus Service Request</h1>
 				<p>Laporkan masalah fasilitas kampus dan pantau statusnya.</p>
+				<section className="foundation-status" aria-live="polite">
+					<h2>Status Fondasi</h2>
+					<p>{foundationStatus}</p>
+				</section>
 			</section>
 
 			<section className="content-grid">

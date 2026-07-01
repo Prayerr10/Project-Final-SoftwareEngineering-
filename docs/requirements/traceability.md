@@ -33,15 +33,15 @@ Traceability ini mencatat relasi requirement ke user story dari Skill 03, priori
 | FR-22 | US-16 | ARCH-03, ARCH-08 | DB-01, DB-02, DB-03, DB-04, API-17 | UI-07 | #20 | Belum tahap implementasi | Belum tahap testing | Planned in Skill 09; approved through Skill 08 |
 | FR-23 | US-16 | ARCH-03, ARCH-08 | DB-02, DB-03, API-08, API-17 | UI-07 | #20 | Belum tahap implementasi | Belum tahap testing | Planned in Skill 09; approved through Skill 08 |
 | FR-24 | US-17 | ARCH-01, ARCH-02, ARCH-09, ARCH-11 | API-02 sampai API-17 role validation | UI-01, UI-08, UI-09 | #21 | Belum tahap implementasi | Belum tahap testing | Planned in Skill 09; approved through Skill 08 |
-| NFR-01 | Semua user story | ARCH-01, ARCH-09, ARCH-10, ARCH-11 | API response supports React data states | UI-01 sampai UI-10 | #13, #21 | Belum tahap implementasi | Belum tahap testing | Planned in Skill 09; approved through Skill 08 |
-| NFR-02 | Semua user story | ARCH-02, ARCH-12 | API-01 sampai API-17 | UI API-to-UI mapping | #13, #21, #23 | Belum tahap implementasi | Belum tahap testing | Planned in Skill 09; approved through Skill 08 |
-| NFR-03 | Semua user story | ARCH-03, ARCH-12 | DB-01 sampai DB-07 | UI data display from DB/API contracts | #13, #23 | Belum tahap implementasi | Belum tahap testing | Planned in Skill 09; approved through Skill 08 |
-| NFR-04 | Semua user story | ARCH-03, ARCH-12 | D1-only database design; no paid storage | UI excludes paid/out-of-scope features | #13, #23 | Belum tahap implementasi | Belum tahap testing | Planned in Skill 09; approved through Skill 08 |
+| NFR-01 | Semua user story | ARCH-01, ARCH-09, ARCH-10, ARCH-11 | API response supports React data states | UI-01 sampai UI-10 | #13, #21 | `src/App.tsx`, `src/App.css` | `tests/integration/react-foundation.test.ts` | Selesai |
+| NFR-02 | Semua user story | ARCH-02, ARCH-12 | API-01 sampai API-17 | UI API-to-UI mapping | #13, #21, #23 | `worker/index.ts`, `src/App.tsx` | `tests/integration/worker-health.test.ts`, `tests/integration/react-foundation.test.ts` | Selesai |
+| NFR-03 | Semua user story | ARCH-03, ARCH-12 | DB-01 sampai DB-07 | UI data display from DB/API contracts | #13, #23 | `worker/index.ts`, `database/migrations/0001_initial.sql`, `wrangler.jsonc` | `tests/integration/worker-health.test.ts` | Selesai |
+| NFR-04 | Semua user story | ARCH-03, ARCH-12 | D1-only database design; no paid storage | UI excludes paid/out-of-scope features | #13, #23 | `wrangler.jsonc`, `worker/index.ts`, `src/App.tsx` | `tests/integration/worker-health.test.ts`, `tests/integration/react-foundation.test.ts` | Implemented foundation slice for Issue #13; pending Human Review |
 | NFR-05 | Semua user story | ARCH-12 | Skill 07 branch and PR workflow | Skill 08 branch and PR workflow | #23 | Belum tahap implementasi | Belum tahap testing | Planned in Skill 09; approved through Skill 08 |
 | NFR-06 | Semua user story | ARCH-04 | Contract-first validation and error contracts | UI-08, UI-09 state/error design | #22 | Belum tahap implementasi | Belum tahap testing | Planned in Skill 09; approved through Skill 08 |
 | NFR-07 | Semua user story | ARCH-13 | Skill 07 traceability links added | Skill 08 traceability links added | #24 | Belum tahap implementasi | Belum tahap testing | Planned in Skill 09; approved through Skill 08 |
 | NFR-08 | Semua user story | ARCH-13 | `evidence/human-review-database-api.md` | `evidence/human-review-ui-design.md` | #24 | Belum tahap implementasi | Belum tahap testing | Planned in Skill 09; approved through Skill 08 |
-| NFR-09 | Semua user story | ARCH-12 | No secret-bearing design or config changes | No secret-bearing UI design changes | #13, #23 | Belum tahap implementasi | Belum tahap testing | Planned in Skill 09; approved through Skill 08 |
+| NFR-09 | Semua user story | ARCH-12 | No secret-bearing design or config changes | No secret-bearing UI design changes | #13, #23 | `wrangler.jsonc`, `worker/index.ts`, `.gitignore` | Secret scan via `git ls-files` and `git grep` for token/password/secret patterns | Implemented foundation slice for Issue #13; pending Human Review |
 
 ## Business Rule Links
 
