@@ -10,4 +10,12 @@ describe("React foundation shell", () => {
 		expect(html).toContain("Status Fondasi");
 		expect(html).toContain("Memeriksa koneksi API dan D1");
 	});
+
+	it("renders reporter identity fields and Lecturer priority suggestion guidance", () => {
+		const html = renderToString(createElement(App));
+
+		expect(html).toContain("Nama Pelapor");
+		expect(html).toContain("Tipe Pelapor");
+		expect(html).toContain("Dosen mendapat saran prioritas HIGH");
+	});
 });

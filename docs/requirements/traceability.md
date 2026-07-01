@@ -9,8 +9,8 @@ Traceability ini mencatat relasi requirement ke user story dari Skill 03, priori
 
 | **Requirement** | **User Story** | **Design Skill 06** | **Design Skill 07** | **Design Skill 08** | **Issue** | **Kode** | **Test** | **Status** |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| FR-01 | US-01 | ARCH-03, ARCH-05 | DB-01, DB-04, API-03 | UI-03, UI-09 | #14 | Belum tahap implementasi | Belum tahap testing | Planned in Skill 09; approved through Skill 08 |
-| FR-02 | US-01 | ARCH-03 | DB-01, API-03 | UI-03, UI-09 | #14 | Belum tahap implementasi | Belum tahap testing | Planned in Skill 09; approved through Skill 08 |
+| FR-01 | US-01 | ARCH-03, ARCH-05 | DB-01, DB-04, API-03 | UI-03, UI-09 | #14 | `worker/index.ts`, `database/migrations/0002_create_request_identity_and_history.sql`, `src/App.tsx`, `src/App.css` | `tests/integration/request-create.test.ts`, `tests/integration/react-foundation.test.ts` | Selesai untuk Issue #14; create request stores complete report and starts `SUBMITTED` |
+| FR-02 | US-01 | ARCH-03 | DB-01, API-03 | UI-03, UI-09 | #14 | `worker/index.ts`, `database/migrations/0002_create_request_identity_and_history.sql`, `src/App.tsx` | `tests/integration/request-create.test.ts`, `tests/integration/react-foundation.test.ts` | Selesai untuk Issue #14; reporter identity stored and required |
 | FR-03 | US-02 | ARCH-01, ARCH-04 | DB-01, API-02 | UI-02, UI-09 | #15 | Belum tahap implementasi | Belum tahap testing | Planned in Skill 09; approved through Skill 08 |
 | FR-04 | US-03 | ARCH-01, ARCH-04 | DB-01, API-02 | UI-02, UI-09 | #15 | Belum tahap implementasi | Belum tahap testing | Planned in Skill 09; approved through Skill 08 |
 | FR-05 | US-04 | ARCH-01, ARCH-04 | DB-01, API-02 | UI-02, UI-09 | #15 | Belum tahap implementasi | Belum tahap testing | Planned in Skill 09; approved through Skill 08 |
@@ -18,7 +18,7 @@ Traceability ini mencatat relasi requirement ke user story dari Skill 03, priori
 | FR-07 | US-06 | ARCH-02, ARCH-05 | DB-01, DB-04, API-05 | UI-05 | #16 | Belum tahap implementasi | Belum tahap testing | Planned in Skill 09; approved through Skill 08 |
 | FR-08 | US-07 | ARCH-02, ARCH-04, ARCH-14 | DB-01, API-06 | UI-05, UI-09 | #16 | Belum tahap implementasi | Belum tahap testing | Planned in Skill 09; approved through Skill 08 |
 | FR-09 | US-07 | ARCH-02, ARCH-04, ARCH-14 | DB-01, API-06 | UI-05, UI-09 | #16 | Belum tahap implementasi | Belum tahap testing | Planned in Skill 09; approved through Skill 08 |
-| FR-10 | US-07 | ARCH-02, ARCH-04, ARCH-14 | DB-01, API-03, API-06 | UI-03, UI-05, UI-09 | #14, #16 | Belum tahap implementasi | Belum tahap testing | Planned in Skill 09; approved through Skill 08 |
+| FR-10 | US-07 | ARCH-02, ARCH-04, ARCH-14 | DB-01, API-03, API-06 | UI-03, UI-05, UI-09 | #14, #16 | `worker/index.ts`, `database/migrations/0002_create_request_identity_and_history.sql`, `src/App.tsx`, `src/App.css` | `tests/integration/request-create.test.ts`, `tests/integration/react-foundation.test.ts` | Selesai untuk Issue #14 create slice; Lecturer creates HIGH suggestion while final priority remains `MEDIUM` until Administrator decision |
 | FR-11 | US-08 | ARCH-02, ARCH-05 | DB-02, DB-03, DB-04, API-07 | UI-05 | #16 | Belum tahap implementasi | Belum tahap testing | Planned in Skill 09; approved through Skill 08 |
 | FR-12 | US-09 | ARCH-02, ARCH-04 | DB-02, DB-03, API-08 | UI-06 | #17 | Belum tahap implementasi | Belum tahap testing | Planned in Skill 09; approved through Skill 08 |
 | FR-13 | US-09 | ARCH-02, ARCH-05 | DB-03, API-09 | UI-06 | #17 | Belum tahap implementasi | Belum tahap testing | Planned in Skill 09; approved through Skill 08 |
@@ -26,7 +26,7 @@ Traceability ini mencatat relasi requirement ke user story dari Skill 03, priori
 | FR-15 | US-10 | ARCH-02, ARCH-05, ARCH-06 | DB-03, DB-04, API-11 | UI-06 | #17 | Belum tahap implementasi | Belum tahap testing | Planned in Skill 09; approved through Skill 08 |
 | FR-16 | US-11 | ARCH-03, ARCH-07 | DB-05, API-12 | UI-04, UI-09 | #18 | Belum tahap implementasi | Belum tahap testing | Planned in Skill 09; approved through Skill 08 |
 | FR-17 | US-12 | ARCH-03, ARCH-07 | DB-06, API-13 | UI-04, UI-09 | #18 | Belum tahap implementasi | Belum tahap testing | Planned in Skill 09; approved through Skill 08 |
-| FR-18 | US-05, US-10 | ARCH-03, ARCH-06 | DB-04, API-03, API-05, API-07, API-10, API-11, API-15, API-16 | UI-02, UI-04, UI-05, UI-06 | #14, #15, #16, #17, #19 | Belum tahap implementasi | Belum tahap testing | Planned in Skill 09; approved through Skill 08 |
+| FR-18 | US-05, US-10 | ARCH-03, ARCH-06 | DB-04, API-03, API-05, API-07, API-10, API-11, API-15, API-16 | UI-02, UI-04, UI-05, UI-06 | #14, #15, #16, #17, #19 | `worker/index.ts`, `database/migrations/0002_create_request_identity_and_history.sql` | `tests/integration/request-create.test.ts` | Selesai untuk Issue #14 create slice; initial `SUBMITTED` history is appended |
 | FR-19 | US-13 | ARCH-02, ARCH-05 | DB-07, API-14 | UI-04, UI-09 | #19 | Belum tahap implementasi | Belum tahap testing | Planned in Skill 09; approved through Skill 08 |
 | FR-20 | US-14 | ARCH-02, ARCH-05 | DB-01, DB-07, DB-04, API-15 | UI-05, UI-09 | #19 | Belum tahap implementasi | Belum tahap testing | Planned in Skill 09; approved through Skill 08 |
 | FR-21 | US-15 | ARCH-02, ARCH-05 | DB-04, API-16 | UI-05, UI-09 | #19 | Belum tahap implementasi | Belum tahap testing | Planned in Skill 09; approved through Skill 08 |
@@ -47,14 +47,14 @@ Traceability ini mencatat relasi requirement ke user story dari Skill 03, priori
 
 | Business Rule | Related Requirement | Design Skill 06 | Design Skill 07 | Design Skill 08 | Issue | Status |
 | --- | --- | --- | --- | --- | --- | --- |
-| BR-01 | FR-01 | ARCH-05 | DB-01, DB-04, API-03 | UI-03 | #14 | Planned in Skill 09; approved through Skill 08 |
+| BR-01 | FR-01 | ARCH-05 | DB-01, DB-04, API-03 | UI-03 | #14 | Selesai untuk Issue #14; new request status is `SUBMITTED` |
 | BR-02 | FR-07, FR-11, FR-14, FR-15, FR-20, FR-21 | ARCH-02, ARCH-05 | DB-01, DB-04, API-03, API-05, API-07, API-10, API-11, API-15, API-16 | UI-04, UI-05, UI-06, UI-09 | #16, #17, #19 | Planned in Skill 09; approved through Skill 08 |
 | BR-03 | FR-07, FR-11 | ARCH-02, ARCH-05 | DB-03, API-05, API-07 | UI-05 | #16 | Planned in Skill 09; approved through Skill 08 |
 | BR-04 | FR-09 | ARCH-14 | DB-01, API-06 | UI-05 | #16 | Planned in Skill 09; approved through Skill 08 |
-| BR-05 | FR-10 | ARCH-14 | DB-01, API-03, API-06 | UI-03, UI-05 | #14, #16 | Planned in Skill 09; approved through Skill 08 |
+| BR-05 | FR-10 | ARCH-14 | DB-01, API-03, API-06 | UI-03, UI-05 | #14, #16 | Selesai untuk Issue #14 create slice; Lecturer HIGH suggestion stored separately from final priority |
 | BR-06 | FR-08 | ARCH-14 | DB-01, API-06 | UI-03, UI-05, UI-09 | #16 | Planned in Skill 09; approved through Skill 08 |
 | BR-07 | FR-09 | ARCH-14 | DB-01, API-02, API-06 | UI-05, UI-09 | #16 | Planned in Skill 09; approved through Skill 08 |
-| BR-08 | FR-18 | ARCH-06 | DB-04, status-changing APIs | UI-04, UI-05, UI-06 | #14, #16, #17, #19 | Planned in Skill 09; approved through Skill 08 |
+| BR-08 | FR-18 | ARCH-06 | DB-04, status-changing APIs | UI-04, UI-05, UI-06 | #14, #16, #17, #19 | Selesai untuk Issue #14 create slice; initial history records from/to status, role, note, and timestamp |
 | BR-09 | FR-16 | ARCH-07 | DB-05, API-04, API-12 | UI-04, UI-09 | #18 | Planned in Skill 09; approved through Skill 08 |
 | BR-10 | FR-17 | ARCH-07 | DB-06, API-04, API-13 | UI-04, UI-09 | #18 | Planned in Skill 09; approved through Skill 08 |
 | BR-11 | FR-19, FR-20 | ARCH-02, ARCH-05 | DB-01, DB-07, API-14, API-15 | UI-04, UI-05, UI-09 | #19 | Planned in Skill 09; approved through Skill 08 |

@@ -3,12 +3,15 @@ import "./App.css";
 
 type ServiceRequest = {
 	id: string;
-	request_number: string;
+	requestNumber: string;
 	title: string;
 	location: string;
 	category: string;
 	priority: string;
+	prioritySuggestion: string | null;
 	status: string;
+	reporterName: string;
+	reporterType: string;
 };
 
 type HealthResponse = {
@@ -21,6 +24,8 @@ type HealthResponse = {
 
 export default function App() {
 	const [requests, setRequests] = useState<ServiceRequest[]>([]);
+	const [reporterName, setReporterName] = useState("");
+	const [reporterType, setReporterType] = useState("STUDENT");
 	const [title, setTitle] = useState("");
 	const [description, setDescription] = useState("");
 	const [location, setLocation] = useState("");
@@ -70,6 +75,9 @@ export default function App() {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
+				role: "REPORTER",
+				reporterName,
+				reporterType,
 				title,
 				description,
 				location,
@@ -80,11 +88,13 @@ export default function App() {
 		const result = await response.json();
 
 		if (!response.ok) {
-			setMessage(result.error ?? "Laporan gagal dibuat.");
+			setMessage(result.error?.message ?? "Laporan gagal dibuat.");
 			return;
 		}
 
-		setMessage(`Laporan berhasil dibuat: ${result.requestNumber}`);
+		setMessage(`Laporan berhasil dibuat: ${result.data.requestNumber}`);
+		setReporterName("");
+		setReporterType("STUDENT");
 		setTitle("");
 		setDescription("");
 		setLocation("");
@@ -106,6 +116,31 @@ export default function App() {
 			<section className="content-grid">
 				<form className="request-form" onSubmit={submitRequest}>
 					<h2>Buat Laporan Baru</h2>
+
+					<label>
+						Nama Pelapor
+						<input
+							value={reporterName}
+							onChange={(event) => setReporterName(event.target.value)}
+							placeholder="Contoh: Dr. Mira Santoso"
+						/>
+					</label>
+
+					<label>
+						Tipe Pelapor
+						<select
+							value={reporterType}
+							onChange={(event) => setReporterType(event.target.value)}
+						>
+							<option value="STUDENT">Mahasiswa</option>
+							<option value="LECTURER">Dosen</option>
+						</select>
+					</label>
+
+					<p className="suggestion-note">
+						Dosen mendapat saran prioritas HIGH, tetapi prioritas akhir tetap
+						keputusan Administrator.
+					</p>
 
 					<label>
 						Judul
@@ -166,16 +201,27 @@ export default function App() {
 										<th>Judul</th>
 										<th>Lokasi</th>
 										<th>Kategori</th>
+										<th>Pelapor</th>
+										<th>Prioritas</th>
 										<th>Status</th>
 									</tr>
 								</thead>
 								<tbody>
 									{requests.map((item) => (
 										<tr key={item.id}>
-											<td>{item.request_number}</td>
+											<td>{item.requestNumber}</td>
 											<td>{item.title}</td>
 											<td>{item.location}</td>
 											<td>{item.category}</td>
+											<td>
+												{item.reporterName} ({item.reporterType})
+											</td>
+											<td>
+												{item.priority}
+												{item.prioritySuggestion
+													? `, saran ${item.prioritySuggestion}`
+													: ""}
+											</td>
 											<td>{item.status}</td>
 										</tr>
 									))}
