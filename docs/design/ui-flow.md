@@ -117,7 +117,7 @@ Important boundary: disabled or hidden UI controls are usability support only. T
 | UI-05 | Administrator Review/Classify/Assign | Administrator | ActionPanel, PriorityBadge, StatusBadge, FeedbackMessage | API-05, API-06, API-07, API-15, API-16 |
 | UI-06 | Technician Tasks | Teknisi, Administrator | RequestList, StatusBadge, PriorityBadge, ActionPanel | API-08, API-09, API-10, API-11 |
 | UI-07 | Dashboard Summary | Manajer Fasilitas, Administrator | DashboardCards, StatusBadge, PriorityBadge, EmptyState, ErrorState | API-17 |
-| UI-08 | Fallback Views | All roles | ForbiddenState, NotFoundState, ServerErrorState | Common error contract |
+| UI-08 | Fallback Views | All roles | ErrorState variants for forbidden, not found, conflict, validation, and server error | Common error contract |
 
 ## Descriptive Wireframes
 
@@ -395,7 +395,7 @@ Traceability: NFR-01, NFR-06, FR-24, all protected workflow endpoints.
 
 | State | UI behavior | API source |
 | --- | --- | --- |
-| Loading | Stable skeleton/progress for list/detail/dashboard; disabled submit for commands. | Pending API-02 sampai API-17. |
+| Loading | Stable skeleton/progress for app readiness, list/detail/dashboard, and disabled submit for commands. | Pending API-01 sampai API-17. |
 | Empty | RequestList empty, search/filter no result, dashboard zero data, comments/notes empty copy. | API-02 `meta.empty`, API-17 zero counts. |
 | Success | FeedbackMessage plus refreshed list/detail/status timeline. | 200/201 success responses. |
 | Validation error | Field errors near inputs plus form-level summary. | `422 VALIDATION_ERROR` with `fields`. |
@@ -440,8 +440,8 @@ Reference note: Figma Community and UI UX Pro Max may inspire component inventor
 
 | UI action/view | Endpoint | UI component(s) | Success UI | Error UI |
 | --- | --- | --- | --- | --- |
-| Health check for app readiness | `GET /api/health` | Application Shell, ErrorState | App readiness indicator if used. | ServerErrorState. |
-| List/search/filter requests | `GET /api/requests` | RequestWorkspace, RequestSearchFilter, RequestList | List populated or EmptyState. | ErrorState/ForbiddenState. |
+| Health check for app readiness | `GET /api/health` | Application Shell, ErrorState | App readiness indicator if used. | ErrorState server-error variant. |
+| List/search/filter requests | `GET /api/requests` | RequestWorkspace, RequestSearchFilter, RequestList | List populated or EmptyState. | ErrorState generic/forbidden variants. |
 | Create request | `POST /api/requests` | RequestForm, FeedbackMessage | Request number, `SUBMITTED`, list refresh. | Field errors, form error, forbidden, conflict. |
 | Open request detail | `GET /api/requests/:id` | RequestDetailPanel, StatusHistoryTimeline, CommentArea, InternalNoteArea | Detail rendered by visibility. | Forbidden, not found, server error. |
 | Review submitted request | `PATCH /api/requests/:id/review` | ActionPanel | StatusBadge `UNDER_REVIEW`, timeline update. | Validation/conflict/forbidden. |
@@ -472,6 +472,92 @@ Reference note: Figma Community and UI UX Pro Max may inspire component inventor
 | UI-08 | Fallback state design | NFR-01, NFR-06, FR-24, all protected workflow actions |
 | UI-09 | Component inventory and form feedback design | NFR-01, NFR-06, NFR-07, FR-01 sampai FR-24 |
 | UI-10 | Accessibility-first and design token guidance | NFR-01, NFR-07, US-01 sampai US-17 |
+
+## Full Requirements Coverage Matrix
+
+Bagian ini menuliskan cakupan eksplisit agar reviewer dapat mencocokkan setiap FR, NFR, BR, dan US tanpa bergantung pada rentang ID agregat.
+
+### Functional Requirement Coverage
+
+| Requirement | UI representation | API / component link | Notes |
+| --- | --- | --- | --- |
+| FR-01 | UI-03 Create Request form. | RequestForm, API-03. | Pelapor submits report through create form. |
+| FR-02 | UI-03 reporter identity fields. | RequestForm, API-03. | Uses approved `reporter_name` and `reporter_type`; OPEN-02 preserved for extra fields. |
+| FR-03 | UI-02 Request Workspace list. | RequestList, API-02. | All roles can view role-shaped list data. |
+| FR-04 | UI-02 search toolbar. | RequestSearchFilter, API-02. | Search keyword maps to request list query. |
+| FR-05 | UI-02 status/priority filters. | RequestSearchFilter, API-02. | Combined status and priority filters are represented. |
+| FR-06 | UI-02 selected detail and UI-04 Request Detail. | RequestDetailPanel, API-04. | Facility Manager detail remains OPEN-10 Needs Human Review. |
+| FR-07 | UI-05 review action. | ActionPanel, API-05. | Administrator-only review from `SUBMITTED` to `UNDER_REVIEW`. |
+| FR-08 | UI-05 classification action. | ActionPanel, API-06. | Category controlled vocabulary is represented; OPEN-05 preserved. |
+| FR-09 | UI-05 priority action. | ActionPanel, PriorityBadge, API-06. | Priority values LOW/MEDIUM/HIGH/URGENT represented without defining OPEN-06 criteria. |
+| FR-10 | UI-03/UI-05 lecturer priority suggestion display. | PriorityBadge, API-03, API-06. | Suggestion does not replace Administrator final decision. |
+| FR-11 | UI-05 assignment action. | ActionPanel, API-07. | Assignment follows review/classification surface. |
+| FR-12 | UI-06 Technician Tasks list. | RequestList, API-08. | Technician assigned task visibility represented. |
+| FR-13 | UI-06 accept task action. | ActionPanel, API-09. | Accept only; no reject/reassignment flow added due OPEN-08. |
+| FR-14 | UI-06 progress action. | ActionPanel, API-10. | Moves eligible assigned task to `IN_PROGRESS`. |
+| FR-15 | UI-06 resolve action. | ActionPanel, API-11. | Moves eligible work to `RESOLVED`; OPEN-11 preserved. |
+| FR-16 | UI-04 public comment area. | CommentArea, API-12. | Public comments visible to Pelapor, Administrator, and Teknisi. |
+| FR-17 | UI-04 internal note area. | InternalNoteArea, API-13. | Internal notes visible to Administrator/Teknisi; OPEN-10 preserved for Manager access. |
+| FR-18 | UI-04 status history and status-changing action feedback. | StatusHistoryTimeline, API-03/API-05/API-07/API-10/API-11/API-15/API-16. | Status changes surface history entries. |
+| FR-19 | UI-04/UI-05 confirmation action and summary. | ActionPanel, RequestDetailPanel, API-14. | Confirmation does not create a new main status. |
+| FR-20 | UI-05 close action. | ActionPanel, API-15. | Close supports normal confirmation path and override note field; OPEN-03 preserved. |
+| FR-21 | UI-05 reopen action. | ActionPanel, API-16. | Administrator-only baseline; OPEN-04 preserved. |
+| FR-22 | UI-07 Dashboard Summary. | DashboardCards, API-17. | Operational summary represented. |
+| FR-23 | UI-07 workload source display. | DashboardCards, API-08/API-17. | Workload formula remains OPEN-07 Needs Human Review. |
+| FR-24 | UI-01 RoleSwitcher and Role-Based UI Matrix. | RoleSwitcher, ActionPanel, API role validation. | UI adjusts visible actions but API validation remains authoritative. |
+
+### Non-Functional Requirement Coverage
+
+| Requirement | UI/design representation | Notes |
+| --- | --- | --- |
+| NFR-01 | UI-01 through UI-10 define React-ready screens, components, state, accessibility, and tokens. | Design-only; no React code written. |
+| NFR-02 | API-to-UI Mapping covers Cloudflare Worker endpoints API-01 through API-17. | UI does not bypass Worker API. |
+| NFR-03 | UI data fields are derived from Skill 07 D1-backed API contracts. | UI does not access D1 directly. |
+| NFR-04 | Scope/non-scope excludes paid/out-of-scope services and upload/storage features. | UI design remains compatible with free Cloudflare Workers/D1 baseline. |
+| NFR-05 | Skill 08 branch, commit, push, and PR workflow are captured outside UI surface. | Process requirement, not a UI component. |
+| NFR-06 | UI state coverage and error contract mapping provide design input for future automated tests/CI. | No tests are written in Skill 08. |
+| NFR-07 | Traceability Links and this coverage matrix map requirement to design IDs. | `docs/requirements/traceability.md` also updated. |
+| NFR-08 | `evidence/human-review-ui-design.md` is the Human Review evidence work product. | Decision remains pending Human Review. |
+| NFR-09 | Skill 08 changes only documentation and no secret-bearing config or code. | No token/password/secret fields added. |
+
+### Business Rule Coverage
+
+| Business Rule | UI representation | Notes |
+| --- | --- | --- |
+| BR-01 | UI-03 create success displays `SUBMITTED`; UI cannot choose initial status. | API-03 remains source of truth. |
+| BR-02 | StatusBadge and StatusHistoryTimeline use only six strict statuses. | No seventh main status added. |
+| BR-03 | UI-05 orders review before assignment. | API-05/API-07 validate workflow. |
+| BR-04 | UI-05 keeps priority decision in Administrator action surface. | Suggestion is not final priority. |
+| BR-05 | UI-03/UI-05 represent Lecturer HIGH suggestion. | Administrator still chooses final priority. |
+| BR-06 | UI-03/UI-05 mark category as controlled vocabulary. | OPEN-05 values not invented. |
+| BR-07 | PriorityBadge and classification form use LOW/MEDIUM/HIGH/URGENT. | Criteria OPEN-06 not invented. |
+| BR-08 | UI-04 timeline displays from/to status, changed role, timestamp, and note. | Status-changing actions refresh timeline. |
+| BR-09 | UI-04 CommentArea is visible to Pelapor, Administrator, and Teknisi. | Maps to API-12 public visibility. |
+| BR-10 | UI-04 InternalNoteArea hidden from Pelapor and baseline hidden from Manager. | OPEN-10 preserved. |
+| BR-11 | UI-04/UI-05 represent confirmation before close and manual override note requirement. | OPEN-03 and OPEN-11 preserved. |
+| BR-12 | UI-05 reopen success displays target `UNDER_REVIEW`. | API-16 validates role/status. |
+
+### User Story Coverage
+
+| User Story | UI representation | Notes |
+| --- | --- | --- |
+| US-01 | UI-03 Create Request. | Covers create, `SUBMITTED`, reporter fields. |
+| US-02 | UI-02 Request Workspace list and EmptyState. | Covers populated and empty list. |
+| US-03 | UI-02 search and empty result state. | Covers matching and no-match results. |
+| US-04 | UI-02 status/priority filters. | Covers individual and combined filters. |
+| US-05 | UI-02/UI-04 detail, history, visible comments. | OPEN-10 preserved for Manager boundary. |
+| US-06 | UI-05 review action and forbidden non-admin state. | API-05 is final validator. |
+| US-07 | UI-05 category, priority, Lecturer suggestion. | OPEN-05 and OPEN-06 preserved. |
+| US-08 | UI-05 assignment action and `ASSIGNED` success state. | API-07 maps assignment. |
+| US-09 | UI-06 task list and accept action. | OPEN-08 preserved; reject not added. |
+| US-10 | UI-06 progress/resolve actions and UI-04 status history. | Covers `IN_PROGRESS`, `RESOLVED`, and history display. |
+| US-11 | UI-04 CommentArea. | Public comment storage/display represented. |
+| US-12 | UI-04 InternalNoteArea. | Hidden from Pelapor; Manager access OPEN-10. |
+| US-13 | UI-04/UI-05 confirm resolution action/summary. | Confirmation does not change main status. |
+| US-14 | UI-05 close action with confirmation/override note feedback. | OPEN-03 and OPEN-11 preserved. |
+| US-15 | UI-05 reopen action and timeline refresh. | OPEN-04 preserved. |
+| US-16 | UI-07 dashboard summary and workload source display. | OPEN-07 and OPEN-10 preserved. |
+| US-17 | UI-01 RoleSwitcher and Role-Based UI Matrix. | Visible actions change by selected role. |
 
 ## Risks, Assumptions, and Open Questions
 
