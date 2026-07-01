@@ -420,11 +420,16 @@ export default function App() {
 		event.preventDefault();
 		setMessage("");
 
+		if (activeRole !== "REPORTER") {
+			setMessage("Hanya Pelapor yang dapat membuat laporan baru.");
+			return;
+		}
+
 		const response = await fetch("/api/requests", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
-				role: "REPORTER",
+				role: activeRole,
 				reporterName,
 				reporterType,
 				title,
@@ -714,78 +719,88 @@ export default function App() {
 			</section>
 
 			<section className="content-grid">
-				<form className="request-form" onSubmit={submitRequest}>
-					<h2>Buat Laporan Baru</h2>
+				{activeRole === "REPORTER" ? (
+					<form className="request-form" onSubmit={submitRequest}>
+						<h2>Buat Laporan Baru</h2>
 
-					<label>
-						Nama Pelapor
-						<input
-							value={reporterName}
-							onChange={(event) => setReporterName(event.target.value)}
-							placeholder="Contoh: Dr. Mira Santoso"
-						/>
-					</label>
+						<label>
+							Nama Pelapor
+							<input
+								value={reporterName}
+								onChange={(event) => setReporterName(event.target.value)}
+								placeholder="Contoh: Dr. Mira Santoso"
+							/>
+						</label>
 
-					<label>
-						Tipe Pelapor
-						<select
-							value={reporterType}
-							onChange={(event) => setReporterType(event.target.value)}
-						>
-							<option value="STUDENT">Mahasiswa</option>
-							<option value="LECTURER">Dosen</option>
-						</select>
-					</label>
+						<label>
+							Tipe Pelapor
+							<select
+								value={reporterType}
+								onChange={(event) => setReporterType(event.target.value)}
+							>
+								<option value="STUDENT">Mahasiswa</option>
+								<option value="LECTURER">Dosen</option>
+							</select>
+						</label>
 
-					<p className="suggestion-note">
-						Dosen mendapat saran prioritas HIGH, tetapi prioritas akhir tetap
-						keputusan Administrator.
-					</p>
+						<p className="suggestion-note">
+							Dosen mendapat saran prioritas HIGH, tetapi prioritas akhir tetap
+							keputusan Administrator.
+						</p>
 
-					<label>
-						Judul
-						<input
-							value={title}
-							onChange={(event) => setTitle(event.target.value)}
-							placeholder="Contoh: Proyektor ruang 302 rusak"
-						/>
-					</label>
+						<label>
+							Judul
+							<input
+								value={title}
+								onChange={(event) => setTitle(event.target.value)}
+								placeholder="Contoh: Proyektor ruang 302 rusak"
+							/>
+						</label>
 
-					<label>
-						Deskripsi
-						<textarea
-							value={description}
-							onChange={(event) => setDescription(event.target.value)}
-							placeholder="Jelaskan masalah minimal 20 karakter."
-						/>
-					</label>
+						<label>
+							Deskripsi
+							<textarea
+								value={description}
+								onChange={(event) => setDescription(event.target.value)}
+								placeholder="Jelaskan masalah minimal 20 karakter."
+							/>
+						</label>
 
-					<label>
-						Lokasi
-						<input
-							value={location}
-							onChange={(event) => setLocation(event.target.value)}
-							placeholder="Contoh: Gedung A, Ruang 302"
-						/>
-					</label>
+						<label>
+							Lokasi
+							<input
+								value={location}
+								onChange={(event) => setLocation(event.target.value)}
+								placeholder="Contoh: Gedung A, Ruang 302"
+							/>
+						</label>
 
-					<label>
-						Kategori
-						<select
-							value={category}
-							onChange={(event) => setCategory(event.target.value)}
-						>
-							<option>Internet</option>
-							<option>AC</option>
-							<option>Peralatan Kelas</option>
-							<option>Kebersihan</option>
-							<option>Lainnya</option>
-						</select>
-					</label>
+						<label>
+							Kategori
+							<select
+								value={category}
+								onChange={(event) => setCategory(event.target.value)}
+							>
+								<option>Internet</option>
+								<option>AC</option>
+								<option>Peralatan Kelas</option>
+								<option>Kebersihan</option>
+								<option>Lainnya</option>
+							</select>
+						</label>
 
-					<button type="submit">Kirim Laporan</button>
-					{message && <p className="form-message">{message}</p>}
-				</form>
+						<button type="submit">Kirim Laporan</button>
+						{message && <p className="form-message">{message}</p>}
+					</form>
+				) : (
+					<section className="request-form" aria-live="polite">
+						<h2>Buat Laporan Baru</h2>
+						<p className="empty-state">
+							Form laporan baru hanya tersedia untuk role Pelapor.
+						</p>
+						{message && <p className="form-message">{message}</p>}
+					</section>
+				)}
 
 				<section
 					className="technician-panel"

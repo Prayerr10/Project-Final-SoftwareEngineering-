@@ -28,6 +28,24 @@ describe("deployment readiness", () => {
 		expect(wranglerConfig).not.toMatch(/"analytics_engine_datasets"\s*:/);
 	});
 
+	it("enforces strict request status and priority values at the D1 layer", () => {
+		const migration = readText(
+			"database/migrations/0006_enforce_request_status_priority.sql",
+		);
+
+		expect(migration).toContain(
+			"trg_service_requests_status_priority_insert",
+		);
+		expect(migration).toContain(
+			"trg_service_requests_status_priority_update",
+		);
+		expect(migration).toContain(
+			"'SUBMITTED', 'UNDER_REVIEW', 'ASSIGNED', 'IN_PROGRESS', 'RESOLVED', 'CLOSED'",
+		);
+		expect(migration).toContain("'LOW', 'MEDIUM', 'HIGH', 'URGENT'");
+		expect(migration).toContain("RAISE(ABORT");
+	});
+
 	it("protects local secret files from being committed", () => {
 		const gitignore = readText(".gitignore");
 

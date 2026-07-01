@@ -1,5 +1,6 @@
 import { createElement } from "react";
 import { renderToString } from "react-dom/server";
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import App from "../../src/App";
 
@@ -17,6 +18,19 @@ describe("React foundation shell", () => {
 		expect(html).toContain("Nama Pelapor");
 		expect(html).toContain("Tipe Pelapor");
 		expect(html).toContain("Dosen mendapat saran prioritas HIGH");
+	});
+
+	it("keeps Create Request bound to the selected Reporter role context", () => {
+		const appSource = readFileSync("src/App.tsx", "utf8");
+		const submitRequestSource = appSource.slice(
+			appSource.indexOf("async function submitRequest"),
+			appSource.indexOf("function clearFilters"),
+		);
+
+		expect(submitRequestSource).toContain('activeRole !== "REPORTER"');
+		expect(submitRequestSource).toContain("role: activeRole");
+		expect(submitRequestSource).not.toContain('role: "REPORTER",');
+		expect(appSource).toContain('activeRole === "REPORTER" ?');
 	});
 
 	it("renders request workspace search and filter controls", () => {
