@@ -30,6 +30,26 @@
 	font-size: 1.05rem;
 }
 
+.foundation-status {
+	margin-top: 20px;
+	border: 1px solid #d1fae5;
+	border-radius: 8px;
+	background: #ecfdf5;
+	padding: 16px;
+}
+
+.foundation-status h2 {
+	margin: 0;
+	color: #064e3b;
+	font-size: 1rem;
+}
+
+.foundation-status p {
+	margin: 6px 0 0;
+	color: #065f46;
+	font-size: 0.95rem;
+}
+
 .content-grid {
 	display: grid;
 	grid-template-columns: minmax(280px, 380px) 1fr;

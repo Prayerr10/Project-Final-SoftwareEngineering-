@@ -11,7 +11,16 @@ export default {
 		const url = new URL(request.url);
 
 		if (url.pathname === "/api/health" && request.method === "GET") {
-			return json({ status: "ok" });
+			await env.DB.prepare("SELECT 1 AS ready").first();
+
+			return json({
+				status: "healthy",
+				service: "campus-maintenance",
+				checks: {
+					api: "ok",
+					d1: "ok",
+				},
+			});
 		}
 
 		if (url.pathname === "/api/requests" && request.method === "GET") {
