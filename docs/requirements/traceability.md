@@ -5,7 +5,7 @@
 | Skill AI | Skill 03 - Specification (`requirements-elaboration-and-specification`) |
 | Human decision | Disetujui through Skill 07 |
 
-Traceability ini mencatat relasi requirement ke user story dari Skill 03, prioritas Skill 04, validasi Skill 05, update design level Skill 06, dan draft design level Skill 07. Kolom Issue, Kode, dan Test tetap menggunakan template dari `instruksi-dosen.md`, tetapi belum diisi karena tahap tersebut belum dikerjakan.
+Traceability ini mencatat relasi requirement ke user story dari Skill 03, prioritas Skill 04, validasi Skill 05, update design level Skill 06, dan update design level Skill 07. Kolom Issue, Kode, dan Test tetap menggunakan template dari `instruksi-dosen.md`, tetapi belum diisi karena tahap tersebut belum dikerjakan.
 
 | **Requirement** | **User Story** | **Design Skill 06** | **Design Skill 07** | **Issue** | **Kode** | **Test** | **Status** |
 | --- | --- | --- | --- | --- | --- | --- | --- |

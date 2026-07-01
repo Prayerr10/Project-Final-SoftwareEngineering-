@@ -20,8 +20,8 @@ Skill 07 - Database dan API Design (`07-database-api-design`)
 2. NFR-01, NFR-04, NFR-05, NFR-06, NFR-07, NFR-08, dan NFR-09 belum terlihat eksplisit pada bagian `Traceability Links` di `docs/design/database-api.md`. NFR tersebut memang tidak selalu berupa tabel atau endpoint, tetapi tetap perlu dicatat sebagai coverage design agar traceability Skill 07 tidak lebih dangkal dari Skill 06.
 3. Kontrak API-06 `PATCH /api/requests/:id/classification` memakai frasa "Current status should be `UNDER_REVIEW` before assignment." Kata "should" terlalu lemah untuk role/workflow validation. Karena classification adalah bagian dari proses sebelum assignment, kontrak API perlu menyatakan validasi status secara tegas agar tidak membuka celah workflow skipping.
 4. Coverage user story di `docs/design/database-api.md` belum memiliki tabel cocok-cocokan eksplisit US-01 sampai US-17. Walaupun setiap endpoint detail sudah menuliskan user story terkait, reviewer masih harus mencari manual di banyak section.
-5. Draft awal evidence Skill 07 masih berisi temuan generik dan bagian perbaikan `Pending Human Review`, sehingga belum setara kedalamannya dengan `evidence/human-review-architecture.md` yang mencatat temuan aktual dan perbaikan aktual.
-6. Format evidence sudah memakai enam section Template Human Review dan tidak memiliki section tambahan di luar template, tetapi isi section "Masalah yang Ditemukan" dan "Perbaikan" perlu diperkuat agar menjadi draft Human Review yang dapat diperiksa manusia.
+5. Versi awal evidence Skill 07 masih berisi temuan generik dan bagian perbaikan yang belum mencatat hasil review aktual, sehingga belum setara kedalamannya dengan `evidence/human-review-architecture.md` yang mencatat temuan aktual dan perbaikan aktual.
+6. Format evidence sudah memakai enam section Template Human Review dan tidak memiliki section tambahan di luar template, tetapi isi section "Masalah yang Ditemukan" dan "Perbaikan" perlu diperkuat agar menjadi dokumen Human Review yang dapat diperiksa manusia.
 
 ## Perbaikan
 
