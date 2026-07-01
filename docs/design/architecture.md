@@ -43,7 +43,9 @@ Dokumen ini adalah output Skill 06. Isinya menggunakan baseline requirements yan
 | Frontend menggunakan React di `src/`. | UI aplikasi dibangun sebagai Single Page App dengan komponen reusable dan role simulator. | NFR-01, FR-24, US-17 |
 | Backend/API menggunakan Cloudflare Workers di `worker/`. | Semua command penting harus melewati API Worker, termasuk role/action validation dan workflow validation. | NFR-02, FR-07, FR-11, FR-14, FR-15, FR-19, FR-20, FR-21 |
 | Database menggunakan Cloudflare D1 dan migration di `database/migrations/`. | D1 menjadi storage utama untuk laporan, assignment, komentar/catatan, status history, dan data pendukung. Detail skema diserahkan ke Skill 07. | NFR-03, FR-01, FR-18 |
-| Deployment menggunakan Cloudflare dan Wrangler. | Build Vite dan Worker deploy memakai konfigurasi `wrangler.jsonc`, termasuk D1 binding `DB`. | NFR-04, NFR-05 |
+| Deployment menggunakan Cloudflare dan Wrangler. | Build Vite dan Worker deploy memakai konfigurasi `wrangler.jsonc`, termasuk D1 binding `DB`. | NFR-04, NFR-05, NFR-09 |
+| Automated testing dan CI adalah requirement project, tetapi bukan output implementasi Skill 06. | Arsitektur harus memisahkan layer, command/query, dan validation boundary agar test otomatis dan GitHub Actions pada fase berikutnya dapat memeriksa behavior tanpa merombak desain. | NFR-06 |
+| Traceability dan Human Review wajib dijaga. | Setiap keputusan arsitektur penting harus punya link ke FR/NFR/BR/US dan evidence Human Review Skill 06 harus tersedia sebelum lanjut Skill 07. | NFR-07, NFR-08 |
 | Fitur out of scope tidak menjadi bagian arsitektur wajib. | Tidak ada upload foto, email notification, login Google, QR code ruangan, AI kategori, inventory spare part, atau vendor management. | CASE.md, Skill 05 validation |
 | Requirements final tidak boleh diubah. | Open question dibawa sebagai risiko atau `Needs Human Review`, bukan diselesaikan sepihak. | NFR-08, OPEN-02 sampai OPEN-11 |
 
@@ -192,7 +194,7 @@ Traceability: NFR-02, NFR-03, NFR-04, NFR-05, NFR-09.
 | ARCH-01 | Use React SPA in `src/` with role simulator and master-detail application shell. | Matches approved role simulator and master-detail decision while staying within React constraint. | FR-03, FR-06, FR-24, NFR-01, US-17 |
 | ARCH-02 | Put all trusted workflow and role/action validation in Cloudflare Worker, not only in frontend conditional rendering. | Prevents Role-Based UI from becoming the only access boundary. | FR-07, FR-11, FR-14, FR-15, FR-19, FR-20, FR-21, FR-24, BR-02, BR-03, BR-11, BR-12, NFR-02 |
 | ARCH-03 | Treat D1 as the single persistent data store for reports, assignments, comments/notes, status history, and dashboard source data. | Meets D1 requirement and avoids paid/out-of-scope storage services. | FR-01, FR-16, FR-17, FR-18, FR-22, FR-23, NFR-03, NFR-04 |
-| ARCH-04 | Separate query responsibilities from command responsibilities at the API design level. | Skill 07 can define contracts cleanly for list/detail/dashboard reads versus workflow-changing commands. | FR-03 sampai FR-06, FR-07 sampai FR-21 |
+| ARCH-04 | Separate query responsibilities from command responsibilities at the API design level. | Skill 07 can define contracts cleanly for list/detail/dashboard reads versus workflow-changing commands and future tests can verify reads separately from state-changing commands. | FR-03 sampai FR-06, FR-07 sampai FR-21, NFR-06 |
 | ARCH-05 | Preserve strict 6 statuses and model unresolved confirmation detail only as `Needs Human Review`, not a seventh status. | Protects BR-02 and CR-05-01 conditions. | BR-02, BR-11, FR-19, FR-20, CR-05-01 |
 | ARCH-06 | Use append-only Riwayat Status for every status transition. | Supports auditability and required history fields. | FR-18, BR-08, US-05, US-10 |
 | ARCH-07 | Keep Komentar Publik and Catatan Internal as separate visibility concepts. | Supports approved public/internal communication boundary. | FR-16, FR-17, BR-09, BR-10, US-11, US-12 |
@@ -200,6 +202,9 @@ Traceability: NFR-02, NFR-03, NFR-04, NFR-05, NFR-09.
 | ARCH-09 | Apply component-driven frontend design without final wireframes or design tokens. | Prepares Skill 08 while respecting Skill 06 boundary. | FR-24, NFR-01 |
 | ARCH-10 | Apply accessibility-first constraints at architecture level. | Ensures Skill 08 has explicit accessibility input for forms, status feedback, filters, detail panel, and dashboard. | NFR-01, US-01 sampai US-17 |
 | ARCH-11 | Stay open design compatible without adding UI dependencies in Skill 06. | Allows later reference to OpenUI, Radix UI, shadcn/ui, or Figma Community patterns without premature implementation decisions. | NFR-01, FR-24 |
+| ARCH-12 | Use Cloudflare/Wrangler deployment boundary from `wrangler.jsonc`. | Keeps Worker entrypoint, SPA asset handling, D1 binding, free-tier compatibility, and secret safety visible before implementation/deployment phases. | NFR-02, NFR-03, NFR-04, NFR-05, NFR-09 |
+| ARCH-13 | Treat traceability and Human Review as architecture quality gates. | Skill 06 must update traceability and remain pending until Human Review approves before Skill 07 starts. | NFR-07, NFR-08 |
+| ARCH-14 | Keep Administrator as owner of category and priority decisions while Worker validates controlled values. | Supports Administrator final decision authority, Lecturer HIGH suggestion, fixed category vocabulary, and priority value constraints without deciding unresolved category list or priority criteria. | FR-08, FR-09, FR-10, BR-04, BR-05, BR-06, BR-07, OPEN-05, OPEN-06 |
 
 ## Traceability Links
 
@@ -208,7 +213,7 @@ Traceability: NFR-02, NFR-03, NFR-04, NFR-05, NFR-09.
 | ARCH-01 | Frontend React application shell, role simulator, master-detail structure. | FR-03, FR-06, FR-24, NFR-01, US-02, US-05, US-17 |
 | ARCH-02 | Backend/API boundary and validation responsibility. | FR-07, FR-11, FR-14, FR-15, FR-19, FR-20, FR-21, FR-24, NFR-02, BR-02, BR-03, BR-11, BR-12 |
 | ARCH-03 | D1 persistence boundary. | FR-01, FR-02, FR-16, FR-17, FR-18, FR-22, FR-23, NFR-03 |
-| ARCH-04 | Query/command split for future API design. | FR-03 sampai FR-23 |
+| ARCH-04 | Query/command split for future API design and testable API behavior. | FR-03 sampai FR-23, NFR-06 |
 | ARCH-05 | Strict workflow status architecture. | BR-01, BR-02, BR-03, BR-11, BR-12, US-01, US-06, US-08, US-10, US-13, US-14, US-15 |
 | ARCH-06 | Status history architecture. | FR-18, BR-08, US-05, US-10 |
 | ARCH-07 | Public comment and internal note boundary. | FR-16, FR-17, BR-09, BR-10, US-11, US-12 |
@@ -217,6 +222,8 @@ Traceability: NFR-02, NFR-03, NFR-04, NFR-05, NFR-09.
 | ARCH-10 | Accessibility-first frontend constraint. | NFR-01, US-01 sampai US-17 |
 | ARCH-11 | Open design compatible constraint. | FR-24, NFR-01 |
 | ARCH-12 | Cloudflare deployment architecture. | NFR-02, NFR-03, NFR-04, NFR-05, NFR-09 |
+| ARCH-13 | Traceability and Human Review quality gate. | NFR-07, NFR-08 |
+| ARCH-14 | Category, priority, and Lecturer priority suggestion decision boundary. | FR-08, FR-09, FR-10, BR-04, BR-05, BR-06, BR-07, OPEN-05, OPEN-06 |
 
 ## Risks, Assumptions, and Open Questions
 

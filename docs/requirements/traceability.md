@@ -16,9 +16,9 @@ Traceability ini mencatat relasi requirement ke user story dari Skill 03, priori
 | FR-05 | US-04 | ARCH-01, ARCH-04 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03; Design Skill 06 Needs Human Review |
 | FR-06 | US-05 | ARCH-01, ARCH-04 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03; Design Skill 06 Needs Human Review |
 | FR-07 | US-06 | ARCH-02, ARCH-05 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03; Design Skill 06 Needs Human Review |
-| FR-08 | US-07 | ARCH-02, ARCH-04 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03; Design Skill 06 Needs Human Review |
-| FR-09 | US-07 | ARCH-02, ARCH-04 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03; Design Skill 06 Needs Human Review |
-| FR-10 | US-07 | ARCH-02, ARCH-04 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03; Design Skill 06 Needs Human Review |
+| FR-08 | US-07 | ARCH-02, ARCH-04, ARCH-14 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03; Design Skill 06 Needs Human Review |
+| FR-09 | US-07 | ARCH-02, ARCH-04, ARCH-14 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03; Design Skill 06 Needs Human Review |
+| FR-10 | US-07 | ARCH-02, ARCH-04, ARCH-14 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03; Design Skill 06 Needs Human Review |
 | FR-11 | US-08 | ARCH-02, ARCH-05 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03; Design Skill 06 Needs Human Review |
 | FR-12 | US-09 | ARCH-02, ARCH-04 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03; Design Skill 06 Needs Human Review |
 | FR-13 | US-09 | ARCH-02, ARCH-05 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03; Design Skill 06 Needs Human Review |
@@ -38,9 +38,9 @@ Traceability ini mencatat relasi requirement ke user story dari Skill 03, priori
 | NFR-03 | Semua user story | ARCH-03, ARCH-12 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03; Design Skill 06 Needs Human Review |
 | NFR-04 | Semua user story | ARCH-03, ARCH-12 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03; Design Skill 06 Needs Human Review |
 | NFR-05 | Semua user story | ARCH-12 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03; Design Skill 06 Needs Human Review |
-| NFR-06 | Semua user story | ARCH-10 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03; Design Skill 06 Needs Human Review |
-| NFR-07 | Semua user story | ARCH-01 sampai ARCH-12 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03; Design Skill 06 Needs Human Review |
-| NFR-08 | Semua user story | ARCH-01 sampai ARCH-12 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03; Design Skill 06 Needs Human Review |
+| NFR-06 | Semua user story | ARCH-04 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03; Design Skill 06 Needs Human Review |
+| NFR-07 | Semua user story | ARCH-13 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03; Design Skill 06 Needs Human Review |
+| NFR-08 | Semua user story | ARCH-13 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03; Design Skill 06 Needs Human Review |
 | NFR-09 | Semua user story | ARCH-12 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03; Design Skill 06 Needs Human Review |
 
 ## Business Rule Links
@@ -78,6 +78,8 @@ Status: Needs Human Review. Link design berikut ditautkan dari `docs/design/arch
 | ARCH-10 | Accessibility-first frontend constraint | NFR-01, US-01 sampai US-17 | Draft Skill 06 - Needs Human Review |
 | ARCH-11 | Open design compatible frontend constraint | FR-24, NFR-01 | Draft Skill 06 - Needs Human Review |
 | ARCH-12 | Cloudflare deployment architecture | NFR-02, NFR-03, NFR-04, NFR-05, NFR-09 | Draft Skill 06 - Needs Human Review |
+| ARCH-13 | Traceability and Human Review quality gate | NFR-07, NFR-08 | Draft Skill 06 - Needs Human Review |
+| ARCH-14 | Category, priority, and Lecturer priority suggestion decision boundary | FR-08, FR-09, FR-10, BR-04, BR-05, BR-06, BR-07, OPEN-05, OPEN-06 | Draft Skill 06 - Needs Human Review |
 
 ## Skill 04 Prioritization Links
 
