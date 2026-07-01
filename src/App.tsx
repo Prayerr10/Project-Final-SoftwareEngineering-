@@ -14,6 +14,22 @@ type ServiceRequest = {
 	reporterType: string;
 };
 
+type StatusHistoryEntry = {
+	id: string;
+	fromStatus: string | null;
+	toStatus: string;
+	changedByRole: string;
+	note: string;
+	createdAt: string;
+};
+
+type RequestDetail = ServiceRequest & {
+	description: string;
+	createdAt: string;
+	updatedAt: string;
+	statusHistory: StatusHistoryEntry[];
+};
+
 type HealthResponse = {
 	status?: string;
 	checks?: {
@@ -24,6 +40,15 @@ type HealthResponse = {
 
 export default function App() {
 	const [requests, setRequests] = useState<ServiceRequest[]>([]);
+	const [requestListEmpty, setRequestListEmpty] = useState(true);
+	const [search, setSearch] = useState("");
+	const [statusFilter, setStatusFilter] = useState("");
+	const [priorityFilter, setPriorityFilter] = useState("");
+	const [selectedRequestId, setSelectedRequestId] = useState("");
+	const [selectedRequest, setSelectedRequest] = useState<RequestDetail | null>(
+		null,
+	);
+	const [detailMessage, setDetailMessage] = useState("");
 	const [reporterName, setReporterName] = useState("");
 	const [reporterType, setReporterType] = useState("STUDENT");
 	const [title, setTitle] = useState("");
@@ -36,9 +61,44 @@ export default function App() {
 	);
 
 	async function loadRequests() {
-		const response = await fetch("/api/requests");
+		const params = new URLSearchParams();
+
+		if (search.trim()) {
+			params.set("search", search.trim());
+		}
+
+		if (statusFilter) {
+			params.set("status", statusFilter);
+		}
+
+		if (priorityFilter) {
+			params.set("priority", priorityFilter);
+		}
+
+		const queryString = params.toString();
+		const response = await fetch(
+			`/api/requests${queryString ? `?${queryString}` : ""}`,
+		);
 		const result = await response.json();
 		setRequests(result.data ?? []);
+		setRequestListEmpty(result.meta?.empty ?? (result.data ?? []).length === 0);
+	}
+
+	async function loadRequestDetail(requestId: string) {
+		setSelectedRequestId(requestId);
+		setDetailMessage("Memuat detail laporan.");
+		setSelectedRequest(null);
+
+		const response = await fetch(`/api/requests/${encodeURIComponent(requestId)}`);
+		const result = await response.json();
+
+		if (!response.ok) {
+			setDetailMessage(result.error?.message ?? "Detail laporan gagal dimuat.");
+			return;
+		}
+
+		setSelectedRequest(result.data);
+		setDetailMessage("");
 	}
 
 	async function loadFoundationStatus() {
@@ -66,6 +126,10 @@ export default function App() {
 		loadFoundationStatus();
 		loadRequests();
 	}, []);
+
+	useEffect(() => {
+		loadRequests();
+	}, [search, statusFilter, priorityFilter]);
 
 	async function submitRequest(event: React.FormEvent) {
 		event.preventDefault();
@@ -99,6 +163,12 @@ export default function App() {
 		setDescription("");
 		setLocation("");
 		await loadRequests();
+	}
+
+	function clearFilters() {
+		setSearch("");
+		setStatusFilter("");
+		setPriorityFilter("");
 	}
 
 	return (
@@ -187,48 +257,174 @@ export default function App() {
 					{message && <p className="form-message">{message}</p>}
 				</form>
 
-				<section className="request-list">
-					<h2>Daftar Laporan</h2>
-
-					{requests.length === 0 ? (
-						<p className="empty-state">Belum ada laporan.</p>
-					) : (
-						<div className="table-wrap">
-							<table>
-								<thead>
-									<tr>
-										<th>Nomor</th>
-										<th>Judul</th>
-										<th>Lokasi</th>
-										<th>Kategori</th>
-										<th>Pelapor</th>
-										<th>Prioritas</th>
-										<th>Status</th>
-									</tr>
-								</thead>
-								<tbody>
-									{requests.map((item) => (
-										<tr key={item.id}>
-											<td>{item.requestNumber}</td>
-											<td>{item.title}</td>
-											<td>{item.location}</td>
-											<td>{item.category}</td>
-											<td>
-												{item.reporterName} ({item.reporterType})
-											</td>
-											<td>
-												{item.priority}
-												{item.prioritySuggestion
-													? `, saran ${item.prioritySuggestion}`
-													: ""}
-											</td>
-											<td>{item.status}</td>
-										</tr>
-									))}
-								</tbody>
-							</table>
+				<section className="request-workspace" aria-labelledby="workspace-title">
+					<div className="workspace-header">
+						<div>
+							<p className="eyebrow">Request Workspace</p>
+							<h2 id="workspace-title">Daftar dan Detail Laporan</h2>
 						</div>
-					)}
+						<button type="button" className="secondary-button" onClick={loadRequests}>
+							Refresh
+						</button>
+					</div>
+
+					<div className="filter-bar" aria-label="Filter daftar laporan">
+						<label>
+							Cari laporan
+							<input
+								value={search}
+								onChange={(event) => setSearch(event.target.value)}
+								placeholder="Nomor, judul, lokasi, kategori, pelapor"
+							/>
+						</label>
+
+						<label>
+							Filter Status
+							<select
+								value={statusFilter}
+								onChange={(event) => setStatusFilter(event.target.value)}
+							>
+								<option value="">Semua status</option>
+								<option value="SUBMITTED">SUBMITTED</option>
+								<option value="UNDER_REVIEW">UNDER_REVIEW</option>
+								<option value="ASSIGNED">ASSIGNED</option>
+								<option value="IN_PROGRESS">IN_PROGRESS</option>
+								<option value="RESOLVED">RESOLVED</option>
+								<option value="CLOSED">CLOSED</option>
+							</select>
+						</label>
+
+						<label>
+							Filter Prioritas
+							<select
+								value={priorityFilter}
+								onChange={(event) => setPriorityFilter(event.target.value)}
+							>
+								<option value="">Semua prioritas</option>
+								<option value="LOW">LOW</option>
+								<option value="MEDIUM">MEDIUM</option>
+								<option value="HIGH">HIGH</option>
+								<option value="URGENT">URGENT</option>
+							</select>
+						</label>
+
+						<button type="button" className="secondary-button" onClick={clearFilters}>
+							Bersihkan Filter
+						</button>
+					</div>
+
+					<div className="workspace-grid">
+						<section className="request-list" aria-label="Daftar laporan">
+							<h3>Daftar Laporan</h3>
+
+							{requestListEmpty ? (
+								<p className="empty-state">
+									{search || statusFilter || priorityFilter
+										? "Tidak ada laporan yang cocok dengan pencarian atau filter."
+										: "Belum ada laporan."}
+								</p>
+							) : (
+								<div className="request-stack">
+									{requests.map((item) => (
+										<button
+											type="button"
+											key={item.id}
+											className={
+												item.id === selectedRequestId
+													? "request-row selected"
+													: "request-row"
+											}
+											onClick={() => loadRequestDetail(item.id)}
+										>
+											<span className="request-row-main">
+												<strong>{item.requestNumber}</strong>
+												<span>{item.title}</span>
+												<small>
+													{item.location} - {item.category}
+												</small>
+											</span>
+											<span className="request-row-meta">
+												<span>{item.status}</span>
+												<span>{item.priority}</span>
+											</span>
+										</button>
+									))}
+								</div>
+							)}
+						</section>
+
+						<section className="request-detail" aria-live="polite">
+							<h3>Detail Laporan</h3>
+							{!selectedRequest ? (
+								<div className="empty-state">
+									<p>
+										{detailMessage ||
+											"Pilih laporan dari daftar untuk melihat detail."}
+									</p>
+									<h4>Riwayat Status</h4>
+									<p>Riwayat status akan tampil setelah laporan dipilih.</p>
+								</div>
+							) : (
+								<article>
+									<header className="detail-header">
+										<div>
+											<strong>{selectedRequest.requestNumber}</strong>
+											<h4>{selectedRequest.title}</h4>
+										</div>
+										<div className="badge-group">
+											<span>{selectedRequest.status}</span>
+											<span>{selectedRequest.priority}</span>
+										</div>
+									</header>
+
+									<dl className="detail-list">
+										<div>
+											<dt>Lokasi</dt>
+											<dd>{selectedRequest.location}</dd>
+										</div>
+										<div>
+											<dt>Kategori</dt>
+											<dd>{selectedRequest.category}</dd>
+										</div>
+										<div>
+											<dt>Pelapor</dt>
+											<dd>
+												{selectedRequest.reporterName} (
+												{selectedRequest.reporterType})
+											</dd>
+										</div>
+										<div>
+											<dt>Deskripsi</dt>
+											<dd>{selectedRequest.description}</dd>
+										</div>
+									</dl>
+
+									<section className="status-history">
+										<h4>Riwayat Status</h4>
+										{selectedRequest.statusHistory.length === 0 ? (
+											<p>Belum ada riwayat status.</p>
+										) : (
+											<ol>
+												{selectedRequest.statusHistory.map((history) => (
+													<li key={history.id}>
+														<strong>{history.toStatus}</strong>
+														<span>
+															{history.fromStatus
+																? ` dari ${history.fromStatus}`
+																: " status awal"}
+														</span>
+														<small>
+															{history.changedByRole} - {history.note}
+														</small>
+													</li>
+												))}
+											</ol>
+										)}
+									</section>
+								</article>
+							)}
+						</section>
+					</div>
 				</section>
 			</section>
 		</main>
