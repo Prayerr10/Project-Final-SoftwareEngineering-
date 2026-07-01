@@ -179,6 +179,21 @@ type TechnicianTaskRow = RequestSummaryRow & {
 	accepted_at: string | null;
 };
 
+type CountRow = {
+	label: string;
+	total: number;
+};
+
+type TechnicianWorkloadRow = {
+	technician_id: string;
+	technician_name: string;
+	specialization: string | null;
+	total_current_assignments: number;
+	assigned_count: number;
+	in_progress_count: number;
+	resolved_count: number;
+};
+
 function toApiRequest(row: RequestSummaryRow) {
 	return {
 		id: row.id,
@@ -226,6 +241,37 @@ function toApiTechnicianTask(row: TechnicianTaskRow) {
 			technicianName: row.technician_name,
 			assignedAt: row.assigned_at,
 			acceptedAt: row.accepted_at,
+		},
+	};
+}
+
+function toCountMap(rows: CountRow[]) {
+	return new Map(
+		rows.map((row) => [row.label, Number(row.total)] as const),
+	);
+}
+
+function toCountSeries(labels: readonly string[], rows: CountRow[]) {
+	const counts = toCountMap(rows);
+
+	return labels.map((label) => ({
+		label,
+		count: counts.get(label) ?? 0,
+	}));
+}
+
+function toApiTechnicianWorkload(row: TechnicianWorkloadRow) {
+	return {
+		technicianId: row.technician_id,
+		technicianName: row.technician_name,
+		specialization: row.specialization,
+		sourceData: {
+			totalCurrentAssignments: Number(row.total_current_assignments),
+			byActiveStatus: {
+				assigned: Number(row.assigned_count),
+				inProgress: Number(row.in_progress_count),
+				resolved: Number(row.resolved_count),
+			},
 		},
 	};
 }
@@ -328,6 +374,81 @@ export default {
 				checks: {
 					api: "ok",
 					d1: "ok",
+				},
+			});
+		}
+
+		if (url.pathname === "/api/dashboard/summary" && request.method === "GET") {
+			const role = url.searchParams.get("role")?.trim();
+
+			if (role !== "FACILITY_MANAGER" && role !== "ADMINISTRATOR") {
+				return forbidden();
+			}
+
+			const totalRow = (await env.DB.prepare(`
+				SELECT COUNT(*) AS total
+				FROM service_requests
+			`).first()) as { total: number } | null;
+
+			const statusResult = await env.DB.prepare(`
+				SELECT status AS label, COUNT(*) AS total
+				FROM service_requests
+				GROUP BY status
+			`).all();
+
+			const priorityResult = await env.DB.prepare(`
+				SELECT priority AS label, COUNT(*) AS total
+				FROM service_requests
+				GROUP BY priority
+			`).all();
+
+			const categoryResult = await env.DB.prepare(`
+				SELECT category AS label, COUNT(*) AS total
+				FROM service_requests
+				GROUP BY category
+			`).all();
+
+			const workloadResult = await env.DB.prepare(`
+				SELECT technicians.id AS technician_id,
+					technicians.name AS technician_name,
+					technicians.specialization,
+					COUNT(service_requests.id) AS total_current_assignments,
+					SUM(CASE WHEN service_requests.status = 'ASSIGNED' THEN 1 ELSE 0 END) AS assigned_count,
+					SUM(CASE WHEN service_requests.status = 'IN_PROGRESS' THEN 1 ELSE 0 END) AS in_progress_count,
+					SUM(CASE WHEN service_requests.status = 'RESOLVED' THEN 1 ELSE 0 END) AS resolved_count
+				FROM technicians
+				LEFT JOIN request_assignments
+					ON request_assignments.technician_id = technicians.id
+					AND request_assignments.is_current = 1
+				LEFT JOIN service_requests
+					ON service_requests.id = request_assignments.request_id
+					AND service_requests.status IN ('ASSIGNED', 'IN_PROGRESS', 'RESOLVED')
+				WHERE technicians.is_active = 1
+				GROUP BY technicians.id, technicians.name, technicians.specialization
+				ORDER BY technicians.name ASC
+			`).all();
+
+			return json({
+				data: {
+					totalRequests: Number(totalRow?.total ?? 0),
+					byStatus: toCountSeries(
+						STATUSES,
+						statusResult.results as unknown as CountRow[],
+					),
+					byPriority: toCountSeries(
+						PRIORITIES,
+						priorityResult.results as unknown as CountRow[],
+					),
+					byCategory: toCountSeries(
+						CATEGORIES,
+						categoryResult.results as unknown as CountRow[],
+					),
+					technicianWorkload: workloadResult.results.map((row) =>
+						toApiTechnicianWorkload(row as unknown as TechnicianWorkloadRow),
+					),
+					workloadBasis:
+						"Source data: current assignments grouped by active request statuses; final workload formula remains OPEN-07.",
+					openQuestions: ["OPEN-07", "OPEN-10"],
 				},
 			});
 		}

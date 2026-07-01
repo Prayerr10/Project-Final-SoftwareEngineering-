@@ -75,8 +75,47 @@ type Technician = {
 	isActive: boolean;
 };
 
+type DashboardCount = {
+	label: string;
+	count: number;
+};
+
+type DashboardWorkload = {
+	technicianId: string;
+	technicianName: string;
+	specialization: string | null;
+	sourceData: {
+		totalCurrentAssignments: number;
+		byActiveStatus: {
+			assigned: number;
+			inProgress: number;
+			resolved: number;
+		};
+	};
+};
+
+type DashboardSummary = {
+	totalRequests: number;
+	byStatus: DashboardCount[];
+	byPriority: DashboardCount[];
+	byCategory: DashboardCount[];
+	technicianWorkload: DashboardWorkload[];
+	workloadBasis: string;
+	openQuestions: string[];
+};
+
 const categories = ["Internet", "AC", "Peralatan Kelas", "Kebersihan", "Lainnya"];
 const priorities = ["LOW", "MEDIUM", "HIGH", "URGENT"];
+const emptyDashboardSummary: DashboardSummary = {
+	totalRequests: 0,
+	byStatus: [],
+	byPriority: [],
+	byCategory: [],
+	technicianWorkload: [],
+	workloadBasis:
+		"Source data: current assignments grouped by active request statuses; final workload formula remains OPEN-07.",
+	openQuestions: ["OPEN-07", "OPEN-10"],
+};
 const technicianContextOptions = [
 	{
 		id: "tech-audio-visual",
@@ -91,6 +130,32 @@ const technicianContextOptions = [
 		name: "Sari Teknisi",
 	},
 ];
+
+function SummaryList({
+	title,
+	items,
+}: {
+	title: string;
+	items: DashboardCount[];
+}) {
+	return (
+		<section className="summary-list">
+			<h3>{title}</h3>
+			{items.length === 0 ? (
+				<p className="empty-state">Belum ada data {title.toLowerCase()}.</p>
+			) : (
+				<ul>
+					{items.map((item) => (
+						<li key={item.label}>
+							<span>{item.label}</span>
+							<strong>{item.count}</strong>
+						</li>
+					))}
+				</ul>
+			)}
+		</section>
+	);
+}
 
 export default function App() {
 	const [requests, setRequests] = useState<ServiceRequest[]>([]);
@@ -124,6 +189,12 @@ export default function App() {
 	const [commentBody, setCommentBody] = useState("");
 	const [internalNoteBody, setInternalNoteBody] = useState("");
 	const [communicationMessage, setCommunicationMessage] = useState("");
+	const [dashboardSummary, setDashboardSummary] = useState<DashboardSummary>(
+		emptyDashboardSummary,
+	);
+	const [dashboardMessage, setDashboardMessage] = useState(
+		"Dashboard menunggu role Manajer Fasilitas atau Administrator.",
+	);
 	const [confirmationNote, setConfirmationNote] = useState("");
 	const [confirmationMessage, setConfirmationMessage] = useState("");
 	const [closeNote, setCloseNote] = useState("");
@@ -233,6 +304,37 @@ export default function App() {
 		);
 	}
 
+	async function loadDashboardSummary() {
+		if (activeRole !== "FACILITY_MANAGER" && activeRole !== "ADMINISTRATOR") {
+			setDashboardSummary(emptyDashboardSummary);
+			setDashboardMessage(
+				"Dashboard hanya tersedia untuk Manajer Fasilitas dan Administrator.",
+			);
+			return;
+		}
+
+		setDashboardMessage("Memuat dashboard operasional.");
+
+		const response = await fetch(
+			`/api/dashboard/summary?${new URLSearchParams({ role: activeRole })}`,
+		);
+		const result = await response.json();
+
+		if (!response.ok) {
+			setDashboardMessage(
+				result.error?.message ?? "Dashboard operasional gagal dimuat.",
+			);
+			return;
+		}
+
+		setDashboardSummary(result.data ?? emptyDashboardSummary);
+		setDashboardMessage(
+			(result.data?.totalRequests ?? 0) === 0
+				? "Belum ada laporan untuk diringkas."
+				: "",
+		);
+	}
+
 	async function loadFoundationStatus() {
 		try {
 			const response = await fetch("/api/health");
@@ -270,6 +372,10 @@ export default function App() {
 	useEffect(() => {
 		loadTechnicianTasks();
 	}, [activeRole, selectedTechnicianId]);
+
+	useEffect(() => {
+		loadDashboardSummary();
+	}, [activeRole]);
 
 	useEffect(() => {
 		if (selectedRequestId) {
@@ -756,6 +862,93 @@ export default function App() {
 								))}
 							</div>
 						)}
+				</section>
+
+				<section
+					className="dashboard-panel"
+					aria-labelledby="dashboard-title"
+					aria-live="polite"
+					hidden={
+						activeRole !== "FACILITY_MANAGER" &&
+						activeRole !== "ADMINISTRATOR"
+					}
+				>
+					<div className="workspace-header">
+						<div>
+							<p className="eyebrow">Dashboard Summary</p>
+							<h2 id="dashboard-title">Dashboard Operasional</h2>
+						</div>
+						<button
+							type="button"
+							className="secondary-button"
+							onClick={loadDashboardSummary}
+						>
+							Refresh
+						</button>
+					</div>
+
+					<div className="dashboard-total">
+						<span>Total Laporan</span>
+						<strong>{dashboardSummary.totalRequests}</strong>
+					</div>
+
+					{dashboardMessage && <p className="form-message">{dashboardMessage}</p>}
+
+					<div className="dashboard-grid">
+						<SummaryList title="Status" items={dashboardSummary.byStatus} />
+						<SummaryList title="Prioritas" items={dashboardSummary.byPriority} />
+						<SummaryList title="Kategori" items={dashboardSummary.byCategory} />
+					</div>
+
+					<section className="workload-summary">
+						<h3>Workload Source Data per Teknisi</h3>
+						<p className="open-question-note">
+							{dashboardSummary.workloadBasis}
+						</p>
+						<p className="open-question-note">
+							OPEN-10: dashboard tidak menampilkan konten Catatan Internal.
+						</p>
+
+						{dashboardSummary.technicianWorkload.length === 0 ? (
+							<p className="empty-state">
+								Belum ada source data assignment aktif untuk Teknisi.
+							</p>
+						) : (
+							<div className="request-stack">
+								{dashboardSummary.technicianWorkload.map((workload) => (
+									<article
+										className="workload-row"
+										key={workload.technicianId}
+									>
+										<header>
+											<strong>{workload.technicianName}</strong>
+											<span>
+												{workload.specialization ?? "Spesialisasi belum diisi"}
+											</span>
+										</header>
+										<dl className="workload-metrics">
+											<div>
+												<dt>Current assignments</dt>
+												<dd>{workload.sourceData.totalCurrentAssignments}</dd>
+											</div>
+											<div>
+												<dt>ASSIGNED</dt>
+												<dd>{workload.sourceData.byActiveStatus.assigned}</dd>
+											</div>
+											<div>
+												<dt>IN_PROGRESS</dt>
+												<dd>{workload.sourceData.byActiveStatus.inProgress}</dd>
+											</div>
+											<div>
+												<dt>RESOLVED</dt>
+												<dd>{workload.sourceData.byActiveStatus.resolved}</dd>
+											</div>
+										</dl>
+									</article>
+								))}
+							</div>
+						)}
+					</section>
 				</section>
 
 				<section className="request-workspace" aria-labelledby="workspace-title">
