@@ -131,6 +131,39 @@ const technicianContextOptions = [
 	},
 ];
 
+function roleActionSummary(role: string) {
+	if (role === "ADMINISTRATOR") {
+		return [
+			"Review laporan",
+			"Klasifikasi kategori dan prioritas",
+			"Tugaskan teknisi",
+			"Tutup atau buka kembali laporan",
+			"Lihat dashboard operasional",
+		];
+	}
+
+	if (role === "TECHNICIAN") {
+		return [
+			"Lihat tugas teknisi",
+			"Terima tugas",
+			"Mulai progres",
+			"Tandai selesai",
+			"Catatan internal",
+		];
+	}
+
+	if (role === "FACILITY_MANAGER") {
+		return ["Lihat dashboard operasional", "Lihat ringkasan workload source data"];
+	}
+
+	return [
+		"Buat laporan",
+		"Lihat detail laporan",
+		"Tambah komentar publik",
+		"Konfirmasi hasil resolved",
+	];
+}
+
 function SummaryList({
 	title,
 	items,
@@ -666,6 +699,14 @@ export default function App() {
 						<option value="FACILITY_MANAGER">Manajer Fasilitas</option>
 					</select>
 				</label>
+				<section className="role-action-summary" aria-live="polite">
+					<h2>Aksi tersedia untuk role aktif</h2>
+					<ul>
+						{roleActionSummary(activeRole).map((action) => (
+							<li key={action}>{action}</li>
+						))}
+					</ul>
+				</section>
 				<section className="foundation-status" aria-live="polite">
 					<h2>Status Fondasi</h2>
 					<p>{foundationStatus}</p>
