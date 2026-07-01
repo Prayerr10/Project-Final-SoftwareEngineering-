@@ -1,64 +1,64 @@
 # Traceability Matrix
 
-| Review Status | Human Reviewed & Approved through Skill 07 |
+| Review Status | Human Reviewed & Approved through Skill 08 |
 | --- | --- |
-| Skill AI | Skill 03 - Specification (`requirements-elaboration-and-specification`) |
-| Human decision | Disetujui through Skill 07 |
+| Skill AI | Skill 03 through Skill 08 traceability updates |
+| Human decision | Disetujui through Skill 08 |
 
-Traceability ini mencatat relasi requirement ke user story dari Skill 03, prioritas Skill 04, validasi Skill 05, update design level Skill 06, dan update design level Skill 07. Kolom Issue, Kode, dan Test tetap menggunakan template dari `instruksi-dosen.md`, tetapi belum diisi karena tahap tersebut belum dikerjakan.
+Traceability ini mencatat relasi requirement ke user story dari Skill 03, prioritas Skill 04, validasi Skill 05, update design level Skill 06, update design level Skill 07, dan update design level Skill 08. Kolom Issue, Kode, dan Test tetap menggunakan template dari `instruksi-dosen.md`, tetapi belum diisi karena tahap tersebut belum dikerjakan.
 
-| **Requirement** | **User Story** | **Design Skill 06** | **Design Skill 07** | **Issue** | **Kode** | **Test** | **Status** |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| FR-01 | US-01 | ARCH-03, ARCH-05 | DB-01, DB-04, API-03 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 07 |
-| FR-02 | US-01 | ARCH-03 | DB-01, API-03 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 07 |
-| FR-03 | US-02 | ARCH-01, ARCH-04 | DB-01, API-02 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 07 |
-| FR-04 | US-03 | ARCH-01, ARCH-04 | DB-01, API-02 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 07 |
-| FR-05 | US-04 | ARCH-01, ARCH-04 | DB-01, API-02 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 07 |
-| FR-06 | US-05 | ARCH-01, ARCH-04 | DB-01, DB-04, DB-05, DB-06, API-04 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 07 |
-| FR-07 | US-06 | ARCH-02, ARCH-05 | DB-01, DB-04, API-05 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 07 |
-| FR-08 | US-07 | ARCH-02, ARCH-04, ARCH-14 | DB-01, API-06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 07 |
-| FR-09 | US-07 | ARCH-02, ARCH-04, ARCH-14 | DB-01, API-06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 07 |
-| FR-10 | US-07 | ARCH-02, ARCH-04, ARCH-14 | DB-01, API-03, API-06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 07 |
-| FR-11 | US-08 | ARCH-02, ARCH-05 | DB-02, DB-03, DB-04, API-07 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 07 |
-| FR-12 | US-09 | ARCH-02, ARCH-04 | DB-02, DB-03, API-08 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 07 |
-| FR-13 | US-09 | ARCH-02, ARCH-05 | DB-03, API-09 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 07 |
-| FR-14 | US-10 | ARCH-02, ARCH-05, ARCH-06 | DB-03, DB-04, API-10 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 07 |
-| FR-15 | US-10 | ARCH-02, ARCH-05, ARCH-06 | DB-03, DB-04, API-11 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 07 |
-| FR-16 | US-11 | ARCH-03, ARCH-07 | DB-05, API-12 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 07 |
-| FR-17 | US-12 | ARCH-03, ARCH-07 | DB-06, API-13 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 07 |
-| FR-18 | US-05, US-10 | ARCH-03, ARCH-06 | DB-04, API-03, API-05, API-07, API-10, API-11, API-15, API-16 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 07 |
-| FR-19 | US-13 | ARCH-02, ARCH-05 | DB-07, API-14 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 07 |
-| FR-20 | US-14 | ARCH-02, ARCH-05 | DB-01, DB-07, DB-04, API-15 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 07 |
-| FR-21 | US-15 | ARCH-02, ARCH-05 | DB-04, API-16 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 07 |
-| FR-22 | US-16 | ARCH-03, ARCH-08 | DB-01, DB-02, DB-03, DB-04, API-17 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 07 |
-| FR-23 | US-16 | ARCH-03, ARCH-08 | DB-02, DB-03, API-08, API-17 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 07 |
-| FR-24 | US-17 | ARCH-01, ARCH-02, ARCH-09, ARCH-11 | API-02 sampai API-17 role validation | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 07 |
-| NFR-01 | Semua user story | ARCH-01, ARCH-09, ARCH-10, ARCH-11 | API response supports React data states | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 07 |
-| NFR-02 | Semua user story | ARCH-02, ARCH-12 | API-01 sampai API-17 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 07 |
-| NFR-03 | Semua user story | ARCH-03, ARCH-12 | DB-01 sampai DB-07 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 07 |
-| NFR-04 | Semua user story | ARCH-03, ARCH-12 | D1-only database design; no paid storage | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 07 |
-| NFR-05 | Semua user story | ARCH-12 | Skill 07 branch and PR workflow | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 07 |
-| NFR-06 | Semua user story | ARCH-04 | Contract-first validation and error contracts | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 07 |
-| NFR-07 | Semua user story | ARCH-13 | Skill 07 traceability links added | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 07 |
-| NFR-08 | Semua user story | ARCH-13 | `evidence/human-review-database-api.md` | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 07 |
-| NFR-09 | Semua user story | ARCH-12 | No secret-bearing design or config changes | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 07 |
+| **Requirement** | **User Story** | **Design Skill 06** | **Design Skill 07** | **Design Skill 08** | **Issue** | **Kode** | **Test** | **Status** |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| FR-01 | US-01 | ARCH-03, ARCH-05 | DB-01, DB-04, API-03 | UI-03, UI-09 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 08 |
+| FR-02 | US-01 | ARCH-03 | DB-01, API-03 | UI-03, UI-09 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 08 |
+| FR-03 | US-02 | ARCH-01, ARCH-04 | DB-01, API-02 | UI-02, UI-09 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 08 |
+| FR-04 | US-03 | ARCH-01, ARCH-04 | DB-01, API-02 | UI-02, UI-09 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 08 |
+| FR-05 | US-04 | ARCH-01, ARCH-04 | DB-01, API-02 | UI-02, UI-09 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 08 |
+| FR-06 | US-05 | ARCH-01, ARCH-04 | DB-01, DB-04, DB-05, DB-06, API-04 | UI-02, UI-04 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 08 |
+| FR-07 | US-06 | ARCH-02, ARCH-05 | DB-01, DB-04, API-05 | UI-05 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 08 |
+| FR-08 | US-07 | ARCH-02, ARCH-04, ARCH-14 | DB-01, API-06 | UI-05, UI-09 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 08 |
+| FR-09 | US-07 | ARCH-02, ARCH-04, ARCH-14 | DB-01, API-06 | UI-05, UI-09 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 08 |
+| FR-10 | US-07 | ARCH-02, ARCH-04, ARCH-14 | DB-01, API-03, API-06 | UI-03, UI-05, UI-09 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 08 |
+| FR-11 | US-08 | ARCH-02, ARCH-05 | DB-02, DB-03, DB-04, API-07 | UI-05 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 08 |
+| FR-12 | US-09 | ARCH-02, ARCH-04 | DB-02, DB-03, API-08 | UI-06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 08 |
+| FR-13 | US-09 | ARCH-02, ARCH-05 | DB-03, API-09 | UI-06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 08 |
+| FR-14 | US-10 | ARCH-02, ARCH-05, ARCH-06 | DB-03, DB-04, API-10 | UI-06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 08 |
+| FR-15 | US-10 | ARCH-02, ARCH-05, ARCH-06 | DB-03, DB-04, API-11 | UI-06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 08 |
+| FR-16 | US-11 | ARCH-03, ARCH-07 | DB-05, API-12 | UI-04, UI-09 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 08 |
+| FR-17 | US-12 | ARCH-03, ARCH-07 | DB-06, API-13 | UI-04, UI-09 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 08 |
+| FR-18 | US-05, US-10 | ARCH-03, ARCH-06 | DB-04, API-03, API-05, API-07, API-10, API-11, API-15, API-16 | UI-02, UI-04, UI-05, UI-06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 08 |
+| FR-19 | US-13 | ARCH-02, ARCH-05 | DB-07, API-14 | UI-04, UI-09 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 08 |
+| FR-20 | US-14 | ARCH-02, ARCH-05 | DB-01, DB-07, DB-04, API-15 | UI-05, UI-09 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 08 |
+| FR-21 | US-15 | ARCH-02, ARCH-05 | DB-04, API-16 | UI-05, UI-09 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 08 |
+| FR-22 | US-16 | ARCH-03, ARCH-08 | DB-01, DB-02, DB-03, DB-04, API-17 | UI-07 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 08 |
+| FR-23 | US-16 | ARCH-03, ARCH-08 | DB-02, DB-03, API-08, API-17 | UI-07 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 08 |
+| FR-24 | US-17 | ARCH-01, ARCH-02, ARCH-09, ARCH-11 | API-02 sampai API-17 role validation | UI-01, UI-08, UI-09 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 08 |
+| NFR-01 | Semua user story | ARCH-01, ARCH-09, ARCH-10, ARCH-11 | API response supports React data states | UI-01 sampai UI-10 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 08 |
+| NFR-02 | Semua user story | ARCH-02, ARCH-12 | API-01 sampai API-17 | UI API-to-UI mapping | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 08 |
+| NFR-03 | Semua user story | ARCH-03, ARCH-12 | DB-01 sampai DB-07 | UI data display from DB/API contracts | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 08 |
+| NFR-04 | Semua user story | ARCH-03, ARCH-12 | D1-only database design; no paid storage | UI excludes paid/out-of-scope features | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 08 |
+| NFR-05 | Semua user story | ARCH-12 | Skill 07 branch and PR workflow | Skill 08 branch and PR workflow | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 08 |
+| NFR-06 | Semua user story | ARCH-04 | Contract-first validation and error contracts | UI-08, UI-09 state/error design | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 08 |
+| NFR-07 | Semua user story | ARCH-13 | Skill 07 traceability links added | Skill 08 traceability links added | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 08 |
+| NFR-08 | Semua user story | ARCH-13 | `evidence/human-review-database-api.md` | `evidence/human-review-ui-design.md` | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 08 |
+| NFR-09 | Semua user story | ARCH-12 | No secret-bearing design or config changes | No secret-bearing UI design changes | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 08 |
 
 ## Business Rule Links
 
-| Business Rule | Related Requirement | Design Skill 06 | Design Skill 07 | Status |
-| --- | --- | --- | --- | --- |
-| BR-01 | FR-01 | ARCH-05 | DB-01, DB-04, API-03 | Approved through Skill 07 |
-| BR-02 | FR-07, FR-11, FR-14, FR-15, FR-20, FR-21 | ARCH-02, ARCH-05 | DB-01, DB-04, API-03, API-05, API-07, API-10, API-11, API-15, API-16 | Approved through Skill 07 |
-| BR-03 | FR-07, FR-11 | ARCH-02, ARCH-05 | DB-03, API-05, API-07 | Approved through Skill 07 |
-| BR-04 | FR-09 | ARCH-14 | DB-01, API-06 | Approved through Skill 07 |
-| BR-05 | FR-10 | ARCH-14 | DB-01, API-03, API-06 | Approved through Skill 07 |
-| BR-06 | FR-08 | ARCH-14 | DB-01, API-06 | Approved through Skill 07 |
-| BR-07 | FR-09 | ARCH-14 | DB-01, API-02, API-06 | Approved through Skill 07 |
-| BR-08 | FR-18 | ARCH-06 | DB-04, status-changing APIs | Approved through Skill 07 |
-| BR-09 | FR-16 | ARCH-07 | DB-05, API-04, API-12 | Approved through Skill 07 |
-| BR-10 | FR-17 | ARCH-07 | DB-06, API-04, API-13 | Approved through Skill 07 |
-| BR-11 | FR-19, FR-20 | ARCH-02, ARCH-05 | DB-01, DB-07, API-14, API-15 | Approved through Skill 07 |
-| BR-12 | FR-21 | ARCH-02, ARCH-05 | DB-04, API-16 | Approved through Skill 07 |
+| Business Rule | Related Requirement | Design Skill 06 | Design Skill 07 | Design Skill 08 | Status |
+| --- | --- | --- | --- | --- | --- |
+| BR-01 | FR-01 | ARCH-05 | DB-01, DB-04, API-03 | UI-03 | Approved through Skill 08 |
+| BR-02 | FR-07, FR-11, FR-14, FR-15, FR-20, FR-21 | ARCH-02, ARCH-05 | DB-01, DB-04, API-03, API-05, API-07, API-10, API-11, API-15, API-16 | UI-04, UI-05, UI-06, UI-09 | Approved through Skill 08 |
+| BR-03 | FR-07, FR-11 | ARCH-02, ARCH-05 | DB-03, API-05, API-07 | UI-05 | Approved through Skill 08 |
+| BR-04 | FR-09 | ARCH-14 | DB-01, API-06 | UI-05 | Approved through Skill 08 |
+| BR-05 | FR-10 | ARCH-14 | DB-01, API-03, API-06 | UI-03, UI-05 | Approved through Skill 08 |
+| BR-06 | FR-08 | ARCH-14 | DB-01, API-06 | UI-03, UI-05, UI-09 | Approved through Skill 08 |
+| BR-07 | FR-09 | ARCH-14 | DB-01, API-02, API-06 | UI-05, UI-09 | Approved through Skill 08 |
+| BR-08 | FR-18 | ARCH-06 | DB-04, status-changing APIs | UI-04, UI-05, UI-06 | Approved through Skill 08 |
+| BR-09 | FR-16 | ARCH-07 | DB-05, API-04, API-12 | UI-04, UI-09 | Approved through Skill 08 |
+| BR-10 | FR-17 | ARCH-07 | DB-06, API-04, API-13 | UI-04, UI-09 | Approved through Skill 08 |
+| BR-11 | FR-19, FR-20 | ARCH-02, ARCH-05 | DB-01, DB-07, API-14, API-15 | UI-04, UI-05, UI-09 | Approved through Skill 08 |
+| BR-12 | FR-21 | ARCH-02, ARCH-05 | DB-04, API-16 | UI-05 | Approved through Skill 08 |
 
 ## Skill 06 Architecture Design Links
 
@@ -111,6 +111,23 @@ Status: Human Reviewed & Approved. Link design berikut ditautkan dari `docs/desi
 | API-15 | `PATCH /api/requests/:id/close` | FR-20, FR-18, BR-02, BR-08, BR-11, OPEN-03, OPEN-11 | Approved Skill 07 |
 | API-16 | `PATCH /api/requests/:id/reopen` | FR-21, FR-18, BR-12, BR-08, OPEN-04 | Approved Skill 07 |
 | API-17 | `GET /api/dashboard/summary` | FR-22, FR-23, OPEN-07, OPEN-10 | Approved Skill 07 |
+
+## Skill 08 UI Design Links
+
+Status: Human Reviewed & Approved. Link design berikut ditautkan dari `docs/design/ui-flow.md`. Update ini tidak mengubah requirement final, tidak mengubah arsitektur Skill 06, tidak mengubah database/API Skill 07, dan tidak membuat kode React, CSS, HTML, TypeScript, test, API, database, atau deployment.
+
+| Design ID | Design Area | Related Requirement / Rule | Status |
+| --- | --- | --- | --- |
+| UI-01 | Application shell, navigation, and RoleSwitcher | FR-24, US-17, NFR-01 | Approved through Skill 08 |
+| UI-02 | Request Workspace list, search, filter, detail selection | FR-03, FR-04, FR-05, FR-06, FR-18, US-02, US-03, US-04, US-05 | Approved through Skill 08 |
+| UI-03 | Create Request form and feedback | FR-01, FR-02, FR-10, BR-01, BR-05, US-01 | Approved through Skill 08 |
+| UI-04 | Request Detail, comments, internal notes, and status history | FR-06, FR-16, FR-17, FR-18, BR-09, BR-10, US-05, US-11, US-12, OPEN-10 | Approved through Skill 08 |
+| UI-05 | Administrator review, classify, assign, close, and reopen actions | FR-07, FR-08, FR-09, FR-10, FR-11, FR-20, FR-21, BR-02, BR-03, BR-04, BR-05, BR-06, BR-07, BR-08, BR-11, BR-12, OPEN-03, OPEN-05, OPEN-11 | Approved through Skill 08 |
+| UI-06 | Technician Tasks and technician workflow actions | FR-12, FR-13, FR-14, FR-15, FR-18, US-09, US-10, OPEN-08 | Approved through Skill 08 |
+| UI-07 | Dashboard Summary and workload source display | FR-22, FR-23, US-16, OPEN-07, OPEN-10 | Approved through Skill 08 |
+| UI-08 | Fallback views for forbidden, not found, conflict, and server error | FR-24, NFR-01, NFR-06, API error contract | Approved through Skill 08 |
+| UI-09 | Component inventory and form/feedback design | FR-01 through FR-24, NFR-01, NFR-06, NFR-07 | Approved through Skill 08 |
+| UI-10 | Accessibility-first checklist and design token guidance | NFR-01, NFR-07, US-01 through US-17 | Approved through Skill 08 |
 
 ## Skill 04 Prioritization Links
 
@@ -204,22 +221,22 @@ Status: Human Reviewed & Approved. Validasi Skill 05 ditautkan dari `docs/requir
 
 ### User Story Validation Links
 
-| User Story | Supports | Skill 05 Validation | Change Request | Design Skill 07 | Status |
-| --- | --- | --- | --- | --- | --- |
-| US-01 | FR-01, FR-02, BR-01 | OPEN QUESTION: OPEN-02 | None | DB-01, DB-04, API-03 | Approved through Skill 07 |
-| US-02 | FR-03 | PASS | None | DB-01, API-02 | Approved through Skill 07 |
-| US-03 | FR-04 | PASS | None | DB-01, API-02 | Approved through Skill 07 |
-| US-04 | FR-05 | PASS | None | DB-01, API-02 | Approved through Skill 07 |
-| US-05 | FR-06, FR-18 | OPEN QUESTION: OPEN-10 | None | DB-01, DB-04, DB-05, DB-06, API-04 | Approved through Skill 07 |
-| US-06 | FR-07, BR-03 | PASS | None | DB-01, DB-04, API-05 | Approved through Skill 07 |
-| US-07 | FR-08, FR-09, FR-10, BR-04, BR-05, BR-06, BR-07 | OPEN QUESTION: OPEN-05, OPEN-06 | None | DB-01, API-06 | Approved through Skill 07 |
-| US-08 | FR-11, BR-03 | PASS | None | DB-02, DB-03, DB-04, API-07 | Approved through Skill 07 |
-| US-09 | FR-12, FR-13 | OPEN QUESTION: OPEN-08 | None | DB-02, DB-03, API-08, API-09 | Approved through Skill 07 |
-| US-10 | FR-14, FR-15, FR-18, BR-02, BR-08 | PASS | None | DB-03, DB-04, API-10, API-11 | Approved through Skill 07 |
-| US-11 | FR-16, BR-09 | PASS | None | DB-05, API-12 | Approved through Skill 07 |
-| US-12 | FR-17, BR-10 | OPEN QUESTION: OPEN-10 | None | DB-06, API-13 | Approved through Skill 07 |
-| US-13 | FR-19, BR-11 | OPEN QUESTION: OPEN-11 | CR-05-01 | DB-07, API-14 | Approved through Skill 07 |
-| US-14 | FR-20, BR-11 | OPEN QUESTION: OPEN-03, OPEN-11 | CR-05-01 | DB-01, DB-04, DB-07, API-15 | Approved through Skill 07 |
-| US-15 | FR-21, BR-12 | OPEN QUESTION: OPEN-04 | None | DB-04, API-16 | Approved through Skill 07 |
-| US-16 | FR-22, FR-23 | OPEN QUESTION: OPEN-07, OPEN-10 | None | DB-01, DB-02, DB-03, DB-04, API-17 | Approved through Skill 07 |
-| US-17 | FR-24 | PASS | None | API-02 sampai API-17 role validation | Approved through Skill 07 |
+| User Story | Supports | Skill 05 Validation | Change Request | Design Skill 07 | Design Skill 08 | Status |
+| --- | --- | --- | --- | --- | --- | --- |
+| US-01 | FR-01, FR-02, BR-01 | OPEN QUESTION: OPEN-02 | None | DB-01, DB-04, API-03 | UI-03 | Approved through Skill 08 |
+| US-02 | FR-03 | PASS | None | DB-01, API-02 | UI-02 | Approved through Skill 08 |
+| US-03 | FR-04 | PASS | None | DB-01, API-02 | UI-02 | Approved through Skill 08 |
+| US-04 | FR-05 | PASS | None | DB-01, API-02 | UI-02 | Approved through Skill 08 |
+| US-05 | FR-06, FR-18 | OPEN QUESTION: OPEN-10 | None | DB-01, DB-04, DB-05, DB-06, API-04 | UI-02, UI-04 | Approved through Skill 08 |
+| US-06 | FR-07, BR-03 | PASS | None | DB-01, DB-04, API-05 | UI-05 | Approved through Skill 08 |
+| US-07 | FR-08, FR-09, FR-10, BR-04, BR-05, BR-06, BR-07 | OPEN QUESTION: OPEN-05, OPEN-06 | None | DB-01, API-06 | UI-05 | Approved through Skill 08 |
+| US-08 | FR-11, BR-03 | PASS | None | DB-02, DB-03, DB-04, API-07 | UI-05 | Approved through Skill 08 |
+| US-09 | FR-12, FR-13 | OPEN QUESTION: OPEN-08 | None | DB-02, DB-03, API-08, API-09 | UI-06 | Approved through Skill 08 |
+| US-10 | FR-14, FR-15, FR-18, BR-02, BR-08 | PASS | None | DB-03, DB-04, API-10, API-11 | UI-04, UI-06 | Approved through Skill 08 |
+| US-11 | FR-16, BR-09 | PASS | None | DB-05, API-12 | UI-04 | Approved through Skill 08 |
+| US-12 | FR-17, BR-10 | OPEN QUESTION: OPEN-10 | None | DB-06, API-13 | UI-04 | Approved through Skill 08 |
+| US-13 | FR-19, BR-11 | OPEN QUESTION: OPEN-11 | CR-05-01 | DB-07, API-14 | UI-04, UI-05 | Approved through Skill 08 |
+| US-14 | FR-20, BR-11 | OPEN QUESTION: OPEN-03, OPEN-11 | CR-05-01 | DB-01, DB-04, DB-07, API-15 | UI-05 | Approved through Skill 08 |
+| US-15 | FR-21, BR-12 | OPEN QUESTION: OPEN-04 | None | DB-04, API-16 | UI-05 | Approved through Skill 08 |
+| US-16 | FR-22, FR-23 | OPEN QUESTION: OPEN-07, OPEN-10 | None | DB-01, DB-02, DB-03, DB-04, API-17 | UI-07 | Approved through Skill 08 |
+| US-17 | FR-24 | PASS | None | API-02 sampai API-17 role validation | UI-01, UI-08 | Approved through Skill 08 |
