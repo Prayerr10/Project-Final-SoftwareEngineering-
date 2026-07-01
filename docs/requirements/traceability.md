@@ -1,64 +1,85 @@
 # Traceability Matrix
 
-| Review Status | Human Reviewed & Approved |
+| Review Status | Human Reviewed & Approved through Skill 06 |
 | --- | --- |
 | Skill AI | Skill 03 - Specification (`requirements-elaboration-and-specification`) |
 | Human decision | Disetujui |
 
-Traceability ini hanya mencatat relasi yang sudah dapat ditelusuri pada tahap Skill 03, yaitu hubungan Requirement ke User Story. Kolom Design, Issue, Kode, dan Test tetap menggunakan template dari `instruksi-dosen.md`, tetapi belum diisi karena tahap tersebut belum dikerjakan pada Skill 03.
+Traceability ini mencatat relasi requirement ke user story dari Skill 03, prioritas Skill 04, validasi Skill 05, dan update design level Skill 06. Kolom Issue, Kode, dan Test tetap menggunakan template dari `instruksi-dosen.md`, tetapi belum diisi karena tahap tersebut belum dikerjakan.
 
 | **Requirement** | **User Story** | **Design** | **Issue** | **Kode** | **Test** | **Status** |
 | --- | --- | --- | --- | --- | --- | --- |
-| FR-01 | US-01 | Belum tahap Skill 06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03 |
-| FR-02 | US-01 | Belum tahap Skill 06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03 |
-| FR-03 | US-02 | Belum tahap Skill 06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03 |
-| FR-04 | US-03 | Belum tahap Skill 06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03 |
-| FR-05 | US-04 | Belum tahap Skill 06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03 |
-| FR-06 | US-05 | Belum tahap Skill 06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03 |
-| FR-07 | US-06 | Belum tahap Skill 06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03 |
-| FR-08 | US-07 | Belum tahap Skill 06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03 |
-| FR-09 | US-07 | Belum tahap Skill 06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03 |
-| FR-10 | US-07 | Belum tahap Skill 06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03 |
-| FR-11 | US-08 | Belum tahap Skill 06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03 |
-| FR-12 | US-09 | Belum tahap Skill 06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03 |
-| FR-13 | US-09 | Belum tahap Skill 06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03 |
-| FR-14 | US-10 | Belum tahap Skill 06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03 |
-| FR-15 | US-10 | Belum tahap Skill 06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03 |
-| FR-16 | US-11 | Belum tahap Skill 06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03 |
-| FR-17 | US-12 | Belum tahap Skill 06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03 |
-| FR-18 | US-05, US-10 | Belum tahap Skill 06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03 |
-| FR-19 | US-13 | Belum tahap Skill 06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03 |
-| FR-20 | US-14 | Belum tahap Skill 06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03 |
-| FR-21 | US-15 | Belum tahap Skill 06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03 |
-| FR-22 | US-16 | Belum tahap Skill 06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03 |
-| FR-23 | US-16 | Belum tahap Skill 06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03 |
-| FR-24 | US-17 | Belum tahap Skill 06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03 |
-| NFR-01 | Semua user story | Belum tahap Skill 06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03 |
-| NFR-02 | Semua user story | Belum tahap Skill 06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03 |
-| NFR-03 | Semua user story | Belum tahap Skill 06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03 |
-| NFR-04 | Semua user story | Belum tahap Skill 06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03 |
-| NFR-05 | Semua user story | Belum tahap Skill 06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03 |
-| NFR-06 | Semua user story | Belum tahap Skill 06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03 |
-| NFR-07 | Semua user story | Belum tahap Skill 06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03 |
-| NFR-08 | Semua user story | Belum tahap Skill 06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03 |
-| NFR-09 | Semua user story | Belum tahap Skill 06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved Skill 03 |
+| FR-01 | US-01 | ARCH-03, ARCH-05 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 06 |
+| FR-02 | US-01 | ARCH-03 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 06 |
+| FR-03 | US-02 | ARCH-01, ARCH-04 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 06 |
+| FR-04 | US-03 | ARCH-01, ARCH-04 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 06 |
+| FR-05 | US-04 | ARCH-01, ARCH-04 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 06 |
+| FR-06 | US-05 | ARCH-01, ARCH-04 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 06 |
+| FR-07 | US-06 | ARCH-02, ARCH-05 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 06 |
+| FR-08 | US-07 | ARCH-02, ARCH-04, ARCH-14 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 06 |
+| FR-09 | US-07 | ARCH-02, ARCH-04, ARCH-14 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 06 |
+| FR-10 | US-07 | ARCH-02, ARCH-04, ARCH-14 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 06 |
+| FR-11 | US-08 | ARCH-02, ARCH-05 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 06 |
+| FR-12 | US-09 | ARCH-02, ARCH-04 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 06 |
+| FR-13 | US-09 | ARCH-02, ARCH-05 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 06 |
+| FR-14 | US-10 | ARCH-02, ARCH-05, ARCH-06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 06 |
+| FR-15 | US-10 | ARCH-02, ARCH-05, ARCH-06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 06 |
+| FR-16 | US-11 | ARCH-03, ARCH-07 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 06 |
+| FR-17 | US-12 | ARCH-03, ARCH-07 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 06 |
+| FR-18 | US-05, US-10 | ARCH-03, ARCH-06 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 06 |
+| FR-19 | US-13 | ARCH-02, ARCH-05 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 06 |
+| FR-20 | US-14 | ARCH-02, ARCH-05 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 06 |
+| FR-21 | US-15 | ARCH-02, ARCH-05 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 06 |
+| FR-22 | US-16 | ARCH-03, ARCH-08 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 06 |
+| FR-23 | US-16 | ARCH-03, ARCH-08 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 06 |
+| FR-24 | US-17 | ARCH-01, ARCH-02, ARCH-09, ARCH-11 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 06 |
+| NFR-01 | Semua user story | ARCH-01, ARCH-09, ARCH-10, ARCH-11 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 06 |
+| NFR-02 | Semua user story | ARCH-02, ARCH-12 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 06 |
+| NFR-03 | Semua user story | ARCH-03, ARCH-12 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 06 |
+| NFR-04 | Semua user story | ARCH-03, ARCH-12 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 06 |
+| NFR-05 | Semua user story | ARCH-12 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 06 |
+| NFR-06 | Semua user story | ARCH-04 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 06 |
+| NFR-07 | Semua user story | ARCH-13 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 06 |
+| NFR-08 | Semua user story | ARCH-13 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 06 |
+| NFR-09 | Semua user story | ARCH-12 | Belum tahap Skill 09 | Belum tahap implementasi | Belum tahap testing | Approved through Skill 06 |
 
 ## Business Rule Links
 
-| Business Rule | Related Requirement | Status |
-| --- | --- | --- |
-| BR-01 | FR-01 | Approved Skill 03 |
-| BR-02 | FR-07, FR-11, FR-14, FR-15, FR-20, FR-21 | Approved Skill 03 |
-| BR-03 | FR-07, FR-11 | Approved Skill 03 |
-| BR-04 | FR-09 | Approved Skill 03 |
-| BR-05 | FR-10 | Approved Skill 03 |
-| BR-06 | FR-08 | Approved Skill 03 |
-| BR-07 | FR-09 | Approved Skill 03 |
-| BR-08 | FR-18 | Approved Skill 03 |
-| BR-09 | FR-16 | Approved Skill 03 |
-| BR-10 | FR-17 | Approved Skill 03 |
-| BR-11 | FR-19, FR-20 | Approved Skill 03 |
-| BR-12 | FR-21 | Approved Skill 03 |
+| Business Rule | Related Requirement | Design | Status |
+| --- | --- | --- | --- |
+| BR-01 | FR-01 | ARCH-05 | Approved through Skill 06 |
+| BR-02 | FR-07, FR-11, FR-14, FR-15, FR-20, FR-21 | ARCH-02, ARCH-05 | Approved through Skill 06 |
+| BR-03 | FR-07, FR-11 | ARCH-02, ARCH-05 | Approved through Skill 06 |
+| BR-04 | FR-09 | ARCH-14 | Approved through Skill 06 |
+| BR-05 | FR-10 | ARCH-14 | Approved through Skill 06 |
+| BR-06 | FR-08 | ARCH-14 | Approved through Skill 06 |
+| BR-07 | FR-09 | ARCH-14 | Approved through Skill 06 |
+| BR-08 | FR-18 | ARCH-06 | Approved through Skill 06 |
+| BR-09 | FR-16 | ARCH-07 | Approved through Skill 06 |
+| BR-10 | FR-17 | ARCH-07 | Approved through Skill 06 |
+| BR-11 | FR-19, FR-20 | ARCH-02, ARCH-05 | Approved through Skill 06 |
+| BR-12 | FR-21 | ARCH-02, ARCH-05 | Approved through Skill 06 |
+
+## Skill 06 Architecture Design Links
+
+Status: Human Reviewed & Approved. Link design berikut ditautkan dari `docs/design/architecture.md`. Update ini tidak mengubah requirement final dan tidak membuat detail database/API/UI yang menjadi scope Skill 07 atau Skill 08.
+
+| Design ID | Design Area | Related Requirement / Rule | Status |
+| --- | --- | --- | --- |
+| ARCH-01 | React SPA, role simulator, master-detail shell | FR-03, FR-06, FR-24, NFR-01, US-02, US-05, US-17 | Approved Skill 06 |
+| ARCH-02 | Cloudflare Worker API boundary and role/workflow validation | FR-07, FR-11, FR-14, FR-15, FR-19, FR-20, FR-21, FR-24, NFR-02, BR-02, BR-03, BR-11, BR-12 | Approved Skill 06 |
+| ARCH-03 | Cloudflare D1 persistence boundary | FR-01, FR-02, FR-16, FR-17, FR-18, FR-22, FR-23, NFR-03 | Approved Skill 06 |
+| ARCH-04 | Query/command API design boundary for later Skill 07 | FR-03 sampai FR-23 | Approved Skill 06 |
+| ARCH-05 | Strict 6 status workflow architecture | BR-01, BR-02, BR-03, BR-11, BR-12, US-01, US-06, US-08, US-10, US-13, US-14, US-15 | Approved Skill 06 |
+| ARCH-06 | Riwayat Status architecture | FR-18, BR-08, US-05, US-10 | Approved Skill 06 |
+| ARCH-07 | Komentar Publik and Catatan Internal visibility boundary | FR-16, FR-17, BR-09, BR-10, US-11, US-12 | Approved Skill 06 |
+| ARCH-08 | Dashboard and technician workload summary boundary | FR-22, FR-23, US-16 | Approved Skill 06 |
+| ARCH-09 | Component-driven frontend constraint | FR-24, NFR-01 | Approved Skill 06 |
+| ARCH-10 | Accessibility-first frontend constraint | NFR-01, US-01 sampai US-17 | Approved Skill 06 |
+| ARCH-11 | Open design compatible frontend constraint | FR-24, NFR-01 | Approved Skill 06 |
+| ARCH-12 | Cloudflare deployment architecture | NFR-02, NFR-03, NFR-04, NFR-05, NFR-09 | Approved Skill 06 |
+| ARCH-13 | Traceability and Human Review quality gate | NFR-07, NFR-08 | Approved Skill 06 |
+| ARCH-14 | Category, priority, and Lecturer priority suggestion decision boundary | FR-08, FR-09, FR-10, BR-04, BR-05, BR-06, BR-07, OPEN-05, OPEN-06 | Approved Skill 06 |
 
 ## Skill 04 Prioritization Links
 
