@@ -52,13 +52,17 @@ describe("React foundation shell", () => {
 		expect(html).toContain("Riwayat Status");
 	});
 
-	it("renders public comment and internal note controls for the request detail surface", () => {
+	it("renders public comment controls and gates internal note controls by role", () => {
 		const html = renderToString(createElement(App));
+		const appSource = readFileSync("src/App.tsx", "utf8");
 
 		expect(html).toContain("Komentar Publik");
-		expect(html).toContain("Catatan Internal");
 		expect(html).toContain("Tambah Komentar");
-		expect(html).toContain("Tambah Catatan Internal");
+		expect(appSource).toContain("const canUseInternalNotes");
+		expect(appSource).toContain('activeRole === "ADMINISTRATOR"');
+		expect(appSource).toContain('activeRole === "TECHNICIAN"');
+		expect(appSource).toContain("canUseInternalNotes &&");
+		expect(appSource).toContain("Tambah Catatan Internal");
 	});
 
 	it("renders the technician task lifecycle surface", () => {

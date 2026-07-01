@@ -414,6 +414,9 @@ export default function App() {
 		if (selectedRequestId) {
 			loadRequestDetail(selectedRequestId);
 		}
+
+		setCommunicationMessage("");
+		setInternalNoteBody("");
 	}, [activeRole]);
 
 	async function submitRequest(event: React.FormEvent) {
@@ -685,6 +688,9 @@ export default function App() {
 		setCommunicationMessage("Catatan internal disimpan.");
 		await loadRequestDetail(selectedRequest.id);
 	}
+
+	const canUseInternalNotes =
+		activeRole === "ADMINISTRATOR" || activeRole === "TECHNICIAN";
 
 	return (
 		<main className="app-shell">
@@ -1119,8 +1125,15 @@ export default function App() {
 									<p>Catatan konfirmasi akan tampil saat laporan RESOLVED.</p>
 									<h4>Komentar Publik</h4>
 									<p>Komentar publik akan tampil setelah laporan dipilih.</p>
-									<h4>Catatan Internal</h4>
-									<p>Catatan internal hanya tampil untuk Administrator dan Teknisi.</p>
+									{canUseInternalNotes && (
+										<>
+											<h4>Catatan Internal</h4>
+											<p>
+												Catatan internal hanya tampil untuk Administrator dan
+												Teknisi.
+											</p>
+										</>
+									)}
 									<h4>Catatan Close</h4>
 									<p>Manual override tanpa konfirmasi Pelapor membutuhkan catatan.</p>
 									<h4>Catatan Reopen</h4>
@@ -1128,9 +1141,11 @@ export default function App() {
 									<button type="button" disabled>
 										Tambah Komentar
 									</button>
-									<button type="button" disabled>
-										Tambah Catatan Internal
-									</button>
+									{canUseInternalNotes && (
+										<button type="button" disabled>
+											Tambah Catatan Internal
+										</button>
+									)}
 								</div>
 							) : (
 								<article>
@@ -1267,42 +1282,41 @@ export default function App() {
 											</form>
 										)}
 
-										<section
-											className="internal-note-panel"
-											hidden={
-												activeRole !== "ADMINISTRATOR" &&
-												activeRole !== "TECHNICIAN"
-											}
-										>
-											<h4>Catatan Internal</h4>
-											{(selectedRequest.internalNotes ?? []).length === 0 ? (
-												<p className="empty-state">Belum ada catatan internal.</p>
-											) : (
-												<ul className="communication-list">
-													{(selectedRequest.internalNotes ?? []).map((note) => (
-														<li key={note.id}>
-															<strong>{note.authorRole}</strong>
-															<p>{note.body}</p>
-															<small>{note.createdAt}</small>
-														</li>
-													))}
-												</ul>
-											)}
+										{canUseInternalNotes && (
+											<section className="internal-note-panel">
+												<h4>Catatan Internal</h4>
+												{(selectedRequest.internalNotes ?? []).length === 0 ? (
+													<p className="empty-state">Belum ada catatan internal.</p>
+												) : (
+													<ul className="communication-list">
+														{(selectedRequest.internalNotes ?? []).map((note) => (
+															<li key={note.id}>
+																<strong>{note.authorRole}</strong>
+																<p>{note.body}</p>
+																<small>{note.createdAt}</small>
+															</li>
+														))}
+													</ul>
+												)}
 
-											<form className="communication-form" onSubmit={submitInternalNote}>
-												<label>
-													Tambah Catatan Internal
-													<textarea
-														value={internalNoteBody}
-														onChange={(event) =>
-															setInternalNoteBody(event.target.value)
-														}
-														placeholder="Tulis catatan internal untuk Administrator atau Teknisi."
-													/>
-												</label>
-												<button type="submit">Simpan Catatan Internal</button>
-											</form>
-										</section>
+												<form
+													className="communication-form"
+													onSubmit={submitInternalNote}
+												>
+													<label>
+														Tambah Catatan Internal
+														<textarea
+															value={internalNoteBody}
+															onChange={(event) =>
+																setInternalNoteBody(event.target.value)
+															}
+															placeholder="Tulis catatan internal untuk Administrator atau Teknisi."
+														/>
+													</label>
+													<button type="submit">Simpan Catatan Internal</button>
+												</form>
+											</section>
+										)}
 
 										{communicationMessage && (
 											<p className="form-message">{communicationMessage}</p>
