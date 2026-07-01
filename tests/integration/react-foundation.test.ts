@@ -37,4 +37,14 @@ describe("React foundation shell", () => {
 		expect(html).toContain("Pilih laporan dari daftar untuk melihat detail.");
 		expect(html).toContain("Riwayat Status");
 	});
+
+	it("renders the technician task lifecycle surface", () => {
+		const html = renderToString(createElement(App));
+
+		expect(html).toContain("Technician Tasks");
+		expect(html).toContain("Daftar Tugas Teknisi");
+		expect(html).toContain("Konteks Teknisi");
+		expect(html).toContain("Catatan Progres atau Penyelesaian");
+		expect(html).toContain("Tugas teknisi akan tampil sesuai assignment aktif.");
+	});
 });

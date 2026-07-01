@@ -29,6 +29,12 @@ type AssignmentRequestInput = {
 	note?: string;
 };
 
+type TechnicianActionInput = {
+	role?: string;
+	technicianId?: string;
+	note?: string;
+};
+
 const STATUSES = [
 	"SUBMITTED",
 	"UNDER_REVIEW",
@@ -130,6 +136,24 @@ type RequestDetailRow = RequestSummaryRow & {
 	updated_at: string;
 };
 
+type AssignmentRow = {
+	id: string;
+	request_id: string;
+	technician_id: string;
+	assigned_by_role: string;
+	assigned_at: string;
+	accepted_at: string | null;
+	is_current: number;
+};
+
+type TechnicianTaskRow = RequestSummaryRow & {
+	assignment_id: string;
+	technician_id: string;
+	technician_name: string;
+	assigned_at: string;
+	accepted_at: string | null;
+};
+
 function toApiRequest(row: RequestSummaryRow) {
 	return {
 		id: row.id,
@@ -153,6 +177,31 @@ function toApiRequestDetail(row: RequestDetailRow) {
 		description: row.description,
 		createdAt: row.created_at,
 		updatedAt: row.updated_at,
+	};
+}
+
+function toApiAssignment(row: AssignmentRow) {
+	return {
+		id: row.id,
+		requestId: row.request_id,
+		technicianId: row.technician_id,
+		assignedByRole: row.assigned_by_role,
+		assignedAt: row.assigned_at,
+		acceptedAt: row.accepted_at,
+		isCurrent: row.is_current === 1,
+	};
+}
+
+function toApiTechnicianTask(row: TechnicianTaskRow) {
+	return {
+		...toApiRequest(row),
+		assignment: {
+			id: row.assignment_id,
+			technicianId: row.technician_id,
+			technicianName: row.technician_name,
+			assignedAt: row.assigned_at,
+			acceptedAt: row.accepted_at,
+		},
 	};
 }
 
@@ -188,6 +237,18 @@ export default {
 		);
 		const requestAssignmentMatch = url.pathname.match(
 			/^\/api\/requests\/([^/]+)\/assignment$/,
+		);
+		const technicianTasksMatch = url.pathname.match(
+			/^\/api\/technicians\/([^/]+)\/tasks$/,
+		);
+		const requestAcceptMatch = url.pathname.match(
+			/^\/api\/requests\/([^/]+)\/accept$/,
+		);
+		const requestProgressMatch = url.pathname.match(
+			/^\/api\/requests\/([^/]+)\/progress$/,
+		);
+		const requestResolveMatch = url.pathname.match(
+			/^\/api\/requests\/([^/]+)\/resolve$/,
 		);
 
 		if (url.pathname === "/api/health" && request.method === "GET") {
@@ -345,6 +406,89 @@ export default {
 						isActive: technician.is_active === 1,
 					};
 				}),
+			});
+		}
+
+		if (technicianTasksMatch && request.method === "GET") {
+			const technicianId = decodeURIComponent(technicianTasksMatch[1]);
+			const role = url.searchParams.get("role")?.trim();
+			const activeTechnicianId = url.searchParams.get("technicianId")?.trim();
+			const status = url.searchParams.get("status")?.trim() || null;
+			const fields: Record<string, string> = {};
+
+			if (role !== "TECHNICIAN" && role !== "ADMINISTRATOR") {
+				return forbidden();
+			}
+
+			if (role === "TECHNICIAN" && activeTechnicianId !== technicianId) {
+				return forbidden();
+			}
+
+			if (status && !STATUSES.includes(status as (typeof STATUSES)[number])) {
+				fields.status = "Status filter tidak didukung.";
+			}
+
+			if (Object.keys(fields).length > 0) {
+				return validationError(fields);
+			}
+
+			const technician = await env.DB.prepare(`
+				SELECT id, name, specialization, is_active
+				FROM technicians
+				WHERE id = ? AND is_active = 1
+			`)
+				.bind(technicianId)
+				.first();
+
+			if (!technician) {
+				return json(
+					{
+						error: {
+							code: "NOT_FOUND",
+							message: "Teknisi tidak ditemukan.",
+						},
+					},
+					404,
+				);
+			}
+
+			const result = await env.DB.prepare(`
+				SELECT service_requests.id, service_requests.request_number,
+					service_requests.title, service_requests.location,
+					service_requests.category, service_requests.priority,
+					service_requests.priority_suggestion, service_requests.status,
+					service_requests.reporter_name, service_requests.reporter_type,
+					service_requests.reviewed_at, service_requests.reviewed_by_role,
+					request_assignments.id AS assignment_id,
+					request_assignments.technician_id,
+					technicians.name AS technician_name,
+					request_assignments.assigned_at,
+					request_assignments.accepted_at
+				FROM request_assignments
+				INNER JOIN service_requests
+					ON service_requests.id = request_assignments.request_id
+				INNER JOIN technicians
+					ON technicians.id = request_assignments.technician_id
+				WHERE request_assignments.technician_id = ?
+					AND request_assignments.is_current = 1
+					AND (? IS NULL OR service_requests.status = ?)
+				ORDER BY service_requests.updated_at DESC
+			`)
+				.bind(technicianId, status, status)
+				.all();
+
+			const data = result.results.map((row) =>
+				toApiTechnicianTask(row as TechnicianTaskRow),
+			);
+
+			return json({
+				data,
+				meta: {
+					page: 1,
+					pageSize: 20,
+					total: data.length,
+					empty: data.length === 0,
+				},
 			});
 		}
 
@@ -613,6 +757,185 @@ export default {
 						assignedAt: now,
 					},
 				},
+			});
+		}
+
+		if (requestAcceptMatch && request.method === "PATCH") {
+			const requestId = decodeURIComponent(requestAcceptMatch[1]);
+			const input = (await request.json()) as TechnicianActionInput;
+
+			if (input.role !== "TECHNICIAN") {
+				return forbidden();
+			}
+
+			const fields: Record<string, string> = {};
+
+			if (!requiredText(input.technicianId)) {
+				fields.technicianId = "Konteks Teknisi wajib diisi.";
+			}
+
+			if (Object.keys(fields).length > 0) {
+				return validationError(fields);
+			}
+
+			const requestRow = await env.DB.prepare(`
+				SELECT id, request_number, title, location,
+				category, priority, priority_suggestion, status,
+				reporter_name, reporter_type, reviewed_at, reviewed_by_role
+				FROM service_requests
+				WHERE id = ?
+			`)
+				.bind(requestId)
+				.first();
+
+			if (!requestRow) {
+				return notFound();
+			}
+
+			const storedRequest = requestRow as RequestSummaryRow;
+
+			if (storedRequest.status !== "ASSIGNED") {
+				return invalidStatusTransition(storedRequest.status, ["ASSIGNED"]);
+			}
+
+			const assignment = (await env.DB.prepare(`
+				SELECT id, request_id, technician_id, assigned_by_role,
+					assigned_at, accepted_at, is_current
+				FROM request_assignments
+				WHERE request_id = ?
+					AND technician_id = ?
+					AND is_current = 1
+			`)
+				.bind(requestId, input.technicianId!.trim())
+				.first()) as AssignmentRow | null;
+
+			if (!assignment) {
+				return forbidden();
+			}
+
+			const now = new Date().toISOString();
+
+			await env.DB.prepare(`
+				UPDATE request_assignments
+				SET accepted_at = ?
+				WHERE request_id = ?
+					AND technician_id = ?
+					AND is_current = 1
+			`)
+				.bind(now, requestId, input.technicianId!.trim())
+				.run();
+
+			return json({
+				data: {
+					...toApiAssignment({
+						...assignment,
+						accepted_at: now,
+					}),
+					requestStatus: storedRequest.status,
+				},
+			});
+		}
+
+		if (
+			(requestProgressMatch || requestResolveMatch) &&
+			request.method === "PATCH"
+		) {
+			const requestId = decodeURIComponent(
+				(requestProgressMatch ?? requestResolveMatch)![1],
+			);
+			const input = (await request.json()) as TechnicianActionInput;
+			const isProgress = Boolean(requestProgressMatch);
+			const fromStatus = isProgress ? "ASSIGNED" : "IN_PROGRESS";
+			const toStatus = isProgress ? "IN_PROGRESS" : "RESOLVED";
+
+			if (input.role !== "TECHNICIAN") {
+				return forbidden();
+			}
+
+			const fields: Record<string, string> = {};
+
+			if (!requiredText(input.technicianId)) {
+				fields.technicianId = "Konteks Teknisi wajib diisi.";
+			}
+
+			if (!requiredText(input.note)) {
+				fields.note = isProgress
+					? "Catatan progres wajib diisi."
+					: "Catatan penyelesaian wajib diisi.";
+			}
+
+			if (Object.keys(fields).length > 0) {
+				return validationError(fields);
+			}
+
+			const requestRow = await env.DB.prepare(`
+				SELECT id, request_number, title, location,
+				category, priority, priority_suggestion, status,
+				reporter_name, reporter_type, reviewed_at, reviewed_by_role
+				FROM service_requests
+				WHERE id = ?
+			`)
+				.bind(requestId)
+				.first();
+
+			if (!requestRow) {
+				return notFound();
+			}
+
+			const storedRequest = requestRow as RequestSummaryRow;
+
+			if (storedRequest.status !== fromStatus) {
+				return invalidStatusTransition(storedRequest.status, [toStatus]);
+			}
+
+			const assignment = await env.DB.prepare(`
+				SELECT id, request_id, technician_id, assigned_by_role,
+					assigned_at, accepted_at, is_current
+				FROM request_assignments
+				WHERE request_id = ?
+					AND technician_id = ?
+					AND is_current = 1
+			`)
+				.bind(requestId, input.technicianId!.trim())
+				.first();
+
+			if (!assignment) {
+				return forbidden();
+			}
+
+			const historyId = crypto.randomUUID();
+			const now = new Date().toISOString();
+
+			await env.DB.prepare(`
+				UPDATE service_requests
+				SET status = '${toStatus}',
+					updated_at = ?
+				WHERE id = ?
+			`)
+				.bind(now, requestId)
+				.run();
+
+			await env.DB.prepare(`
+				INSERT INTO request_status_history
+				(id, request_id, from_status, to_status, changed_by_role, note, created_at)
+				VALUES (?, ?, ?, ?, ?, ?, ?)
+			`)
+				.bind(
+					historyId,
+					requestId,
+					fromStatus,
+					toStatus,
+					"TECHNICIAN",
+					input.note!.trim(),
+					now,
+				)
+				.run();
+
+			return json({
+				data: toApiRequest({
+					...storedRequest,
+					status: toStatus,
+				}),
 			});
 		}
 
