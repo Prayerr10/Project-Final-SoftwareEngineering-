@@ -586,7 +586,7 @@ Errors: `403`, `404`, `422` invalid category/priority.
 
 Validation:
 
-- Current status should be `UNDER_REVIEW` before assignment.
+- Current status must be `UNDER_REVIEW` before assignment.
 - Priority must be one of `LOW`, `MEDIUM`, `HIGH`, `URGENT`.
 - Category must come from final fixed list after OPEN-05 is answered.
 - Does not change status by itself unless implementation combines with assignment later; this contract keeps classification separate for reviewability.
@@ -871,6 +871,92 @@ Needs Human Review:
 | DB-06 | Internal notes. | FR-17, BR-10 |
 | DB-07 | Reporter confirmation. | FR-19, FR-20, BR-11 |
 | API-01 sampai API-17 | API contract-first endpoints for all required workflows. | FR-01 sampai FR-24, NFR-02, NFR-03, BR-01 sampai BR-12, US-01 sampai US-17 |
+
+## Full Requirements Coverage Matrix
+
+Bagian ini menuliskan cakupan eksplisit agar reviewer dapat mencocokkan setiap FR, NFR, BR, dan US tanpa bergantung pada rentang ID agregat.
+
+### Functional Requirement Coverage
+
+| Requirement | Covered by table/design | Covered by endpoint | Notes |
+| --- | --- | --- | --- |
+| FR-01 | DB-01, DB-04 | API-03 | Create request and initial status history. |
+| FR-02 | DB-01 | API-03 | `reporter_name` and `reporter_type`; OPEN-02 preserved for extra fields. |
+| FR-03 | DB-01 | API-02 | Request list source and list contract. |
+| FR-04 | DB-01 | API-02 | Search over request summary fields. |
+| FR-05 | DB-01 | API-02 | Status and priority filters. |
+| FR-06 | DB-01, DB-04, DB-05, DB-06, DB-07 | API-04 | Detail includes history, comments, notes by visibility, and confirmation summary. |
+| FR-07 | DB-01, DB-04 | API-05 | Review transition from `SUBMITTED` to `UNDER_REVIEW`. |
+| FR-08 | DB-01 | API-06 | Category controlled vocabulary; OPEN-05 preserved. |
+| FR-09 | DB-01 | API-06 | Priority controlled values; OPEN-06 preserved. |
+| FR-10 | DB-01 | API-03, API-06 | Lecturer HIGH suggestion without replacing Administrator final decision. |
+| FR-11 | DB-02, DB-03, DB-04 | API-07 | Assignment and status transition to `ASSIGNED`. |
+| FR-12 | DB-02, DB-03 | API-08 | Technician assigned task list. |
+| FR-13 | DB-03 | API-09 | Acceptance timestamp; OPEN-08 preserved for rejection. |
+| FR-14 | DB-03, DB-04 | API-10 | Progress transition to `IN_PROGRESS`. |
+| FR-15 | DB-03, DB-04 | API-11 | Resolve transition to `RESOLVED`. |
+| FR-16 | DB-05 | API-12 | Public comments. |
+| FR-17 | DB-06 | API-13 | Internal notes. |
+| FR-18 | DB-04 | API-03, API-05, API-07, API-10, API-11, API-15, API-16 | Every status-changing endpoint appends status history. |
+| FR-19 | DB-07 | API-14 | Reporter confirmation event. |
+| FR-20 | DB-01, DB-04, DB-07 | API-15 | Close after confirmation or manual override note; OPEN-03 and OPEN-11 preserved. |
+| FR-21 | DB-04 | API-16 | Reopen target `UNDER_REVIEW`; OPEN-04 preserved. |
+| FR-22 | DB-01, DB-02, DB-03, DB-04 | API-17 | Dashboard summary. |
+| FR-23 | DB-02, DB-03 | API-08, API-17 | Technician workload source data; OPEN-07 preserved. |
+| FR-24 | API role validation convention | API-02 sampai API-17 | Role-Based UI remains frontend concern; API validates role/action separately. |
+
+### Non-Functional Requirement Coverage
+
+| Requirement | Covered by table/design | Covered by endpoint | Notes |
+| --- | --- | --- | --- |
+| NFR-01 | API response conventions and camelCase contract | API-02 sampai API-17 | Supports React data states without designing UI. |
+| NFR-02 | Cloudflare Workers API boundary | API-01 sampai API-17 | Worker endpoint contract. |
+| NFR-03 | DB-01 sampai DB-07 | API handlers use D1 binding `DB` by design | Cloudflare D1 SQLite storage. |
+| NFR-04 | D1-only design; no paid storage tables | API contract avoids paid services | Cloudflare free-tier compatibility. |
+| NFR-05 | Branch/PR workflow captured in traceability and evidence | Not an endpoint concern | GitHub workflow is process-level, not data schema. |
+| NFR-06 | Contract-first validation and error responses | API-01 sampai API-17 | Supports future automated API tests without writing tests in Skill 07. |
+| NFR-07 | Traceability links and coverage matrix | All API IDs and DB IDs | Requirement-to-design traceability updated. |
+| NFR-08 | Human review checklist and evidence file | Not an endpoint concern | Human review evidence is prepared separately. |
+| NFR-09 | No secret-bearing schema/config changes | API contract exposes no secret data | Secret safety preserved. |
+
+### Business Rule Coverage
+
+| Business Rule | Covered by table/design | Covered by endpoint | Notes |
+| --- | --- | --- | --- |
+| BR-01 | DB-01, DB-04 | API-03 | New request starts `SUBMITTED`. |
+| BR-02 | DB-01, DB-04 controlled status | API-03, API-05, API-07, API-10, API-11, API-15, API-16 | Strict 6 statuses only. |
+| BR-03 | DB-03 assignment depends on reviewed request | API-05, API-07 | Review before assignment. |
+| BR-04 | DB-01 priority final value | API-06 | Administrator owns final priority. |
+| BR-05 | DB-01 `priority_suggestion` | API-03, API-06 | Lecturer HIGH suggestion only. |
+| BR-06 | DB-01 category | API-06 | Controlled category vocabulary; OPEN-05 preserved. |
+| BR-07 | DB-01 priority check | API-02, API-06 | LOW/MEDIUM/HIGH/URGENT. |
+| BR-08 | DB-04 status history fields | Status-changing APIs | `from_status`, `to_status`, `changed_by_role`, timestamp, and note. |
+| BR-09 | DB-05 public visibility | API-04, API-12 | Public comments visible to Reporter, Administrator, Technician. |
+| BR-10 | DB-06 internal visibility | API-04, API-13 | Internal notes only Administrator and Technician; OPEN-10 preserved for Facility Manager. |
+| BR-11 | DB-01 override fields, DB-07 confirmation | API-14, API-15 | Confirmation before close or manual override note. |
+| BR-12 | DB-04 status transition record | API-16 | Reopen target `UNDER_REVIEW`. |
+
+### User Story Coverage
+
+| User Story | Covered by table/design | Covered by endpoint | Notes |
+| --- | --- | --- | --- |
+| US-01 | DB-01, DB-04 | API-03 | Create request, reporter fields, initial status. |
+| US-02 | DB-01 | API-02 | List and empty state metadata. |
+| US-03 | DB-01 | API-02 | Search and empty result metadata. |
+| US-04 | DB-01 | API-02 | Status/priority combined filters. |
+| US-05 | DB-01, DB-04, DB-05, DB-06 | API-04 | Detail, status history, visible comments. |
+| US-06 | DB-01, DB-04 | API-05 | Administrator review and forbidden non-admin action. |
+| US-07 | DB-01 | API-06 | Category, priority, Lecturer suggestion. |
+| US-08 | DB-02, DB-03, DB-04 | API-07 | Assignment and transition to `ASSIGNED`. |
+| US-09 | DB-02, DB-03 | API-08, API-09 | View and accept assigned tasks. |
+| US-10 | DB-03, DB-04 | API-10, API-11 | Progress/resolved transitions and status history. |
+| US-11 | DB-05 | API-12 | Public comment storage and visibility. |
+| US-12 | DB-06 | API-13 | Internal note storage and visibility. |
+| US-13 | DB-07 | API-14 | Reporter confirmation. |
+| US-14 | DB-01, DB-04, DB-07 | API-15 | Close after confirmation or override note. |
+| US-15 | DB-04 | API-16 | Reopen and status history. |
+| US-16 | DB-01, DB-02, DB-03, DB-04 | API-17 | Dashboard summary and workload source data. |
+| US-17 | Role validation convention | API-02 sampai API-17 | API validates role/action while UI controls visible actions. |
 
 ## Risks, Assumptions, and Open Questions
 
