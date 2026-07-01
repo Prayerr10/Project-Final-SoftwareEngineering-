@@ -106,6 +106,28 @@ type DashboardSummary = {
 
 const categories = ["Internet", "AC", "Peralatan Kelas", "Kebersihan", "Lainnya"];
 const priorities = ["LOW", "MEDIUM", "HIGH", "URGENT"];
+const roleOptions = [
+	{
+		value: "REPORTER",
+		label: "Pelapor",
+		hint: "Buat dan pantau laporan",
+	},
+	{
+		value: "ADMINISTRATOR",
+		label: "Administrator",
+		hint: "Review, klasifikasi, assignment",
+	},
+	{
+		value: "TECHNICIAN",
+		label: "Teknisi",
+		hint: "Kerjakan tugas aktif",
+	},
+	{
+		value: "FACILITY_MANAGER",
+		label: "Manajer",
+		hint: "Pantau dashboard",
+	},
+];
 const emptyDashboardSummary: DashboardSummary = {
 	totalRequests: 0,
 	byStatus: [],
@@ -162,6 +184,10 @@ function roleActionSummary(role: string) {
 		"Tambah komentar publik",
 		"Konfirmasi hasil resolved",
 	];
+}
+
+function badgeClass(kind: "status" | "priority", value: string) {
+	return `badge badge-${kind} badge-${value.toLowerCase().replace(/_/g, "-")}`;
 }
 
 function SummaryList({
@@ -698,18 +724,28 @@ export default function App() {
 				<p className="eyebrow">Campus Maintenance</p>
 				<h1>Campus Service Request</h1>
 				<p>Laporkan masalah fasilitas kampus dan pantau statusnya.</p>
-				<label className="role-switcher">
-					Simulasi Role
-					<select
-						value={activeRole}
-						onChange={(event) => setActiveRole(event.target.value)}
-					>
-						<option value="REPORTER">Pelapor</option>
-						<option value="ADMINISTRATOR">Administrator</option>
-						<option value="TECHNICIAN">Teknisi</option>
-						<option value="FACILITY_MANAGER">Manajer Fasilitas</option>
-					</select>
-				</label>
+				<section className="role-switcher" aria-labelledby="role-switcher-title">
+					<div>
+						<h2 id="role-switcher-title">Simulasi Role</h2>
+						<p>Role aktif mengatur tampilan aksi. API tetap memvalidasi izin.</p>
+					</div>
+					<div className="role-tabs" role="tablist" aria-label="Simulasi Role">
+						{roleOptions.map((role) => (
+							<button
+								type="button"
+								key={role.value}
+								className={
+									activeRole === role.value ? "role-tab active" : "role-tab"
+								}
+								aria-pressed={activeRole === role.value}
+								onClick={() => setActiveRole(role.value)}
+							>
+								<strong>{role.label}</strong>
+								<span>{role.hint}</span>
+							</button>
+						))}
+					</div>
+				</section>
 				<section className="role-action-summary" aria-live="polite">
 					<h2>Aksi tersedia untuk role aktif</h2>
 					<ul>
@@ -732,6 +768,7 @@ export default function App() {
 						<label>
 							Nama Pelapor
 							<input
+								name="reporterName"
 								value={reporterName}
 								onChange={(event) => setReporterName(event.target.value)}
 								placeholder="Contoh: Dr. Mira Santoso"
@@ -741,6 +778,7 @@ export default function App() {
 						<label>
 							Tipe Pelapor
 							<select
+								name="reporterType"
 								value={reporterType}
 								onChange={(event) => setReporterType(event.target.value)}
 							>
@@ -757,6 +795,7 @@ export default function App() {
 						<label>
 							Judul
 							<input
+								name="title"
 								value={title}
 								onChange={(event) => setTitle(event.target.value)}
 								placeholder="Contoh: Proyektor ruang 302 rusak"
@@ -766,6 +805,7 @@ export default function App() {
 						<label>
 							Deskripsi
 							<textarea
+								name="description"
 								value={description}
 								onChange={(event) => setDescription(event.target.value)}
 								placeholder="Jelaskan masalah minimal 20 karakter."
@@ -775,6 +815,7 @@ export default function App() {
 						<label>
 							Lokasi
 							<input
+								name="location"
 								value={location}
 								onChange={(event) => setLocation(event.target.value)}
 								placeholder="Contoh: Gedung A, Ruang 302"
@@ -784,6 +825,7 @@ export default function App() {
 						<label>
 							Kategori
 							<select
+								name="category"
 								value={category}
 								onChange={(event) => setCategory(event.target.value)}
 							>
@@ -830,6 +872,7 @@ export default function App() {
 						<label>
 							Konteks Teknisi
 							<select
+								name="technicianContext"
 								value={selectedTechnicianId}
 								onChange={(event) => setSelectedTechnicianId(event.target.value)}
 							>
@@ -844,6 +887,7 @@ export default function App() {
 						<label>
 							Catatan Progres atau Penyelesaian
 							<textarea
+								name="technicianNote"
 								value={technicianNote}
 								onChange={(event) => setTechnicianNote(event.target.value)}
 								placeholder="Contoh: Mulai dikerjakan atau pekerjaan selesai."
@@ -868,8 +912,12 @@ export default function App() {
 												<h3>{task.title}</h3>
 											</div>
 											<div className="badge-group">
-												<span>{task.status}</span>
-												<span>{task.priority}</span>
+												<span className={badgeClass("status", task.status)}>
+													{task.status}
+												</span>
+												<span className={badgeClass("priority", task.priority)}>
+													{task.priority}
+												</span>
 											</div>
 										</header>
 										<p>
@@ -1028,6 +1076,7 @@ export default function App() {
 						<label>
 							Cari laporan
 							<input
+								name="search"
 								value={search}
 								onChange={(event) => setSearch(event.target.value)}
 								placeholder="Nomor, judul, lokasi, kategori, pelapor"
@@ -1037,6 +1086,7 @@ export default function App() {
 						<label>
 							Filter Status
 							<select
+								name="statusFilter"
 								value={statusFilter}
 								onChange={(event) => setStatusFilter(event.target.value)}
 							>
@@ -1053,6 +1103,7 @@ export default function App() {
 						<label>
 							Filter Prioritas
 							<select
+								name="priorityFilter"
 								value={priorityFilter}
 								onChange={(event) => setPriorityFilter(event.target.value)}
 							>
@@ -1100,8 +1151,12 @@ export default function App() {
 												</small>
 											</span>
 											<span className="request-row-meta">
-												<span>{item.status}</span>
-												<span>{item.priority}</span>
+												<span className={badgeClass("status", item.status)}>
+													{item.status}
+												</span>
+												<span className={badgeClass("priority", item.priority)}>
+													{item.priority}
+												</span>
 											</span>
 										</button>
 									))}
@@ -1155,8 +1210,14 @@ export default function App() {
 											<h4>{selectedRequest.title}</h4>
 										</div>
 										<div className="badge-group">
-											<span>{selectedRequest.status}</span>
-											<span>{selectedRequest.priority}</span>
+											<span className={badgeClass("status", selectedRequest.status)}>
+												{selectedRequest.status}
+											</span>
+											<span
+												className={badgeClass("priority", selectedRequest.priority)}
+											>
+												{selectedRequest.priority}
+											</span>
 										</div>
 									</header>
 
@@ -1236,6 +1297,7 @@ export default function App() {
 													<label>
 														Catatan Konfirmasi
 														<textarea
+															name="confirmationNote"
 															value={confirmationNote}
 															onChange={(event) =>
 																setConfirmationNote(event.target.value)
@@ -1273,6 +1335,7 @@ export default function App() {
 												<label>
 													Tambah Komentar
 													<textarea
+														name="commentBody"
 														value={commentBody}
 														onChange={(event) => setCommentBody(event.target.value)}
 														placeholder="Tulis komentar publik untuk laporan ini."
@@ -1306,6 +1369,7 @@ export default function App() {
 													<label>
 														Tambah Catatan Internal
 														<textarea
+															name="internalNoteBody"
 															value={internalNoteBody}
 															onChange={(event) =>
 																setInternalNoteBody(event.target.value)
@@ -1332,6 +1396,7 @@ export default function App() {
 													<label>
 														Catatan Review
 														<textarea
+															name="reviewNote"
 															value={reviewNote}
 															onChange={(event) =>
 																setReviewNote(event.target.value)
@@ -1351,6 +1416,7 @@ export default function App() {
 														<label>
 															Kategori
 															<select
+																name="adminCategory"
 																value={adminCategory}
 																onChange={(event) =>
 																	setAdminCategory(event.target.value)
@@ -1365,6 +1431,7 @@ export default function App() {
 														<label>
 															Prioritas
 															<select
+																name="adminPriority"
 																value={adminPriority}
 																onChange={(event) =>
 																	setAdminPriority(event.target.value)
@@ -1388,6 +1455,7 @@ export default function App() {
 														<label>
 															Teknisi
 															<select
+																name="selectedTechnicianId"
 																value={selectedTechnicianId}
 																onChange={(event) =>
 																	setSelectedTechnicianId(event.target.value)
@@ -1404,6 +1472,7 @@ export default function App() {
 														<label>
 															Catatan Assignment
 															<textarea
+																name="assignmentNote"
 																value={assignmentNote}
 																onChange={(event) =>
 																	setAssignmentNote(event.target.value)
@@ -1424,6 +1493,7 @@ export default function App() {
 													<label>
 														Catatan Close
 														<textarea
+															name="closeNote"
 															value={closeNote}
 															onChange={(event) =>
 																setCloseNote(event.target.value)
@@ -1435,6 +1505,7 @@ export default function App() {
 													<label className="checkbox-label">
 														<input
 															type="checkbox"
+															name="manualOverride"
 															checked={manualOverride}
 															onChange={(event) =>
 																setManualOverride(event.target.checked)
@@ -1447,6 +1518,7 @@ export default function App() {
 														<label>
 															Catatan Manual Override
 															<textarea
+																name="manualOverrideNote"
 																value={manualOverrideNote}
 																onChange={(event) =>
 																	setManualOverrideNote(event.target.value)
@@ -1456,7 +1528,11 @@ export default function App() {
 														</label>
 													)}
 
-													<button type="button" onClick={closeSelectedRequest}>
+													<button
+														type="button"
+														className="danger-button"
+														onClick={closeSelectedRequest}
+													>
 														Tutup Laporan
 													</button>
 												</div>
@@ -1467,6 +1543,7 @@ export default function App() {
 													<label>
 														Catatan Reopen
 														<textarea
+															name="reopenNote"
 															value={reopenNote}
 															onChange={(event) =>
 																setReopenNote(event.target.value)
@@ -1474,7 +1551,11 @@ export default function App() {
 															placeholder="Contoh: Masalah muncul kembali."
 														/>
 													</label>
-													<button type="button" onClick={reopenSelectedRequest}>
+													<button
+														type="button"
+														className="danger-button"
+														onClick={reopenSelectedRequest}
+													>
 														Buka Kembali
 													</button>
 												</div>
