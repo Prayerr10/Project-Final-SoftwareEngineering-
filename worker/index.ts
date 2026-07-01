@@ -523,6 +523,11 @@ export default {
 		if (requestDetailMatch && request.method === "GET") {
 			const requestId = decodeURIComponent(requestDetailMatch[1]);
 			const role = url.searchParams.get("role")?.trim() || null;
+
+			if (role === "FACILITY_MANAGER") {
+				return forbidden();
+			}
+
 			const requestRow = await env.DB.prepare(`
 				SELECT id, request_number, title, description, location,
 				category, priority, priority_suggestion, status,

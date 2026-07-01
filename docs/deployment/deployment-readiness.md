@@ -38,7 +38,7 @@ npx wrangler secret put SECRET_NAME
 | Command | Result |
 | --- | --- |
 | `npm test -- --run tests/integration/deployment-readiness.test.ts` | RED first: missing readiness document and comment-aware config check needed |
-| `npm test -- --run` | PASS: 11 test files, 45 tests |
+| `npm test -- --run` | PASS: 12 test files, 52 tests after Skill 11 regression review |
 | `npm run build` | PASS |
 
 ## Secret Scan Result

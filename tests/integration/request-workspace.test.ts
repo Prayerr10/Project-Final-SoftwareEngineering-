@@ -497,6 +497,21 @@ describe("GET /api/requests/:id detail", () => {
 		);
 	});
 
+	it("rejects Facility Manager full detail while OPEN-10 remains unresolved", async () => {
+		const response = await worker.fetch(
+			new Request("http://localhost/api/requests/request-1?role=FACILITY_MANAGER"),
+			{ DB: new FakeWorkspaceD1Database(storedRequests) } as unknown as Env,
+		);
+
+		await expect(response.json()).resolves.toEqual({
+			error: {
+				code: "FORBIDDEN",
+				message: "Role aktif tidak boleh melakukan aksi ini.",
+			},
+		});
+		expect(response.status).toBe(403);
+	});
+
 	it("validates empty bodies and rejects Reporter or Facility Manager internal notes", async () => {
 		const database = new FakeWorkspaceD1Database(storedRequests);
 
