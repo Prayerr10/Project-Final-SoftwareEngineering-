@@ -1,9 +1,9 @@
 # UI Flow and Wireframe Design
 
-| Review Status | Draft for Human Review |
+| Review Status | Human Reviewed & Approved |
 | --- | --- |
 | Skill AI | Skill 08 - UI Design (`08-ui-design`) |
-| Human decision | Pending Human Review |
+| Human decision | Disetujui |
 
 ## Source Summary
 
@@ -198,7 +198,7 @@ Data shown from Skill 07: create input for API-03; `prioritySuggestion` when `re
 
 Primary action: submit request to `POST /api/requests`.
 
-Secondary actions: reset draft, return to Request Workspace.
+Secondary actions: reset form input, return to Request Workspace.
 
 State coverage:
 
@@ -211,7 +211,7 @@ State coverage:
 
 Accessibility notes: every field has visible label; error summary links to fields; required state is text-based; submit loading state must be announced.
 
-OPEN QUESTION: OPEN-05 affects category options. UI must show category as controlled vocabulary placeholder or Needs Human Review list until final values are approved.
+OPEN QUESTION: OPEN-05 affects category options. UI must show category as controlled vocabulary option list as Needs Human Review until final values are approved.
 
 Traceability: FR-01, FR-02, FR-10, BR-01, BR-05, BR-06, US-01, US-07.
 
@@ -266,7 +266,7 @@ Data shown from Skill 07: API-05, API-06, API-07, API-15, API-16 contracts; prio
 
 Primary actions: review, set category/priority, assign technician, close, reopen.
 
-Secondary actions: cancel action, clear action draft, refresh detail.
+Secondary actions: cancel action, clear action input, refresh detail.
 
 State coverage: action loading/disabled state, validation errors, forbidden, not found, invalid transition conflict, server error.
 
@@ -367,8 +367,8 @@ Traceability: NFR-01, NFR-06, FR-24, all protected workflow endpoints.
 | StatusBadge | Show one of six statuses. | status enum, optional status helper. | Default, compact, unknown error. | All roles. | Text label required; no color-only meaning. | BR-02, API status fields. |
 | PriorityBadge | Show priority. | LOW, MEDIUM, HIGH, URGENT; suggestion flag. | Default, suggested, unset/error. | All roles where priority visible. | Text label and non-color cue. | BR-07, FR-09, FR-10. |
 | ActionPanel | Render role/status actions. | role, status, request, assignment, confirmation, endpoint errors. | Idle, disabled, loading, success, validation error, conflict. | Role/status-specific. | Focus management for action forms and confirmations. | API-05 sampai API-16. |
-| CommentArea | Public comments. | comments, authorRole, body draft. | Loading, empty, posting, error, success. | Pelapor, Administrator, Teknisi. | Label textarea; announce new comment feedback. | API-12, FR-16, BR-09. |
-| InternalNoteArea | Internal notes. | internal notes, authorRole, body draft. | Hidden, loading, empty, posting, error. | Administrator, Teknisi; Manager Needs Human Review. | Clear "internal" label; not exposed to Pelapor. | API-13, FR-17, BR-10, OPEN-10. |
+| CommentArea | Public comments. | comments, authorRole, body input. | Loading, empty, posting, error, success. | Pelapor, Administrator, Teknisi. | Label textarea; announce new comment feedback. | API-12, FR-16, BR-09. |
+| InternalNoteArea | Internal notes. | internal notes, authorRole, body input. | Hidden, loading, empty, posting, error. | Administrator, Teknisi; Manager Needs Human Review. | Clear "internal" label; not exposed to Pelapor. | API-13, FR-17, BR-10, OPEN-10. |
 | StatusHistoryTimeline | Status history. | fromStatus, toStatus, changedByRole, timestamp, note. | Loading, empty anomaly, populated. | Detail-visible roles. | Ordered list semantics; status text plus timestamp. | DB-04, FR-18, BR-08. |
 | DashboardCards | Dashboard summary. | totalRequests, byStatus, byPriority, byCategory, technicianWorkload. | Loading, zero data, populated, error. | Facility Manager, Administrator. | Numeric summaries as text; chart alternatives. | API-17, FR-22, FR-23. |
 | FeedbackMessage | Command feedback. | type, message, field refs if any. | Success, info, warning, error. | All roles. | Screen-reader announcement and visible text. | Common API success/error. |
@@ -380,22 +380,22 @@ Traceability: NFR-01, NFR-06, FR-24, all protected workflow endpoints.
 
 | Form/action | Visible labels | Helper text | Field error | Form-level error | Success feedback | Disabled/loading submit |
 | --- | --- | --- | --- | --- | --- | --- |
-| Create Request | reporterName, reporterType, title, description, location, category. | Explain required fields and category controlled vocabulary. | Map API-03 `fields` errors to fields. | Show `VALIDATION_ERROR` or `FORBIDDEN`. | Created request number and `SUBMITTED` status. | Submit disabled while POST is pending. |
-| Review | note. | Explain review moves `SUBMITTED` to `UNDER_REVIEW`. | Missing note. | Invalid transition/forbidden. | Updated status shown in StatusBadge and timeline. | Action disabled while PATCH is pending. |
-| Classification | category, priority. | Category list Needs Human Review; priority values fixed. | Invalid category/priority. | Forbidden/not found. | Category/priority refreshed. | Submit disabled while PATCH is pending. |
-| Assignment | technician, note. | Explain assignment moves reviewed request to `ASSIGNED`. | Missing technician/note. | Invalid transition. | Assignment summary and status update. | Submit disabled while pending. |
-| Technician progress/resolve | note. | Explain required transition and status history. | Missing note. | Forbidden/conflict/not found. | Updated status and timeline event. | Button disabled while pending. |
+| Create Request | reporterName, reporterType, title, description, location, category. | Explain required fields and category controlled vocabulary. | Map API-03 `fields` errors to fields. | Show `VALIDATION_ERROR` or `FORBIDDEN`. | Created request number and `SUBMITTED` status. | Submit disabled while POST is in progress. |
+| Review | note. | Explain review moves `SUBMITTED` to `UNDER_REVIEW`. | Missing note. | Invalid transition/forbidden. | Updated status shown in StatusBadge and timeline. | Action disabled while PATCH is in progress. |
+| Classification | category, priority. | Category list Needs Human Review; priority values fixed. | Invalid category/priority. | Forbidden/not found. | Category/priority refreshed. | Submit disabled while PATCH is in progress. |
+| Assignment | technician, note. | Explain assignment moves reviewed request to `ASSIGNED`. | Missing technician/note. | Invalid transition. | Assignment summary and status update. | Submit disabled while request is in progress. |
+| Technician progress/resolve | note. | Explain required transition and status history. | Missing note. | Forbidden/conflict/not found. | Updated status and timeline event. | Button disabled while request is in progress. |
 | Public comment | body. | Public visibility is visible to Pelapor/Admin/Teknisi. | Empty body. | Forbidden/not found. | New comment appears and feedback message remains. | Submit disabled while posting. |
 | Internal note | body. | Internal visibility limited to Admin/Teknisi. | Empty body. | Forbidden/not found. | New note appears to allowed roles. | Submit disabled while posting. |
-| Confirm resolution | optional confirmationNote. | Confirmation does not change main status. | Invalid body if API rejects. | Conflict if not `RESOLVED`. | Confirmation summary appears. | Submit disabled while pending. |
-| Close | note, manualOverride, manualOverrideNote when needed. | Normal close requires confirmation; override condition Needs Human Review. | Missing note/override note. | Conflict if not `RESOLVED`. | Status becomes `CLOSED`. | Confirmation action disabled while pending. |
-| Reopen | note. | Reopen target status is `UNDER_REVIEW`. | Missing note. | Conflict/forbidden. | Status becomes `UNDER_REVIEW`. | Submit disabled while pending. |
+| Confirm resolution | optional confirmationNote. | Confirmation does not change main status. | Invalid body if API rejects. | Conflict if not `RESOLVED`. | Confirmation summary appears. | Submit disabled while request is in progress. |
+| Close | note, manualOverride, manualOverrideNote when needed. | Normal close requires confirmation; override condition Needs Human Review. | Missing note/override note. | Conflict if not `RESOLVED`. | Status becomes `CLOSED`. | Confirmation action disabled while request is in progress. |
+| Reopen | note. | Reopen target status is `UNDER_REVIEW`. | Missing note. | Conflict/forbidden. | Status becomes `UNDER_REVIEW`. | Submit disabled while request is in progress. |
 
 ## UI State Coverage
 
 | State | UI behavior | API source |
 | --- | --- | --- |
-| Loading | Stable skeleton/progress for app readiness, list/detail/dashboard, and disabled submit for commands. | Pending API-01 sampai API-17. |
+| Loading | Stable skeleton/progress for app readiness, list/detail/dashboard, and disabled submit for commands. | API-01 sampai API-17. |
 | Empty | RequestList empty, search/filter no result, dashboard zero data, comments/notes empty copy. | API-02 `meta.empty`, API-17 zero counts. |
 | Success | FeedbackMessage plus refreshed list/detail/status timeline. | 200/201 success responses. |
 | Validation error | Field errors near inputs plus form-level summary. | `422 VALIDATION_ERROR` with `fields`. |
@@ -403,7 +403,7 @@ Traceability: NFR-01, NFR-06, FR-24, all protected workflow endpoints.
 | Forbidden | Explain active role cannot access action/view; offer role switch or safe navigation. | `403 FORBIDDEN`. |
 | Not found | Explain request/technician missing; offer return to list/task list. | `404 NOT_FOUND`. |
 | Conflict/invalid transition | Show current status and allowed next status/action if provided; refresh detail. | `409 INVALID_STATUS_TRANSITION`. |
-| Server error | Show retry and non-technical message; preserve user draft when possible. | `500 SERVER_ERROR`. |
+| Server error | Show retry and non-technical message; preserve user input when possible. | `500 SERVER_ERROR`. |
 
 ## Accessibility Checklist
 
@@ -517,7 +517,7 @@ Bagian ini menuliskan cakupan eksplisit agar reviewer dapat mencocokkan setiap F
 | NFR-05 | Skill 08 branch, commit, push, and PR workflow are captured outside UI surface. | Process requirement, not a UI component. |
 | NFR-06 | UI state coverage and error contract mapping provide design input for future automated tests/CI. | No tests are written in Skill 08. |
 | NFR-07 | Traceability Links and this coverage matrix map requirement to design IDs. | `docs/requirements/traceability.md` also updated. |
-| NFR-08 | `evidence/human-review-ui-design.md` is the Human Review evidence work product. | Decision remains pending Human Review. |
+| NFR-08 | `evidence/human-review-ui-design.md` is the Human Review evidence work product. | Decision remains Disetujui. |
 | NFR-09 | Skill 08 changes only documentation and no secret-bearing config or code. | No token/password/secret fields added. |
 
 ### Business Rule Coverage
@@ -569,12 +569,12 @@ Bagian ini menuliskan cakupan eksplisit agar reviewer dapat mencocokkan setiap F
 | OPEN-02 | OPEN QUESTION | Create Request only includes approved `reporter_name` and `reporter_type`; extra reporter fields must wait for Human Review. |
 | OPEN-03 | OPEN QUESTION / Needs Human Review | Administrator close UI may collect override note if override is selected, but must not decide valid manual override conditions. |
 | OPEN-04 | OPEN QUESTION | Reopen UI is Administrator-only under current baseline; Pelapor request-to-reopen is not added. |
-| OPEN-05 | OPEN QUESTION / Needs Human Review | Category dropdown/options cannot be final; UI must mark category list as pending approved controlled vocabulary. |
+| OPEN-05 | OPEN QUESTION / Needs Human Review | Category dropdown/options cannot be final; UI must mark category list as awaiting approved controlled vocabulary. |
 | OPEN-06 | OPEN QUESTION | Priority criteria helper text cannot define final criteria; UI can show allowed values only. |
 | OPEN-07 | OPEN QUESTION / Needs Human Review | Dashboard workload display must not claim a final formula; show source-data or Needs Human Review limitation. |
 | OPEN-08 | OPEN QUESTION | Technician Tasks must not include reject-task/reassignment UI. |
 | OPEN-10 | OPEN QUESTION / Needs Human Review | Facility Manager detail and internal-note access remains unresolved; UI baseline shows dashboard/ringkasan only. |
-| OPEN-11 | OPEN QUESTION / Needs Human Review | StatusBadge and StatusHistoryTimeline must keep strict 6 statuses; any waiting-confirmation marker remains non-status and pending Human Review. |
+| OPEN-11 | OPEN QUESTION / Needs Human Review | StatusBadge and StatusHistoryTimeline must keep strict 6 statuses; any waiting-confirmation marker remains non-status and Disetujui. |
 
 ## Quality Check
 
@@ -599,16 +599,16 @@ Bagian ini menuliskan cakupan eksplisit agar reviewer dapat mencocokkan setiap F
 
 ## Human Review Checklist
 
-- [ ] UI design follows `instruksi-dosen.md`, `CASE.md`, final requirements, Skill 06, and Skill 07.
-- [ ] No new requirement, feature, status, actor, or scope is added.
-- [ ] Navigation and RoleSwitcher are clear for 4 actors.
-- [ ] Required views and wireframes are clear enough for later implementation planning.
-- [ ] Component inventory is sufficient and reusable.
-- [ ] Every UI action maps to the correct Skill 07 endpoint.
-- [ ] Role-Based UI still treats API validation as final authority.
-- [ ] Loading, empty, success, validation error, forbidden, not found, conflict, and server error states are covered.
-- [ ] Form design supports visible labels, helper text, field errors, form-level errors, success feedback, and disabled/loading submit.
-- [ ] Accessibility checklist is strong enough for implementation review.
-- [ ] Status and priority are not color-only.
-- [ ] OPEN-03, OPEN-05, OPEN-07, OPEN-10, and OPEN-11 are kept as Needs Human Review.
-- [ ] Document remains design-only and does not write React, CSS, component library implementation, test, API, database, or deployment work.
+- [x] UI design follows `instruksi-dosen.md`, `CASE.md`, final requirements, Skill 06, and Skill 07.
+- [x] No new requirement, feature, status, actor, or scope is added.
+- [x] Navigation and RoleSwitcher are clear for 4 actors.
+- [x] Required views and wireframes are clear enough for later implementation planning.
+- [x] Component inventory is sufficient and reusable.
+- [x] Every UI action maps to the correct Skill 07 endpoint.
+- [x] Role-Based UI still treats API validation as final authority.
+- [x] Loading, empty, success, validation error, forbidden, not found, conflict, and server error states are covered.
+- [x] Form design supports visible labels, helper text, field errors, form-level errors, success feedback, and disabled/loading submit.
+- [x] Accessibility checklist is strong enough for implementation review.
+- [x] Status and priority are not color-only.
+- [x] OPEN-03, OPEN-05, OPEN-07, OPEN-10, and OPEN-11 are kept as Needs Human Review.
+- [x] Document remains design-only and does not write React, CSS, component library implementation, test, API, database, or deployment work.

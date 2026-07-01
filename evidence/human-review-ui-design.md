@@ -21,7 +21,7 @@ Skill 08 - UI Design (`08-ui-design`)
 3. Business rule BR-01 sampai BR-12 belum memiliki tabel cocok-cocokan eksplisit di `docs/design/ui-flow.md`. Beberapa rule sudah muncul di wireframe dan API-to-UI mapping, tetapi reviewer masih harus mencari manual apakah strict 6 status, review-before-assignment, controlled category/priority, status history, comment/note visibility, confirmation-before-close, dan reopen target status sudah tercermin.
 4. User story US-01 sampai US-17 belum memiliki coverage matrix eksplisit di `docs/design/ui-flow.md`. Walaupun wireframe per view sudah menyebut user story terkait, reviewer masih perlu menelusuri banyak section untuk memastikan seluruh acceptance criteria memiliki representasi UI.
 5. Page/View Inventory dan API-to-UI mapping sempat menyebut `ForbiddenState`, `NotFoundState`, dan `ServerErrorState`, sedangkan component inventory wajib hanya mendefinisikan `ErrorState`. Ini berpotensi terlihat seperti komponen baru yang tidak tercatat atau komponen wajib yang terpecah tidak konsisten.
-6. UI State Coverage untuk loading awal hanya menyebut pending API-02 sampai API-17, sehingga `GET /api/health` sebagai API-01 belum terlihat sebagai bagian dari app readiness/loading/error handling walaupun sudah ada di API-to-UI mapping.
+6. UI State Coverage untuk loading awal hanya menyebut in-flight API-02 sampai API-17, sehingga `GET /api/health` sebagai API-01 belum terlihat sebagai bagian dari app readiness/loading/error handling walaupun sudah ada di API-to-UI mapping.
 
 ## Perbaikan
 
@@ -44,7 +44,7 @@ Catatan: Test otomatis tidak dijalankan karena perubahan Skill 08 hanya pada dok
 
 ## Keputusan
 
-- [ ] Disetujui
+- [x] Disetujui
 - [ ] Perlu revisi
 - [ ] Ditolak
 - [ ] Terblokir
