@@ -401,6 +401,19 @@
 	padding-top: 14px;
 }
 
+.confirmation-panel {
+	display: grid;
+	gap: 12px;
+	margin-top: 16px;
+	border-top: 1px solid #e5e7eb;
+	padding-top: 14px;
+}
+
+.confirmation-summary {
+	margin: 0;
+	color: #111827;
+}
+
 .internal-note-panel {
 	display: grid;
 	gap: 12px;
@@ -488,6 +501,17 @@
 	gap: 8px;
 	color: #374151;
 	font-weight: 700;
+}
+
+.admin-actions .checkbox-label {
+	display: flex;
+	gap: 10px;
+	align-items: center;
+}
+
+.admin-actions .checkbox-label input {
+	width: 18px;
+	height: 18px;
 }
 
 .admin-actions textarea {
