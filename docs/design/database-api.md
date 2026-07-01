@@ -1,9 +1,9 @@
 # Database and API Design
 
-| Review Status | Draft - Needs Human Review |
+| Review Status | Human Reviewed & Approved |
 | --- | --- |
 | Skill AI | Skill 07 - Database dan API Design (`07-database-api-design`) |
-| Human decision | Pending Human Review |
+| Human decision | Disetujui |
 
 ## Source Summary
 
