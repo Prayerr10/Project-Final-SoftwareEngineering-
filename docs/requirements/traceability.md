@@ -24,8 +24,8 @@ Traceability ini mencatat relasi requirement ke user story dari Skill 03, priori
 | FR-13 | US-09 | ARCH-02, ARCH-05 | DB-03, API-09 | UI-06 | #17 | `worker/index.ts`, `src/App.tsx`, `src/App.css` | `tests/integration/technician-workflow.test.ts`, `tests/integration/react-foundation.test.ts` | Selesai untuk Issue #17; accept records `accepted_at` while status remains `ASSIGNED` and no reject/reassignment path is added |
 | FR-14 | US-10 | ARCH-02, ARCH-05, ARCH-06 | DB-03, DB-04, API-10 | UI-06 | #17 | `worker/index.ts`, `src/App.tsx`, `src/App.css` | `tests/integration/technician-workflow.test.ts`, `tests/integration/react-foundation.test.ts` | Selesai untuk Issue #17; assigned technician moves `ASSIGNED` to `IN_PROGRESS` with status history |
 | FR-15 | US-10 | ARCH-02, ARCH-05, ARCH-06 | DB-03, DB-04, API-11 | UI-06 | #17 | `worker/index.ts`, `src/App.tsx`, `src/App.css` | `tests/integration/technician-workflow.test.ts`, `tests/integration/react-foundation.test.ts` | Selesai untuk Issue #17; assigned technician moves `IN_PROGRESS` to `RESOLVED` without adding a seventh status |
-| FR-16 | US-11 | ARCH-03, ARCH-07 | DB-05, API-12 | UI-04, UI-09 | #18 | Belum tahap implementasi | Belum tahap testing | Planned in Skill 09; approved through Skill 08 |
-| FR-17 | US-12 | ARCH-03, ARCH-07 | DB-06, API-13 | UI-04, UI-09 | #18 | Belum tahap implementasi | Belum tahap testing | Planned in Skill 09; approved through Skill 08 |
+| FR-16 | US-11 | ARCH-03, ARCH-07 | DB-05, API-12 | UI-04, UI-09 | #18 | `worker/index.ts`, `database/migrations/0004_create_request_comments_and_internal_notes.sql`, `src/App.tsx`, `src/App.css` | `tests/integration/request-workspace.test.ts`, `tests/integration/react-foundation.test.ts` | Selesai untuk Issue #18; public comments stored as `PUBLIC` and visible in request detail for REPORTER, ADMINISTRATOR, and TECHNICIAN |
+| FR-17 | US-12 | ARCH-03, ARCH-07 | DB-06, API-13 | UI-04, UI-09 | #18 | `worker/index.ts`, `database/migrations/0004_create_request_comments_and_internal_notes.sql`, `src/App.tsx`, `src/App.css` | `tests/integration/request-workspace.test.ts`, `tests/integration/react-foundation.test.ts` | Selesai untuk Issue #18; internal notes stored as `INTERNAL`, hidden from REPORTER, and not granted to FACILITY_MANAGER while OPEN-10 remains unresolved |
 | FR-18 | US-05, US-10 | ARCH-03, ARCH-06 | DB-04, API-03, API-05, API-07, API-10, API-11, API-15, API-16 | UI-02, UI-04, UI-05, UI-06 | #14, #15, #16, #17, #19 | `worker/index.ts`, `database/migrations/0002_create_request_identity_and_history.sql`, `database/migrations/0003_create_technicians_and_assignments.sql`, `src/App.tsx`, `src/App.css` | `tests/integration/request-create.test.ts`, `tests/integration/request-workspace.test.ts`, `tests/integration/admin-workflow.test.ts`, `tests/integration/technician-workflow.test.ts`, `tests/integration/react-foundation.test.ts` | Selesai untuk Issue #17 slice; progress and resolve append BR-08 Riwayat Status with from/to status, role, note, and timestamp |
 | FR-19 | US-13 | ARCH-02, ARCH-05 | DB-07, API-14 | UI-04, UI-09 | #19 | Belum tahap implementasi | Belum tahap testing | Planned in Skill 09; approved through Skill 08 |
 | FR-20 | US-14 | ARCH-02, ARCH-05 | DB-01, DB-07, DB-04, API-15 | UI-05, UI-09 | #19 | Belum tahap implementasi | Belum tahap testing | Planned in Skill 09; approved through Skill 08 |
@@ -55,8 +55,8 @@ Traceability ini mencatat relasi requirement ke user story dari Skill 03, priori
 | BR-06 | FR-08 | ARCH-14 | DB-01, API-06 | UI-03, UI-05, UI-09 | #16 | Selesai untuk Issue #16; category validation uses the fixed list already present in the app |
 | BR-07 | FR-09 | ARCH-14 | DB-01, API-02, API-06 | UI-05, UI-09 | #16 | Selesai untuk Issue #16; API accepts only `LOW`, `MEDIUM`, `HIGH`, `URGENT` |
 | BR-08 | FR-18 | ARCH-06 | DB-04, status-changing APIs | UI-04, UI-05, UI-06 | #14, #16, #17, #19 | Selesai untuk Issue #17 slice; progress and resolve write from/to status, role `TECHNICIAN`, note, and timestamp |
-| BR-09 | FR-16 | ARCH-07 | DB-05, API-04, API-12 | UI-04, UI-09 | #18 | Planned in Skill 09; approved through Skill 08 |
-| BR-10 | FR-17 | ARCH-07 | DB-06, API-04, API-13 | UI-04, UI-09 | #18 | Planned in Skill 09; approved through Skill 08 |
+| BR-09 | FR-16 | ARCH-07 | DB-05, API-04, API-12 | UI-04, UI-09 | #18 | Selesai untuk Issue #18; Komentar Publik uses `request_comments`, API-12, and API-04 detail visibility |
+| BR-10 | FR-17 | ARCH-07 | DB-06, API-04, API-13 | UI-04, UI-09 | #18 | Selesai untuk Issue #18; Catatan Internal uses `request_internal_notes`, API-13, and API-04 role query for ADMINISTRATOR/TECHNICIAN only |
 | BR-11 | FR-19, FR-20 | ARCH-02, ARCH-05 | DB-01, DB-07, API-14, API-15 | UI-04, UI-05, UI-09 | #19 | Planned in Skill 09; approved through Skill 08 |
 | BR-12 | FR-21 | ARCH-02, ARCH-05 | DB-04, API-16 | UI-05 | #19 | Planned in Skill 09; approved through Skill 08 |
 
@@ -140,7 +140,7 @@ Status: Pending Human Review. Link issue berikut dibuat di GitHub Issues untuk m
 | #15 | Request workspace list, search, filter, and detail | FR-03, FR-04, FR-05, FR-06, FR-18, FR-24 | Created in Skill 09 |
 | #16 | Administrator review, classify, and assign workflow | FR-07, FR-08, FR-09, FR-10, FR-11, FR-18, BR-02, BR-03, BR-04, BR-05, BR-06, BR-07, BR-08 | Created in Skill 09 |
 | #17 | Technician task lifecycle | FR-12, FR-13, FR-14, FR-15, FR-18, BR-02, BR-08 | Created in Skill 09 |
-| #18 | Public comments and internal notes | FR-16, FR-17, BR-09, BR-10 | Created in Skill 09 |
+| #18 | Public comments and internal notes | FR-16, FR-17, BR-09, BR-10 | Implemented with Worker API, D1 migration, React detail communication UI, integration tests, and human review evidence |
 | #19 | Confirmation, close, and reopen workflow | FR-19, FR-20, FR-21, FR-18, BR-02, BR-08, BR-11, BR-12 | Created in Skill 09 |
 | #20 | Operational dashboard and technician workload summary | FR-22, FR-23, NFR-01, NFR-02, NFR-03 | Created in Skill 09 |
 | #21 | Role-based UI and API validation states | FR-24, NFR-01, NFR-02, NFR-06, NFR-07 | Created in Skill 09 |

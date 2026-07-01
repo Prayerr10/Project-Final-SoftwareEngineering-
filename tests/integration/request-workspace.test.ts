@@ -27,10 +27,23 @@ type StoredStatusHistory = {
 	created_at: string;
 };
 
+type StoredComment = {
+	id: string;
+	request_id: string;
+	author_role: string;
+	body: string;
+	visibility: string;
+	created_at: string;
+};
+
+type StoredInternalNote = StoredComment;
+
 class FakeWorkspaceD1Database {
 	constructor(
 		private requests: StoredRequest[],
 		private statusHistory: StoredStatusHistory[] = [],
+		private comments: StoredComment[] = [],
+		private internalNotes: StoredInternalNote[] = [],
 	) {}
 
 	prepare(sql: string) {
@@ -52,6 +65,30 @@ class FakeWorkspaceD1Database {
 							};
 						}
 
+						if (sql.includes("FROM request_comments")) {
+							const [requestId] = values as string[];
+
+							return {
+								results: database.comments
+									.filter((comment) => comment.request_id === requestId)
+									.sort((left, right) =>
+										left.created_at.localeCompare(right.created_at),
+									),
+							};
+						}
+
+						if (sql.includes("FROM request_internal_notes")) {
+							const [requestId] = values as string[];
+
+							return {
+								results: database.internalNotes
+									.filter((note) => note.request_id === requestId)
+									.sort((left, right) =>
+										left.created_at.localeCompare(right.created_at),
+									),
+							};
+						}
+
 						const search = values[0] as string | null;
 						const status = values[6] as string | null;
 						const priority = values[8] as string | null;
@@ -66,6 +103,35 @@ class FakeWorkspaceD1Database {
 							database.requests.find((request) => request.id === requestId) ??
 							null
 						);
+					},
+					async run() {
+						if (sql.includes("INSERT INTO request_comments")) {
+							const [id, requestId, authorRole, body, createdAt] =
+								values as string[];
+							database.comments.push({
+								id,
+								request_id: requestId,
+								author_role: authorRole,
+								body,
+								visibility: "PUBLIC",
+								created_at: createdAt,
+							});
+						}
+
+						if (sql.includes("INSERT INTO request_internal_notes")) {
+							const [id, requestId, authorRole, body, createdAt] =
+								values as string[];
+							database.internalNotes.push({
+								id,
+								request_id: requestId,
+								author_role: authorRole,
+								body,
+								visibility: "INTERNAL",
+								created_at: createdAt,
+							});
+						}
+
+						return { success: true };
 					},
 				};
 			},
@@ -286,9 +352,194 @@ describe("GET /api/requests/:id detail", () => {
 						createdAt: "2026-07-01T02:10:00.000Z",
 					},
 				],
+				comments: [],
 			},
 		});
 		expect(response.status).toBe(200);
+	});
+
+	it("stores a public comment and returns it in request detail for Reporter", async () => {
+		const database = new FakeWorkspaceD1Database(storedRequests);
+
+		const commentResponse = await worker.fetch(
+			new Request("http://localhost/api/requests/request-1/comments", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					role: "REPORTER",
+					body: "Mohon update setelah teknisi memeriksa proyektor.",
+				}),
+			}),
+			{ DB: database } as unknown as Env,
+		);
+
+		await expect(commentResponse.json()).resolves.toMatchObject({
+			data: {
+				requestId: "request-1",
+				authorRole: "REPORTER",
+				body: "Mohon update setelah teknisi memeriksa proyektor.",
+				visibility: "PUBLIC",
+			},
+		});
+		expect(commentResponse.status).toBe(201);
+
+		const detailResponse = await worker.fetch(
+			new Request("http://localhost/api/requests/request-1?role=REPORTER"),
+			{ DB: database } as unknown as Env,
+		);
+
+		await expect(detailResponse.json()).resolves.toMatchObject({
+			data: {
+				comments: [
+					{
+						requestId: "request-1",
+						authorRole: "REPORTER",
+						body: "Mohon update setelah teknisi memeriksa proyektor.",
+						visibility: "PUBLIC",
+					},
+				],
+			},
+		});
+
+		for (const role of ["ADMINISTRATOR", "TECHNICIAN"]) {
+			const roleDetailResponse = await worker.fetch(
+				new Request(`http://localhost/api/requests/request-1?role=${role}`),
+				{ DB: database } as unknown as Env,
+			);
+
+			await expect(roleDetailResponse.json()).resolves.toMatchObject({
+				data: {
+					comments: [
+						{
+							requestId: "request-1",
+							authorRole: "REPORTER",
+							body: "Mohon update setelah teknisi memeriksa proyektor.",
+							visibility: "PUBLIC",
+						},
+					],
+				},
+			});
+		}
+	});
+
+	it("stores an internal note for Administrator and hides it from Reporter detail", async () => {
+		const database = new FakeWorkspaceD1Database(storedRequests);
+
+		const noteResponse = await worker.fetch(
+			new Request("http://localhost/api/requests/request-1/internal-notes", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					role: "ADMINISTRATOR",
+					body: "Teknisi perlu cek kabel HDMI sebelum mengganti proyektor.",
+				}),
+			}),
+			{ DB: database } as unknown as Env,
+		);
+
+		await expect(noteResponse.json()).resolves.toMatchObject({
+			data: {
+				requestId: "request-1",
+				authorRole: "ADMINISTRATOR",
+				body: "Teknisi perlu cek kabel HDMI sebelum mengganti proyektor.",
+				visibility: "INTERNAL",
+			},
+		});
+		expect(noteResponse.status).toBe(201);
+
+		const adminDetailResponse = await worker.fetch(
+			new Request("http://localhost/api/requests/request-1?role=ADMINISTRATOR"),
+			{ DB: database } as unknown as Env,
+		);
+
+		await expect(adminDetailResponse.json()).resolves.toMatchObject({
+			data: {
+				internalNotes: [
+					{
+						requestId: "request-1",
+						authorRole: "ADMINISTRATOR",
+						body: "Teknisi perlu cek kabel HDMI sebelum mengganti proyektor.",
+						visibility: "INTERNAL",
+					},
+				],
+			},
+		});
+
+		const reporterDetailResponse = await worker.fetch(
+			new Request("http://localhost/api/requests/request-1?role=REPORTER"),
+			{ DB: database } as unknown as Env,
+		);
+
+		await expect(reporterDetailResponse.json()).resolves.not.toHaveProperty(
+			"data.internalNotes",
+		);
+	});
+
+	it("validates empty bodies and rejects Reporter or Facility Manager internal notes", async () => {
+		const database = new FakeWorkspaceD1Database(storedRequests);
+
+		const emptyCommentResponse = await worker.fetch(
+			new Request("http://localhost/api/requests/request-1/comments", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					role: "TECHNICIAN",
+					body: "   ",
+				}),
+			}),
+			{ DB: database } as unknown as Env,
+		);
+
+		await expect(emptyCommentResponse.json()).resolves.toMatchObject({
+			error: {
+				code: "VALIDATION_ERROR",
+				fields: {
+					body: "Komentar publik wajib diisi.",
+				},
+			},
+		});
+		expect(emptyCommentResponse.status).toBe(422);
+
+		const emptyInternalNoteResponse = await worker.fetch(
+			new Request("http://localhost/api/requests/request-1/internal-notes", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					role: "ADMINISTRATOR",
+					body: "",
+				}),
+			}),
+			{ DB: database } as unknown as Env,
+		);
+
+		await expect(emptyInternalNoteResponse.json()).resolves.toMatchObject({
+			error: {
+				code: "VALIDATION_ERROR",
+				fields: {
+					body: "Catatan internal wajib diisi.",
+				},
+			},
+		});
+		expect(emptyInternalNoteResponse.status).toBe(422);
+
+		for (const role of ["REPORTER", "FACILITY_MANAGER"]) {
+			const forbiddenResponse = await worker.fetch(
+				new Request("http://localhost/api/requests/request-1/internal-notes", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({
+						role,
+						body: "Catatan ini tidak boleh tersimpan.",
+					}),
+				}),
+				{ DB: database } as unknown as Env,
+			);
+
+			await expect(forbiddenResponse.json()).resolves.toMatchObject({
+				error: { code: "FORBIDDEN" },
+			});
+			expect(forbiddenResponse.status).toBe(403);
+		}
 	});
 
 	it("returns not found when the selected request does not exist", async () => {
