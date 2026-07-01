@@ -1,11 +1,11 @@
 # Traceability Matrix
 
-| Review Status | Pending Human Review for Skill 09 |
+| Review Status | PASS for Issue #24 final traceability and evidence audit |
 | --- | --- |
-| Skill AI | Skill 03 through Skill 09 traceability updates |
-| Human decision | Menunggu review Skill 09 |
+| Skill AI | Skill 03 through Skill 09 traceability updates, TDD audit test, Maker-Checker Split |
+| Human decision | PASS |
 
-Traceability ini mencatat relasi requirement ke user story dari Skill 03, prioritas Skill 04, validasi Skill 05, update design level Skill 06, update design level Skill 07, update design level Skill 08, dan issue planning Skill 09. Kolom Kode dan Test tetap menggunakan template dari `instruksi-dosen.md`, tetapi belum diisi karena tahap implementasi dan testing belum dikerjakan.
+Traceability ini mencatat relasi requirement ke user story dari Skill 03, prioritas Skill 04, validasi Skill 05, update design level Skill 06, update design level Skill 07, update design level Skill 08, issue planning Skill 09, serta implementasi Issue #13 sampai #24. Kolom Kode dan Test diisi berdasarkan artefak implementasi dan verifikasi yang sudah tersedia di repositori.
 
 | **Requirement** | **User Story** | **Design Skill 06** | **Design Skill 07** | **Design Skill 08** | **Issue** | **Kode** | **Test** | **Status** |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -39,8 +39,8 @@ Traceability ini mencatat relasi requirement ke user story dari Skill 03, priori
 | NFR-04 | Semua user story | ARCH-03, ARCH-12 | D1-only database design; no paid storage | UI excludes paid/out-of-scope features | #13, #23 | `wrangler.jsonc`, `worker/index.ts`, `src/App.tsx`, `docs/deployment/deployment-readiness.md` | `tests/integration/worker-health.test.ts`, `tests/integration/react-foundation.test.ts`, `tests/integration/deployment-readiness.test.ts` | Selesai untuk Issue #23; active deployment config uses Workers assets and D1 only |
 | NFR-05 | Semua user story | ARCH-12 | Skill 07 branch and PR workflow | Skill 08 branch and PR workflow | #23 | `docs/deployment/deployment-readiness.md`, `.github/workflows/ci.yml`, `docs/requirements/traceability.md` | GitHub PR workflow for `feature/issue-23`, `npm test -- --run`, `npm run build` | Selesai untuk Issue #23; work remains branch/PR based and CI-gated |
 | NFR-06 | Semua user story | ARCH-04 | Contract-first validation and error contracts | UI-08, UI-09 state/error design | #22 | `.github/workflows/ci.yml`, `docs/testing/automated-test-inventory.md`, `worker/index.ts`, `src/App.tsx` | `tests/unit/request-validation.test.ts`, `tests/integration/*.test.ts`, `npm test -- --run`, `npm run build` | Selesai untuk Issue #22; CI runs install, test, and build while inventory records 41 automated tests |
-| NFR-07 | Semua user story | ARCH-13 | Skill 07 traceability links added | Skill 08 traceability links added | #22, #24 | `docs/requirements/traceability.md`, `docs/testing/automated-test-inventory.md`, `evidence/human-review-implementation-issue-22.md` | `tests/integration/role-validation-states.test.ts`, `npm test -- --run`, `npm run build` | Selesai untuk Issue #22 slice; traceability, test inventory, and human-review evidence updated |
-| NFR-08 | Semua user story | ARCH-13 | `evidence/human-review-database-api.md` | `evidence/human-review-ui-design.md` | #24 | Belum tahap implementasi | Belum tahap testing | Planned in Skill 09; approved through Skill 08 |
+| NFR-07 | Semua user story | ARCH-13 | Skill 07 traceability links added | Skill 08 traceability links added | #22, #24 | `docs/requirements/traceability.md`, `docs/testing/automated-test-inventory.md`, `evidence/human-review-implementation-issue-22.md`, `evidence/human-review-implementation-issue-24.md` | `tests/integration/role-validation-states.test.ts`, `tests/integration/traceability-evidence.test.ts`, `npm test -- --run`, `npm run build` | Selesai untuk Issue #24; all FR, NFR, and BR rows are issue-linked and final audit evidence is recorded |
+| NFR-08 | Semua user story | ARCH-13 | `evidence/human-review-database-api.md` | `evidence/human-review-ui-design.md` | #24 | `evidence/human-review-implementation-issue-13.md` through `evidence/human-review-implementation-issue-24.md`, `docs/requirements/traceability.md` | `tests/integration/traceability-evidence.test.ts`, `npm test -- --run`, `npm run build` | Selesai untuk Issue #24; human-review evidence exists for implementation issues with reviewer and PASS decision |
 | NFR-09 | Semua user story | ARCH-12 | No secret-bearing design or config changes | No secret-bearing UI design changes | #13, #23 | `wrangler.jsonc`, `worker/index.ts`, `.gitignore`, `docs/deployment/deployment-readiness.md` | `tests/integration/deployment-readiness.test.ts`, tracked-file secret scan via `git grep` | Selesai untuk Issue #23; ignored secret files are protected and no credential values are added |
 
 ## Business Rule Links
@@ -131,22 +131,22 @@ Status: Human Reviewed & Approved. Link design berikut ditautkan dari `docs/desi
 
 ## Skill 09 Issue Planning Links
 
-Status: Pending Human Review. Link issue berikut dibuat di GitHub Issues untuk mengubah requirement dan design yang sudah disetujui menjadi rencana pekerjaan. Update ini tidak mengubah requirement final, tidak mengubah design Skill 06 sampai Skill 08, dan tidak membuat kode, test, deployment, atau pull request.
+Status: PASS for Issue #24 final traceability and evidence audit. Link issue berikut dibuat di GitHub Issues untuk mengubah requirement dan design yang sudah disetujui menjadi rencana pekerjaan, lalu diperbarui saat implementasi Issue #13 sampai #24 selesai melalui branch, PR, CI, dan evidence review.
 
 | Issue | Planning slice | Related requirement / rule | Status |
 | --- | --- | --- | --- |
-| #13 | React, Worker, D1 foundation | NFR-01, NFR-02, NFR-03, NFR-04, NFR-09 | Created in Skill 09 |
-| #14 | Create service request with reporter identity | FR-01, FR-02, FR-10, FR-18, BR-01, BR-05, BR-08 | Created in Skill 09 |
-| #15 | Request workspace list, search, filter, and detail | FR-03, FR-04, FR-05, FR-06, FR-18, FR-24 | Created in Skill 09 |
-| #16 | Administrator review, classify, and assign workflow | FR-07, FR-08, FR-09, FR-10, FR-11, FR-18, BR-02, BR-03, BR-04, BR-05, BR-06, BR-07, BR-08 | Created in Skill 09 |
-| #17 | Technician task lifecycle | FR-12, FR-13, FR-14, FR-15, FR-18, BR-02, BR-08 | Created in Skill 09 |
+| #13 | React, Worker, D1 foundation | NFR-01, NFR-02, NFR-03, NFR-04, NFR-09 | Selesai; PR #26 merged and evidence recorded |
+| #14 | Create service request with reporter identity | FR-01, FR-02, FR-10, FR-18, BR-01, BR-05, BR-08 | Selesai; PR #27 merged and evidence recorded |
+| #15 | Request workspace list, search, filter, and detail | FR-03, FR-04, FR-05, FR-06, FR-18, FR-24 | Selesai; PR #28 merged and evidence recorded |
+| #16 | Administrator review, classify, and assign workflow | FR-07, FR-08, FR-09, FR-10, FR-11, FR-18, BR-02, BR-03, BR-04, BR-05, BR-06, BR-07, BR-08 | Selesai; PR #29 merged and evidence recorded |
+| #17 | Technician task lifecycle | FR-12, FR-13, FR-14, FR-15, FR-18, BR-02, BR-08 | Selesai; PR #30 merged and evidence recorded |
 | #18 | Public comments and internal notes | FR-16, FR-17, BR-09, BR-10 | Implemented with Worker API, D1 migration, React detail communication UI, integration tests, and human review evidence |
 | #19 | Confirmation, close, and reopen workflow | FR-19, FR-20, FR-21, FR-18, BR-02, BR-08, BR-11, BR-12 | Implemented with Worker API, D1 reporter confirmation migration, React detail actions, integration tests, and human review evidence |
 | #20 | Operational dashboard and technician workload summary | FR-22, FR-23, NFR-01, NFR-02, NFR-03 | Implemented with Worker dashboard summary API, read-only React dashboard, integration tests, and human review evidence |
-| #21 | Role-based UI and API validation states | FR-24, NFR-01, NFR-02, NFR-06, NFR-07 | Created in Skill 09 |
-| #22 | Automated testing and GitHub Actions CI | NFR-06, NFR-07 | Created in Skill 09 |
-| #23 | Cloudflare deployment and secret-safety checks | NFR-02, NFR-03, NFR-04, NFR-05, NFR-09 | Created in Skill 09 |
-| #24 | Traceability and human review evidence | NFR-07, NFR-08, FR-01 sampai FR-24, BR-01 sampai BR-12 | Created in Skill 09 |
+| #21 | Role-based UI and API validation states | FR-24, NFR-01, NFR-02, NFR-06, NFR-07 | Selesai; PR #34 merged and evidence recorded |
+| #22 | Automated testing and GitHub Actions CI | NFR-06, NFR-07 | Selesai; PR #35 merged and evidence recorded |
+| #23 | Cloudflare deployment and secret-safety checks | NFR-02, NFR-03, NFR-04, NFR-05, NFR-09 | Selesai; PR #36 merged and evidence recorded |
+| #24 | Traceability and human review evidence | NFR-07, NFR-08, FR-01 sampai FR-24, BR-01 sampai BR-12 | Selesai; final traceability/evidence audit covered by `tests/integration/traceability-evidence.test.ts` |
 
 ## Skill 04 Prioritization Links
 
@@ -221,7 +221,7 @@ Status: Human Reviewed & Approved. Validasi Skill 05 ditautkan dari `docs/requir
 | NFR-03 | All user stories | PASS | None | Approved Skill 05 |
 | NFR-04 | All user stories | PASS | None | Approved Skill 05 |
 | NFR-05 | All user stories | PASS | None | Approved Skill 05 |
-| NFR-06 | All user stories | OPEN QUESTION: final test inventory is future work | None | Approved Skill 05 |
+| NFR-06 | All user stories | PASS after Issue #22 automated test inventory | None | Approved Skill 05 and closed by Issue #22 |
 | NFR-07 | All user stories | PASS | None | Approved Skill 05 |
 | NFR-08 | All user stories | PASS | None | Approved Skill 05 |
 | NFR-09 | All user stories | PASS | None | Approved Skill 05 |
