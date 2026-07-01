@@ -35,6 +35,11 @@ type TechnicianActionInput = {
 	note?: string;
 };
 
+type CommentInput = {
+	role?: string;
+	body?: string;
+};
+
 const STATUSES = [
 	"SUBMITTED",
 	"UNDER_REVIEW",
@@ -223,6 +228,24 @@ function toApiStatusHistory(row: {
 	};
 }
 
+function toApiComment(row: {
+	id: string;
+	request_id: string;
+	author_role: string;
+	body: string;
+	visibility: string;
+	created_at: string;
+}) {
+	return {
+		id: row.id,
+		requestId: row.request_id,
+		authorRole: row.author_role,
+		body: row.body,
+		visibility: row.visibility,
+		createdAt: row.created_at,
+	};
+}
+
 export default {
 	async fetch(request: Request, env: Env): Promise<Response> {
 		const url = new URL(request.url);
@@ -249,6 +272,12 @@ export default {
 		);
 		const requestResolveMatch = url.pathname.match(
 			/^\/api\/requests\/([^/]+)\/resolve$/,
+		);
+		const requestCommentsMatch = url.pathname.match(
+			/^\/api\/requests\/([^/]+)\/comments$/,
+		);
+		const requestInternalNotesMatch = url.pathname.match(
+			/^\/api\/requests\/([^/]+)\/internal-notes$/,
 		);
 
 		if (url.pathname === "/api/health" && request.method === "GET") {
@@ -333,6 +362,7 @@ export default {
 
 		if (requestDetailMatch && request.method === "GET") {
 			const requestId = decodeURIComponent(requestDetailMatch[1]);
+			const role = url.searchParams.get("role")?.trim() || null;
 			const requestRow = await env.DB.prepare(`
 				SELECT id, request_number, title, description, location,
 				category, priority, priority_suggestion, status,
@@ -357,6 +387,26 @@ export default {
 				.bind(requestId)
 				.all();
 
+			const commentsResult = await env.DB.prepare(`
+				SELECT id, request_id, author_role, body, visibility, created_at
+				FROM request_comments
+				WHERE request_id = ?
+				ORDER BY created_at ASC
+			`)
+				.bind(requestId)
+				.all();
+			const internalNotesResult =
+				role === "ADMINISTRATOR" || role === "TECHNICIAN"
+					? await env.DB.prepare(`
+						SELECT id, request_id, author_role, body, visibility, created_at
+						FROM request_internal_notes
+						WHERE request_id = ?
+						ORDER BY created_at ASC
+					`)
+							.bind(requestId)
+							.all()
+					: null;
+
 			return json({
 				data: {
 					...toApiRequestDetail(requestRow as RequestDetailRow),
@@ -372,6 +422,34 @@ export default {
 							},
 						),
 					),
+					comments: commentsResult.results.map((row) =>
+						toApiComment(
+							row as {
+								id: string;
+								request_id: string;
+								author_role: string;
+								body: string;
+								visibility: string;
+								created_at: string;
+							},
+						),
+					),
+					...(internalNotesResult
+						? {
+								internalNotes: internalNotesResult.results.map((row) =>
+									toApiComment(
+										row as {
+											id: string;
+											request_id: string;
+											author_role: string;
+											body: string;
+											visibility: string;
+											created_at: string;
+										},
+									),
+								),
+							}
+						: {}),
 				},
 			});
 		}
@@ -937,6 +1015,124 @@ export default {
 					status: toStatus,
 				}),
 			});
+		}
+
+		if (requestCommentsMatch && request.method === "POST") {
+			const requestId = decodeURIComponent(requestCommentsMatch[1]);
+			const input = (await request.json()) as CommentInput;
+
+			if (
+				input.role !== "REPORTER" &&
+				input.role !== "ADMINISTRATOR" &&
+				input.role !== "TECHNICIAN"
+			) {
+				return forbidden();
+			}
+
+			const fields: Record<string, string> = {};
+
+			if (!requiredText(input.body)) {
+				fields.body = "Komentar publik wajib diisi.";
+			}
+
+			if (Object.keys(fields).length > 0) {
+				return validationError(fields);
+			}
+
+			const requestRow = await env.DB.prepare(`
+				SELECT id
+				FROM service_requests
+				WHERE id = ?
+			`)
+				.bind(requestId)
+				.first();
+
+			if (!requestRow) {
+				return notFound();
+			}
+
+			const id = crypto.randomUUID();
+			const now = new Date().toISOString();
+			const body = input.body!.trim();
+
+			await env.DB.prepare(`
+				INSERT INTO request_comments
+				(id, request_id, author_role, body, visibility, created_at)
+				VALUES (?, ?, ?, ?, 'PUBLIC', ?)
+			`)
+				.bind(id, requestId, input.role, body, now)
+				.run();
+
+			return json(
+				{
+					data: {
+						id,
+						requestId,
+						authorRole: input.role,
+						body,
+						visibility: "PUBLIC",
+						createdAt: now,
+					},
+				},
+				201,
+			);
+		}
+
+		if (requestInternalNotesMatch && request.method === "POST") {
+			const requestId = decodeURIComponent(requestInternalNotesMatch[1]);
+			const input = (await request.json()) as CommentInput;
+
+			if (input.role !== "ADMINISTRATOR" && input.role !== "TECHNICIAN") {
+				return forbidden();
+			}
+
+			const fields: Record<string, string> = {};
+
+			if (!requiredText(input.body)) {
+				fields.body = "Catatan internal wajib diisi.";
+			}
+
+			if (Object.keys(fields).length > 0) {
+				return validationError(fields);
+			}
+
+			const requestRow = await env.DB.prepare(`
+				SELECT id
+				FROM service_requests
+				WHERE id = ?
+			`)
+				.bind(requestId)
+				.first();
+
+			if (!requestRow) {
+				return notFound();
+			}
+
+			const id = crypto.randomUUID();
+			const now = new Date().toISOString();
+			const body = input.body!.trim();
+
+			await env.DB.prepare(`
+				INSERT INTO request_internal_notes
+				(id, request_id, author_role, body, visibility, created_at)
+				VALUES (?, ?, ?, ?, 'INTERNAL', ?)
+			`)
+				.bind(id, requestId, input.role, body, now)
+				.run();
+
+			return json(
+				{
+					data: {
+						id,
+						requestId,
+						authorRole: input.role,
+						body,
+						visibility: "INTERNAL",
+						createdAt: now,
+					},
+				},
+				201,
+			);
 		}
 
 		if (url.pathname === "/api/requests" && request.method === "POST") {

@@ -23,11 +23,22 @@ type StatusHistoryEntry = {
 	createdAt: string;
 };
 
+type CommunicationEntry = {
+	id: string;
+	requestId: string;
+	authorRole: string;
+	body: string;
+	visibility: "PUBLIC" | "INTERNAL";
+	createdAt: string;
+};
+
 type RequestDetail = ServiceRequest & {
 	description: string;
 	createdAt: string;
 	updatedAt: string;
 	statusHistory: StatusHistoryEntry[];
+	comments: CommunicationEntry[];
+	internalNotes?: CommunicationEntry[];
 };
 
 type TechnicianTask = ServiceRequest & {
@@ -101,6 +112,9 @@ export default function App() {
 	const [technicianTasks, setTechnicianTasks] = useState<TechnicianTask[]>([]);
 	const [technicianNote, setTechnicianNote] = useState("");
 	const [technicianMessage, setTechnicianMessage] = useState("");
+	const [commentBody, setCommentBody] = useState("");
+	const [internalNoteBody, setInternalNoteBody] = useState("");
+	const [communicationMessage, setCommunicationMessage] = useState("");
 	const [message, setMessage] = useState("");
 	const [adminMessage, setAdminMessage] = useState("");
 	const [foundationStatus, setFoundationStatus] = useState(
@@ -136,7 +150,10 @@ export default function App() {
 		setDetailMessage("Memuat detail laporan.");
 		setSelectedRequest(null);
 
-		const response = await fetch(`/api/requests/${encodeURIComponent(requestId)}`);
+		const params = new URLSearchParams({ role: activeRole });
+		const response = await fetch(
+			`/api/requests/${encodeURIComponent(requestId)}?${params.toString()}`,
+		);
 		const result = await response.json();
 
 		if (!response.ok) {
@@ -238,6 +255,12 @@ export default function App() {
 	useEffect(() => {
 		loadTechnicianTasks();
 	}, [activeRole, selectedTechnicianId]);
+
+	useEffect(() => {
+		if (selectedRequestId) {
+			loadRequestDetail(selectedRequestId);
+		}
+	}, [activeRole]);
 
 	async function submitRequest(event: React.FormEvent) {
 		event.preventDefault();
@@ -372,6 +395,78 @@ export default function App() {
 		if (selectedRequestId === requestId) {
 			await loadRequestDetail(requestId);
 		}
+	}
+
+	async function submitPublicComment(event: React.FormEvent) {
+		event.preventDefault();
+
+		if (!selectedRequest) {
+			return;
+		}
+
+		setCommunicationMessage("");
+
+		const response = await fetch(
+			`/api/requests/${selectedRequest.id}/comments`,
+			{
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					role: activeRole,
+					body: commentBody,
+				}),
+			},
+		);
+		const result = await response.json();
+
+		if (!response.ok) {
+			setCommunicationMessage(
+				result.error?.fields?.body ??
+					result.error?.message ??
+					"Komentar publik gagal disimpan.",
+			);
+			return;
+		}
+
+		setCommentBody("");
+		setCommunicationMessage("Komentar publik disimpan.");
+		await loadRequestDetail(selectedRequest.id);
+	}
+
+	async function submitInternalNote(event: React.FormEvent) {
+		event.preventDefault();
+
+		if (!selectedRequest) {
+			return;
+		}
+
+		setCommunicationMessage("");
+
+		const response = await fetch(
+			`/api/requests/${selectedRequest.id}/internal-notes`,
+			{
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					role: activeRole,
+					body: internalNoteBody,
+				}),
+			},
+		);
+		const result = await response.json();
+
+		if (!response.ok) {
+			setCommunicationMessage(
+				result.error?.fields?.body ??
+					result.error?.message ??
+					"Catatan internal gagal disimpan.",
+			);
+			return;
+		}
+
+		setInternalNoteBody("");
+		setCommunicationMessage("Catatan internal disimpan.");
+		await loadRequestDetail(selectedRequest.id);
 	}
 
 	return (
@@ -696,6 +791,16 @@ export default function App() {
 									</p>
 									<h4>Riwayat Status</h4>
 									<p>Riwayat status akan tampil setelah laporan dipilih.</p>
+									<h4>Komentar Publik</h4>
+									<p>Komentar publik akan tampil setelah laporan dipilih.</p>
+									<h4>Catatan Internal</h4>
+									<p>Catatan internal hanya tampil untuk Administrator dan Teknisi.</p>
+									<button type="button" disabled>
+										Tambah Komentar
+									</button>
+									<button type="button" disabled>
+										Tambah Catatan Internal
+									</button>
 								</div>
 							) : (
 								<article>
@@ -756,6 +861,78 @@ export default function App() {
 													</li>
 												))}
 											</ol>
+										)}
+									</section>
+
+									<section className="communication-panel" aria-live="polite">
+										<h4>Komentar Publik</h4>
+										{selectedRequest.comments.length === 0 ? (
+											<p className="empty-state">Belum ada komentar publik.</p>
+										) : (
+											<ul className="communication-list">
+												{selectedRequest.comments.map((comment) => (
+													<li key={comment.id}>
+														<strong>{comment.authorRole}</strong>
+														<p>{comment.body}</p>
+														<small>{comment.createdAt}</small>
+													</li>
+												))}
+											</ul>
+										)}
+
+										{activeRole !== "FACILITY_MANAGER" && (
+											<form className="communication-form" onSubmit={submitPublicComment}>
+												<label>
+													Tambah Komentar
+													<textarea
+														value={commentBody}
+														onChange={(event) => setCommentBody(event.target.value)}
+														placeholder="Tulis komentar publik untuk laporan ini."
+													/>
+												</label>
+												<button type="submit">Simpan Komentar</button>
+											</form>
+										)}
+
+										<section
+											className="internal-note-panel"
+											hidden={
+												activeRole !== "ADMINISTRATOR" &&
+												activeRole !== "TECHNICIAN"
+											}
+										>
+											<h4>Catatan Internal</h4>
+											{(selectedRequest.internalNotes ?? []).length === 0 ? (
+												<p className="empty-state">Belum ada catatan internal.</p>
+											) : (
+												<ul className="communication-list">
+													{(selectedRequest.internalNotes ?? []).map((note) => (
+														<li key={note.id}>
+															<strong>{note.authorRole}</strong>
+															<p>{note.body}</p>
+															<small>{note.createdAt}</small>
+														</li>
+													))}
+												</ul>
+											)}
+
+											<form className="communication-form" onSubmit={submitInternalNote}>
+												<label>
+													Tambah Catatan Internal
+													<textarea
+														value={internalNoteBody}
+														onChange={(event) =>
+															setInternalNoteBody(event.target.value)
+														}
+														placeholder="Tulis catatan internal untuk Administrator atau Teknisi."
+													/>
+												</label>
+												<button type="submit">Simpan Catatan Internal</button>
+											</form>
+										</section>
+
+										{communicationMessage && (
+											<p className="form-message">{communicationMessage}</p>
 										)}
 									</section>
 

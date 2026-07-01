@@ -38,6 +38,15 @@ describe("React foundation shell", () => {
 		expect(html).toContain("Riwayat Status");
 	});
 
+	it("renders public comment and internal note controls for the request detail surface", () => {
+		const html = renderToString(createElement(App));
+
+		expect(html).toContain("Komentar Publik");
+		expect(html).toContain("Catatan Internal");
+		expect(html).toContain("Tambah Komentar");
+		expect(html).toContain("Tambah Catatan Internal");
+	});
+
 	it("renders the technician task lifecycle surface", () => {
 		const html = renderToString(createElement(App));
 
