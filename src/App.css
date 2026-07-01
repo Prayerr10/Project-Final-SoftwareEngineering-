@@ -77,7 +77,8 @@
 }
 
 .request-form,
-.request-workspace {
+.request-workspace,
+.technician-panel {
 	border: 1px solid #e5e7eb;
 	border-radius: 8px;
 	background: #ffffff;
@@ -90,20 +91,30 @@
 	padding: 24px;
 }
 
+.technician-panel {
+	display: grid;
+	gap: 16px;
+	padding: 24px;
+}
+
 .request-form h2,
 .request-workspace h2,
 .request-workspace h3,
-.request-workspace h4 {
+.request-workspace h4,
+.technician-panel h2,
+.technician-panel h3 {
 	margin: 0;
 	color: #111827;
 }
 
 .request-form h2,
-.request-workspace h2 {
+.request-workspace h2,
+.technician-panel h2 {
 	font-size: 1.25rem;
 }
 
-.request-form label {
+.request-form label,
+.technician-panel label {
 	display: grid;
 	gap: 8px;
 	color: #374151;
@@ -114,7 +125,9 @@
 .request-form textarea,
 .request-form select,
 .admin-actions textarea,
-.admin-actions select {
+.admin-actions select,
+.technician-panel textarea,
+.technician-panel select {
 	width: 100%;
 	box-sizing: border-box;
 	border: 1px solid #d1d5db;
@@ -129,8 +142,14 @@
 	resize: vertical;
 }
 
+.technician-panel textarea {
+	min-height: 92px;
+	resize: vertical;
+}
+
 .request-form button,
-.admin-actions button {
+.admin-actions button,
+.task-actions button {
 	border: 0;
 	border-radius: 6px;
 	background: #2563eb;
@@ -142,8 +161,14 @@
 }
 
 .request-form button:hover,
-.admin-actions button:hover {
+.admin-actions button:hover,
+.task-actions button:hover {
 	background: #1d4ed8;
+}
+
+.task-actions button:disabled {
+	background: #9ca3af;
+	cursor: not-allowed;
 }
 
 .secondary-button {
@@ -387,6 +412,26 @@
 .admin-actions textarea {
 	min-height: 86px;
 	resize: vertical;
+}
+
+.technician-task {
+	display: grid;
+	gap: 12px;
+	border: 1px solid #e5e7eb;
+	border-radius: 8px;
+	background: #f9fafb;
+	padding: 14px;
+}
+
+.technician-task p {
+	margin: 0;
+	color: #374151;
+}
+
+.task-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
 }
 
 @media (max-width: 860px) {

@@ -30,6 +30,16 @@ type RequestDetail = ServiceRequest & {
 	statusHistory: StatusHistoryEntry[];
 };
 
+type TechnicianTask = ServiceRequest & {
+	assignment: {
+		id: string;
+		technicianId: string;
+		technicianName: string;
+		assignedAt: string;
+		acceptedAt: string | null;
+	};
+};
+
 type HealthResponse = {
 	status?: string;
 	checks?: {
@@ -47,6 +57,20 @@ type Technician = {
 
 const categories = ["Internet", "AC", "Peralatan Kelas", "Kebersihan", "Lainnya"];
 const priorities = ["LOW", "MEDIUM", "HIGH", "URGENT"];
+const technicianContextOptions = [
+	{
+		id: "tech-audio-visual",
+		name: "Nadia Teknisi",
+	},
+	{
+		id: "tech-building-services",
+		name: "Bima Teknisi",
+	},
+	{
+		id: "tech-network",
+		name: "Sari Teknisi",
+	},
+];
 
 export default function App() {
 	const [requests, setRequests] = useState<ServiceRequest[]>([]);
@@ -71,7 +95,12 @@ export default function App() {
 	const [adminPriority, setAdminPriority] = useState("MEDIUM");
 	const [reviewNote, setReviewNote] = useState("");
 	const [assignmentNote, setAssignmentNote] = useState("");
-	const [selectedTechnicianId, setSelectedTechnicianId] = useState("");
+	const [selectedTechnicianId, setSelectedTechnicianId] = useState(
+		"tech-audio-visual",
+	);
+	const [technicianTasks, setTechnicianTasks] = useState<TechnicianTask[]>([]);
+	const [technicianNote, setTechnicianNote] = useState("");
+	const [technicianMessage, setTechnicianMessage] = useState("");
 	const [message, setMessage] = useState("");
 	const [adminMessage, setAdminMessage] = useState("");
 	const [foundationStatus, setFoundationStatus] = useState(
@@ -138,6 +167,40 @@ export default function App() {
 		}
 	}
 
+	async function loadTechnicianTasks() {
+		if (activeRole !== "TECHNICIAN" || !selectedTechnicianId) {
+			setTechnicianTasks([]);
+			return;
+		}
+
+		setTechnicianMessage("Memuat daftar tugas teknisi.");
+
+		const params = new URLSearchParams({
+			role: "TECHNICIAN",
+			technicianId: selectedTechnicianId,
+		});
+		const response = await fetch(
+			`/api/technicians/${encodeURIComponent(
+				selectedTechnicianId,
+			)}/tasks?${params.toString()}`,
+		);
+		const result = await response.json();
+
+		if (!response.ok) {
+			setTechnicianMessage(
+				result.error?.message ?? "Daftar tugas teknisi gagal dimuat.",
+			);
+			return;
+		}
+
+		setTechnicianTasks(result.data ?? []);
+		setTechnicianMessage(
+			(result.data ?? []).length === 0
+				? "Belum ada tugas aktif untuk teknisi ini."
+				: "",
+		);
+	}
+
 	async function loadFoundationStatus() {
 		try {
 			const response = await fetch("/api/health");
@@ -171,6 +234,10 @@ export default function App() {
 	useEffect(() => {
 		loadTechnicians();
 	}, [activeRole]);
+
+	useEffect(() => {
+		loadTechnicianTasks();
+	}, [activeRole, selectedTechnicianId]);
 
 	async function submitRequest(event: React.FormEvent) {
 		event.preventDefault();
@@ -267,6 +334,44 @@ export default function App() {
 			"Laporan ditugaskan dan dipindahkan ke ASSIGNED.",
 		);
 		setAssignmentNote("");
+	}
+
+	async function runTechnicianAction(
+		requestId: string,
+		path: "accept" | "progress" | "resolve",
+		successMessage: string,
+	) {
+		setTechnicianMessage("");
+
+		const body: Record<string, string> = {
+			role: "TECHNICIAN",
+			technicianId: selectedTechnicianId,
+		};
+
+		if (path !== "accept") {
+			body.note = technicianNote;
+		}
+
+		const response = await fetch(`/api/requests/${requestId}/${path}`, {
+			method: "PATCH",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(body),
+		});
+		const result = await response.json();
+
+		if (!response.ok) {
+			setTechnicianMessage(result.error?.message ?? "Aksi Teknisi gagal.");
+			return;
+		}
+
+		setTechnicianMessage(successMessage);
+		setTechnicianNote("");
+		await loadRequests();
+		await loadTechnicianTasks();
+
+		if (selectedRequestId === requestId) {
+			await loadRequestDetail(requestId);
+		}
 	}
 
 	return (
@@ -366,6 +471,124 @@ export default function App() {
 					<button type="submit">Kirim Laporan</button>
 					{message && <p className="form-message">{message}</p>}
 				</form>
+
+				<section
+					className="technician-panel"
+					aria-live="polite"
+					hidden={activeRole !== "TECHNICIAN"}
+				>
+						<div className="workspace-header">
+							<div>
+								<p className="eyebrow">Technician Tasks</p>
+								<h2>Daftar Tugas Teknisi</h2>
+							</div>
+							<button
+								type="button"
+								className="secondary-button"
+								onClick={loadTechnicianTasks}
+							>
+								Refresh
+							</button>
+						</div>
+
+						<label>
+							Konteks Teknisi
+							<select
+								value={selectedTechnicianId}
+								onChange={(event) => setSelectedTechnicianId(event.target.value)}
+							>
+								{technicianContextOptions.map((technician) => (
+									<option key={technician.id} value={technician.id}>
+										{technician.name}
+									</option>
+								))}
+							</select>
+						</label>
+
+						<label>
+							Catatan Progres atau Penyelesaian
+							<textarea
+								value={technicianNote}
+								onChange={(event) => setTechnicianNote(event.target.value)}
+								placeholder="Contoh: Mulai dikerjakan atau pekerjaan selesai."
+							/>
+						</label>
+
+						{technicianMessage && (
+							<p className="form-message">{technicianMessage}</p>
+						)}
+
+						{technicianTasks.length === 0 ? (
+							<p className="empty-state">
+								Tugas teknisi akan tampil sesuai assignment aktif.
+							</p>
+						) : (
+							<div className="request-stack">
+								{technicianTasks.map((task) => (
+									<article className="technician-task" key={task.id}>
+										<header className="detail-header">
+											<div>
+												<strong>{task.requestNumber}</strong>
+												<h3>{task.title}</h3>
+											</div>
+											<div className="badge-group">
+												<span>{task.status}</span>
+												<span>{task.priority}</span>
+											</div>
+										</header>
+										<p>
+											{task.location} - {task.category}
+										</p>
+										<p>
+											Ditugaskan ke {task.assignment.technicianName}; diterima:{" "}
+											{task.assignment.acceptedAt ?? "Belum diterima"}
+										</p>
+										<div className="task-actions">
+											<button
+												type="button"
+												onClick={() =>
+													runTechnicianAction(
+														task.id,
+														"accept",
+														"Tugas diterima oleh Teknisi.",
+													)
+												}
+												disabled={task.status !== "ASSIGNED"}
+											>
+												Terima Tugas
+											</button>
+											<button
+												type="button"
+												onClick={() =>
+													runTechnicianAction(
+														task.id,
+														"progress",
+														"Tugas dipindahkan ke IN_PROGRESS.",
+													)
+												}
+												disabled={task.status !== "ASSIGNED"}
+											>
+												Mulai Progres
+											</button>
+											<button
+												type="button"
+												onClick={() =>
+													runTechnicianAction(
+														task.id,
+														"resolve",
+														"Tugas dipindahkan ke RESOLVED.",
+													)
+												}
+												disabled={task.status !== "IN_PROGRESS"}
+											>
+												Tandai Selesai
+											</button>
+										</div>
+									</article>
+								))}
+							</div>
+						)}
+				</section>
 
 				<section className="request-workspace" aria-labelledby="workspace-title">
 					<div className="workspace-header">
