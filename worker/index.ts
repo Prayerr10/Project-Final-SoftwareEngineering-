@@ -12,6 +12,23 @@ type CreateRequestInput = {
 	reporterType?: string;
 };
 
+type ReviewRequestInput = {
+	role?: string;
+	note?: string;
+};
+
+type ClassificationRequestInput = {
+	role?: string;
+	category?: string;
+	priority?: string;
+};
+
+type AssignmentRequestInput = {
+	role?: string;
+	technicianId?: string;
+	note?: string;
+};
+
 const STATUSES = [
 	"SUBMITTED",
 	"UNDER_REVIEW",
@@ -22,6 +39,13 @@ const STATUSES = [
 ] as const;
 
 const PRIORITIES = ["LOW", "MEDIUM", "HIGH", "URGENT"] as const;
+const CATEGORIES = [
+	"Internet",
+	"AC",
+	"Peralatan Kelas",
+	"Kebersihan",
+	"Lainnya",
+] as const;
 
 function json(data: unknown, status = 200) {
 	return Response.json(data, { status });
@@ -52,6 +76,35 @@ function notFound() {
 	);
 }
 
+function forbidden() {
+	return json(
+		{
+			error: {
+				code: "FORBIDDEN",
+				message: "Role aktif tidak boleh melakukan aksi ini.",
+			},
+		},
+		403,
+	);
+}
+
+function invalidStatusTransition(
+	currentStatus: string,
+	allowedStatuses: string[],
+) {
+	return json(
+		{
+			error: {
+				code: "INVALID_STATUS_TRANSITION",
+				message: `Status laporan tidak dapat diubah dari ${currentStatus}.`,
+				currentStatus,
+				allowedStatuses,
+			},
+		},
+		409,
+	);
+}
+
 function requiredText(value: unknown) {
 	return typeof value === "string" && value.trim().length > 0;
 }
@@ -67,6 +120,8 @@ type RequestSummaryRow = {
 	status: string;
 	reporter_name: string;
 	reporter_type: string;
+	reviewed_at?: string | null;
+	reviewed_by_role?: string | null;
 };
 
 type RequestDetailRow = RequestSummaryRow & {
@@ -87,6 +142,8 @@ function toApiRequest(row: RequestSummaryRow) {
 		status: row.status,
 		reporterName: row.reporter_name,
 		reporterType: row.reporter_type,
+		reviewedAt: row.reviewed_at ?? null,
+		reviewedByRole: row.reviewed_by_role ?? null,
 	};
 }
 
@@ -122,6 +179,15 @@ export default {
 		const url = new URL(request.url);
 		const requestDetailMatch = url.pathname.match(
 			/^\/api\/requests\/([^/]+)$/,
+		);
+		const requestReviewMatch = url.pathname.match(
+			/^\/api\/requests\/([^/]+)\/review$/,
+		);
+		const requestClassificationMatch = url.pathname.match(
+			/^\/api\/requests\/([^/]+)\/classification$/,
+		);
+		const requestAssignmentMatch = url.pathname.match(
+			/^\/api\/requests\/([^/]+)\/assignment$/,
 		);
 
 		if (url.pathname === "/api/health" && request.method === "GET") {
@@ -161,7 +227,7 @@ export default {
 			const result = await env.DB.prepare(`
 				SELECT id, request_number, title, location,
 				category, priority, priority_suggestion, status,
-				reporter_name, reporter_type
+				reporter_name, reporter_type, reviewed_at, reviewed_by_role
 				FROM service_requests
 				WHERE (
 					? IS NULL
@@ -209,7 +275,8 @@ export default {
 			const requestRow = await env.DB.prepare(`
 				SELECT id, request_number, title, description, location,
 				category, priority, priority_suggestion, status,
-				reporter_name, reporter_type, created_at, updated_at
+				reporter_name, reporter_type, reviewed_at, reviewed_by_role,
+				created_at, updated_at
 				FROM service_requests
 				WHERE id = ?
 			`)
@@ -244,6 +311,307 @@ export default {
 							},
 						),
 					),
+				},
+			});
+		}
+
+		if (url.pathname === "/api/technicians" && request.method === "GET") {
+			const role = url.searchParams.get("role")?.trim();
+
+			if (role !== "ADMINISTRATOR") {
+				return forbidden();
+			}
+
+			const result = await env.DB.prepare(`
+				SELECT id, name, specialization, is_active
+				FROM technicians
+				WHERE is_active = 1
+				ORDER BY name ASC
+			`).all();
+
+			return json({
+				data: result.results.map((row) => {
+					const technician = row as {
+						id: string;
+						name: string;
+						specialization: string | null;
+						is_active: number;
+					};
+
+					return {
+						id: technician.id,
+						name: technician.name,
+						specialization: technician.specialization,
+						isActive: technician.is_active === 1,
+					};
+				}),
+			});
+		}
+
+		if (requestReviewMatch && request.method === "PATCH") {
+			const requestId = decodeURIComponent(requestReviewMatch[1]);
+			const input = (await request.json()) as ReviewRequestInput;
+
+			if (input.role !== "ADMINISTRATOR") {
+				return forbidden();
+			}
+
+			const fields: Record<string, string> = {};
+
+			if (!requiredText(input.note)) {
+				fields.note = "Catatan review wajib diisi.";
+			}
+
+			if (Object.keys(fields).length > 0) {
+				return validationError(fields);
+			}
+
+			const requestRow = await env.DB.prepare(`
+				SELECT id, request_number, title, location,
+				category, priority, priority_suggestion, status,
+				reporter_name, reporter_type, reviewed_at, reviewed_by_role
+				FROM service_requests
+				WHERE id = ?
+			`)
+				.bind(requestId)
+				.first();
+
+			if (!requestRow) {
+				return notFound();
+			}
+
+			const storedRequest = requestRow as RequestSummaryRow;
+
+			if (storedRequest.status !== "SUBMITTED") {
+				return invalidStatusTransition(storedRequest.status, ["UNDER_REVIEW"]);
+			}
+
+			const now = new Date().toISOString();
+			const historyId = crypto.randomUUID();
+
+			await env.DB.prepare(`
+				UPDATE service_requests
+				SET status = 'UNDER_REVIEW',
+					reviewed_at = ?,
+					reviewed_by_role = 'ADMINISTRATOR',
+					updated_at = ?
+				WHERE id = ?
+			`)
+				.bind(now, now, requestId)
+				.run();
+
+			await env.DB.prepare(`
+				INSERT INTO request_status_history
+				(id, request_id, from_status, to_status, changed_by_role, note, created_at)
+				VALUES (?, ?, ?, ?, ?, ?, ?)
+			`)
+				.bind(
+					historyId,
+					requestId,
+					"SUBMITTED",
+					"UNDER_REVIEW",
+					"ADMINISTRATOR",
+					input.note!.trim(),
+					now,
+				)
+				.run();
+
+			return json({
+				data: toApiRequest({
+					...storedRequest,
+					status: "UNDER_REVIEW",
+					reviewed_at: now,
+					reviewed_by_role: "ADMINISTRATOR",
+				}),
+			});
+		}
+
+		if (requestClassificationMatch && request.method === "PATCH") {
+			const requestId = decodeURIComponent(requestClassificationMatch[1]);
+			const input = (await request.json()) as ClassificationRequestInput;
+
+			if (input.role !== "ADMINISTRATOR") {
+				return forbidden();
+			}
+
+			const fields: Record<string, string> = {};
+
+			if (!CATEGORIES.includes(input.category as (typeof CATEGORIES)[number])) {
+				fields.category = "Kategori harus memakai daftar tetap yang tersedia.";
+			}
+
+			if (!PRIORITIES.includes(input.priority as (typeof PRIORITIES)[number])) {
+				fields.priority = "Prioritas harus LOW, MEDIUM, HIGH, atau URGENT.";
+			}
+
+			if (Object.keys(fields).length > 0) {
+				return validationError(fields);
+			}
+
+			const requestRow = await env.DB.prepare(`
+				SELECT id, request_number, title, location,
+				category, priority, priority_suggestion, status,
+				reporter_name, reporter_type, reviewed_at, reviewed_by_role
+				FROM service_requests
+				WHERE id = ?
+			`)
+				.bind(requestId)
+				.first();
+
+			if (!requestRow) {
+				return notFound();
+			}
+
+			const storedRequest = requestRow as RequestSummaryRow;
+
+			if (storedRequest.status !== "UNDER_REVIEW") {
+				return invalidStatusTransition(storedRequest.status, ["UNDER_REVIEW"]);
+			}
+
+			const now = new Date().toISOString();
+			const category = input.category!.trim();
+			const priority = input.priority!;
+
+			await env.DB.prepare(`
+				UPDATE service_requests
+				SET category = ?,
+					priority = ?,
+					updated_at = ?
+				WHERE id = ?
+			`)
+				.bind(category, priority, now, requestId)
+				.run();
+
+			return json({
+				data: toApiRequest({
+					...storedRequest,
+					category,
+					priority,
+				}),
+			});
+		}
+
+		if (requestAssignmentMatch && request.method === "PATCH") {
+			const requestId = decodeURIComponent(requestAssignmentMatch[1]);
+			const input = (await request.json()) as AssignmentRequestInput;
+
+			if (input.role !== "ADMINISTRATOR") {
+				return forbidden();
+			}
+
+			const fields: Record<string, string> = {};
+
+			if (!requiredText(input.technicianId)) {
+				fields.technicianId = "Teknisi wajib dipilih.";
+			}
+
+			if (!requiredText(input.note)) {
+				fields.note = "Catatan assignment wajib diisi.";
+			}
+
+			if (Object.keys(fields).length > 0) {
+				return validationError(fields);
+			}
+
+			const requestRow = await env.DB.prepare(`
+				SELECT id, request_number, title, location,
+				category, priority, priority_suggestion, status,
+				reporter_name, reporter_type, reviewed_at, reviewed_by_role
+				FROM service_requests
+				WHERE id = ?
+			`)
+				.bind(requestId)
+				.first();
+
+			if (!requestRow) {
+				return notFound();
+			}
+
+			const storedRequest = requestRow as RequestSummaryRow;
+
+			if (storedRequest.status !== "UNDER_REVIEW") {
+				return invalidStatusTransition(storedRequest.status, ["ASSIGNED"]);
+			}
+
+			const technician = (await env.DB.prepare(`
+				SELECT id, name, specialization, is_active
+				FROM technicians
+				WHERE id = ? AND is_active = 1
+			`)
+				.bind(input.technicianId!.trim())
+				.first()) as
+				| {
+						id: string;
+						name: string;
+						specialization: string | null;
+						is_active: number;
+				  }
+				| null;
+
+			if (!technician) {
+				return validationError({
+					technicianId: "Teknisi aktif tidak ditemukan.",
+				});
+			}
+
+			const assignmentId = crypto.randomUUID();
+			const historyId = crypto.randomUUID();
+			const now = new Date().toISOString();
+
+			await env.DB.prepare(`
+				UPDATE request_assignments
+				SET is_current = 0
+				WHERE request_id = ? AND is_current = 1
+			`)
+				.bind(requestId)
+				.run();
+
+			await env.DB.prepare(`
+				INSERT INTO request_assignments
+				(id, request_id, technician_id, assigned_by_role, assigned_at, is_current)
+				VALUES (?, ?, ?, 'ADMINISTRATOR', ?, 1)
+			`)
+				.bind(assignmentId, requestId, technician.id, now)
+				.run();
+
+			await env.DB.prepare(`
+				UPDATE service_requests
+				SET status = 'ASSIGNED',
+					updated_at = ?
+				WHERE id = ?
+			`)
+				.bind(now, requestId)
+				.run();
+
+			await env.DB.prepare(`
+				INSERT INTO request_status_history
+				(id, request_id, from_status, to_status, changed_by_role, note, created_at)
+				VALUES (?, ?, ?, ?, ?, ?, ?)
+			`)
+				.bind(
+					historyId,
+					requestId,
+					"UNDER_REVIEW",
+					"ASSIGNED",
+					"ADMINISTRATOR",
+					input.note!.trim(),
+					now,
+				)
+				.run();
+
+			return json({
+				data: {
+					...toApiRequest({
+						...storedRequest,
+						status: "ASSIGNED",
+					}),
+					assignment: {
+						id: assignmentId,
+						technicianId: technician.id,
+						technicianName: technician.name,
+						assignedByRole: "ADMINISTRATOR",
+						assignedAt: now,
+					},
 				},
 			});
 		}
