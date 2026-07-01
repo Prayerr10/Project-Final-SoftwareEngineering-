@@ -5,13 +5,19 @@
 | Skill AI | Skill 03 through Skill 09 traceability updates, TDD audit test, Maker-Checker Split |
 | Human decision | PASS |
 
-Traceability ini mencatat relasi requirement ke user story dari Skill 03, prioritas Skill 04, validasi Skill 05, update design level Skill 06, update design level Skill 07, update design level Skill 08, issue planning Skill 09, implementasi Issue #13 sampai #24, serta audit Skill 11 Code Review. Kolom Kode dan Test diisi berdasarkan artefak implementasi dan verifikasi yang sudah tersedia di repositori.
+Traceability ini mencatat relasi requirement ke user story dari Skill 03, prioritas Skill 04, validasi Skill 05, update design level Skill 06, update design level Skill 07, update design level Skill 08, issue planning Skill 09, implementasi Issue #13 sampai #24, audit Skill 11 Code Review, serta Skill 12 Test Planning. Kolom Kode dan Test diisi berdasarkan artefak implementasi dan verifikasi yang sudah tersedia di repositori.
 
 ## Skill 11 Code Review Links
 
 | Review item | Evidence | Result |
 | --- | --- | --- |
 | Code review Issue #13 sampai #24 | `evidence/human-review-skill-11-code-review.md` | PASS; adversarial Checker found issues, scoped fixes were applied, test/build/secret scan passed, and re-review returned PASS |
+
+## Skill 12 Test Planning Links
+
+| Planning item | Work product | Evidence | Result |
+| --- | --- | --- | --- |
+| Test plan for Issue #13 sampai #24 after Skill 11 | `docs/testing/test-plan.md` | `evidence/human-review-skill-12-test-planning.md` | PASS; test plan maps FR-01 through FR-24, NFR-01 through NFR-09, BR-01 through BR-12, and US-01 through US-17 to existing tests or planned scenarios, including role validation, workflow transitions, forbidden access, invalid transitions, D1 guard, dashboard, deployment readiness, traceability, evidence, and secret-safety checks |
 
 | **Requirement** | **User Story** | **Design Skill 06** | **Design Skill 07** | **Design Skill 08** | **Issue** | **Kode** | **Test** | **Status** |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
