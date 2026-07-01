@@ -38,8 +38,19 @@ type HealthResponse = {
 	};
 };
 
+type Technician = {
+	id: string;
+	name: string;
+	specialization: string | null;
+	isActive: boolean;
+};
+
+const categories = ["Internet", "AC", "Peralatan Kelas", "Kebersihan", "Lainnya"];
+const priorities = ["LOW", "MEDIUM", "HIGH", "URGENT"];
+
 export default function App() {
 	const [requests, setRequests] = useState<ServiceRequest[]>([]);
+	const [activeRole, setActiveRole] = useState("REPORTER");
 	const [requestListEmpty, setRequestListEmpty] = useState(true);
 	const [search, setSearch] = useState("");
 	const [statusFilter, setStatusFilter] = useState("");
@@ -48,6 +59,7 @@ export default function App() {
 	const [selectedRequest, setSelectedRequest] = useState<RequestDetail | null>(
 		null,
 	);
+	const [technicians, setTechnicians] = useState<Technician[]>([]);
 	const [detailMessage, setDetailMessage] = useState("");
 	const [reporterName, setReporterName] = useState("");
 	const [reporterType, setReporterType] = useState("STUDENT");
@@ -55,7 +67,13 @@ export default function App() {
 	const [description, setDescription] = useState("");
 	const [location, setLocation] = useState("");
 	const [category, setCategory] = useState("Internet");
+	const [adminCategory, setAdminCategory] = useState("Internet");
+	const [adminPriority, setAdminPriority] = useState("MEDIUM");
+	const [reviewNote, setReviewNote] = useState("");
+	const [assignmentNote, setAssignmentNote] = useState("");
+	const [selectedTechnicianId, setSelectedTechnicianId] = useState("");
 	const [message, setMessage] = useState("");
+	const [adminMessage, setAdminMessage] = useState("");
 	const [foundationStatus, setFoundationStatus] = useState(
 		"Memeriksa koneksi API dan D1",
 	);
@@ -98,7 +116,26 @@ export default function App() {
 		}
 
 		setSelectedRequest(result.data);
+		setAdminCategory(result.data.category);
+		setAdminPriority(result.data.priority);
 		setDetailMessage("");
+	}
+
+	async function loadTechnicians() {
+		if (activeRole !== "ADMINISTRATOR") {
+			setTechnicians([]);
+			return;
+		}
+
+		const response = await fetch("/api/technicians?role=ADMINISTRATOR");
+		const result = await response.json();
+		const nextTechnicians = result.data ?? [];
+
+		setTechnicians(nextTechnicians);
+
+		if (!selectedTechnicianId && nextTechnicians.length > 0) {
+			setSelectedTechnicianId(nextTechnicians[0].id);
+		}
 	}
 
 	async function loadFoundationStatus() {
@@ -130,6 +167,10 @@ export default function App() {
 	useEffect(() => {
 		loadRequests();
 	}, [search, statusFilter, priorityFilter]);
+
+	useEffect(() => {
+		loadTechnicians();
+	}, [activeRole]);
 
 	async function submitRequest(event: React.FormEvent) {
 		event.preventDefault();
@@ -171,12 +212,81 @@ export default function App() {
 		setPriorityFilter("");
 	}
 
+	async function runAdminAction(
+		path: string,
+		body: Record<string, string>,
+		successMessage: string,
+	) {
+		if (!selectedRequest) {
+			return;
+		}
+
+		setAdminMessage("");
+
+		const response = await fetch(`/api/requests/${selectedRequest.id}/${path}`, {
+			method: "PATCH",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({
+				role: "ADMINISTRATOR",
+				...body,
+			}),
+		});
+		const result = await response.json();
+
+		if (!response.ok) {
+			setAdminMessage(result.error?.message ?? "Aksi Administrator gagal.");
+			return;
+		}
+
+		setAdminMessage(successMessage);
+		await loadRequests();
+		await loadRequestDetail(selectedRequest.id);
+	}
+
+	async function reviewSelectedRequest() {
+		await runAdminAction(
+			"review",
+			{ note: reviewNote },
+			"Laporan dipindahkan ke UNDER_REVIEW.",
+		);
+		setReviewNote("");
+	}
+
+	async function classifySelectedRequest() {
+		await runAdminAction(
+			"classification",
+			{ category: adminCategory, priority: adminPriority },
+			"Kategori dan prioritas Administrator disimpan.",
+		);
+	}
+
+	async function assignSelectedRequest() {
+		await runAdminAction(
+			"assignment",
+			{ technicianId: selectedTechnicianId, note: assignmentNote },
+			"Laporan ditugaskan dan dipindahkan ke ASSIGNED.",
+		);
+		setAssignmentNote("");
+	}
+
 	return (
 		<main className="app-shell">
 			<section className="page-header">
 				<p className="eyebrow">Campus Maintenance</p>
 				<h1>Campus Service Request</h1>
 				<p>Laporkan masalah fasilitas kampus dan pantau statusnya.</p>
+				<label className="role-switcher">
+					Simulasi Role
+					<select
+						value={activeRole}
+						onChange={(event) => setActiveRole(event.target.value)}
+					>
+						<option value="REPORTER">Pelapor</option>
+						<option value="ADMINISTRATOR">Administrator</option>
+						<option value="TECHNICIAN">Teknisi</option>
+						<option value="FACILITY_MANAGER">Manajer Fasilitas</option>
+					</select>
+				</label>
 				<section className="foundation-status" aria-live="polite">
 					<h2>Status Fondasi</h2>
 					<p>{foundationStatus}</p>
@@ -387,6 +497,10 @@ export default function App() {
 											<dd>{selectedRequest.category}</dd>
 										</div>
 										<div>
+											<dt>Saran Prioritas Dosen</dt>
+											<dd>{selectedRequest.prioritySuggestion ?? "Tidak ada"}</dd>
+										</div>
+										<div>
 											<dt>Pelapor</dt>
 											<dd>
 												{selectedRequest.reporterName} (
@@ -421,6 +535,108 @@ export default function App() {
 											</ol>
 										)}
 									</section>
+
+									{activeRole === "ADMINISTRATOR" && (
+										<section className="admin-actions" aria-live="polite">
+											<h4>Aksi Administrator</h4>
+
+											{selectedRequest.status === "SUBMITTED" && (
+												<div className="action-block">
+													<label>
+														Catatan Review
+														<textarea
+															value={reviewNote}
+															onChange={(event) =>
+																setReviewNote(event.target.value)
+															}
+															placeholder="Contoh: Laporan lengkap dan siap ditinjau."
+														/>
+													</label>
+													<button type="button" onClick={reviewSelectedRequest}>
+														Mulai Review
+													</button>
+												</div>
+											)}
+
+											{selectedRequest.status === "UNDER_REVIEW" && (
+												<>
+													<div className="action-block">
+														<label>
+															Kategori
+															<select
+																value={adminCategory}
+																onChange={(event) =>
+																	setAdminCategory(event.target.value)
+																}
+															>
+																{categories.map((item) => (
+																	<option key={item}>{item}</option>
+																))}
+															</select>
+														</label>
+
+														<label>
+															Prioritas
+															<select
+																value={adminPriority}
+																onChange={(event) =>
+																	setAdminPriority(event.target.value)
+																}
+															>
+																{priorities.map((item) => (
+																	<option key={item}>{item}</option>
+																))}
+															</select>
+														</label>
+
+														<button
+															type="button"
+															onClick={classifySelectedRequest}
+														>
+															Simpan Klasifikasi
+														</button>
+													</div>
+
+													<div className="action-block">
+														<label>
+															Teknisi
+															<select
+																value={selectedTechnicianId}
+																onChange={(event) =>
+																	setSelectedTechnicianId(event.target.value)
+																}
+															>
+																{technicians.map((technician) => (
+																	<option key={technician.id} value={technician.id}>
+																		{technician.name}
+																	</option>
+																))}
+															</select>
+														</label>
+
+														<label>
+															Catatan Assignment
+															<textarea
+																value={assignmentNote}
+																onChange={(event) =>
+																	setAssignmentNote(event.target.value)
+																}
+																placeholder="Contoh: Tangani sebelum kelas sore."
+															/>
+														</label>
+
+														<button type="button" onClick={assignSelectedRequest}>
+															Tugaskan Teknisi
+														</button>
+													</div>
+												</>
+											)}
+
+											{adminMessage && (
+												<p className="form-message">{adminMessage}</p>
+											)}
+										</section>
+									)}
 								</article>
 							)}
 						</section>

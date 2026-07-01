@@ -30,6 +30,25 @@
 	font-size: 1.05rem;
 }
 
+.role-switcher {
+	display: grid;
+	gap: 6px;
+	max-width: 260px;
+	margin-top: 18px;
+	color: #374151;
+	font-weight: 700;
+}
+
+.role-switcher select {
+	border: 1px solid #d1d5db;
+	border-radius: 6px;
+	background: #ffffff;
+	color: #111827;
+	font: inherit;
+	min-height: 42px;
+	padding: 9px 10px;
+}
+
 .foundation-status {
 	margin-top: 20px;
 	border: 1px solid #d1fae5;
@@ -93,7 +112,9 @@
 
 .request-form input,
 .request-form textarea,
-.request-form select {
+.request-form select,
+.admin-actions textarea,
+.admin-actions select {
 	width: 100%;
 	box-sizing: border-box;
 	border: 1px solid #d1d5db;
@@ -108,7 +129,8 @@
 	resize: vertical;
 }
 
-.request-form button {
+.request-form button,
+.admin-actions button {
 	border: 0;
 	border-radius: 6px;
 	background: #2563eb;
@@ -119,7 +141,8 @@
 	padding: 12px 16px;
 }
 
-.request-form button:hover {
+.request-form button:hover,
+.admin-actions button:hover {
 	background: #1d4ed8;
 }
 
@@ -335,6 +358,35 @@
 .status-history li small {
 	display: block;
 	color: #4b5563;
+}
+
+.admin-actions {
+	display: grid;
+	gap: 14px;
+	margin-top: 16px;
+	border-top: 1px solid #e5e7eb;
+	padding-top: 14px;
+}
+
+.action-block {
+	display: grid;
+	gap: 12px;
+	border: 1px solid #e5e7eb;
+	border-radius: 8px;
+	background: #f9fafb;
+	padding: 14px;
+}
+
+.admin-actions label {
+	display: grid;
+	gap: 8px;
+	color: #374151;
+	font-weight: 700;
+}
+
+.admin-actions textarea {
+	min-height: 86px;
+	resize: vertical;
 }
 
 @media (max-width: 860px) {
