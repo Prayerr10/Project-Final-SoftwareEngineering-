@@ -18,4 +18,23 @@ describe("React foundation shell", () => {
 		expect(html).toContain("Tipe Pelapor");
 		expect(html).toContain("Dosen mendapat saran prioritas HIGH");
 	});
+
+	it("renders request workspace search and filter controls", () => {
+		const html = renderToString(createElement(App));
+
+		expect(html).toContain("Request Workspace");
+		expect(html).toContain("Cari laporan");
+		expect(html).toContain("Filter Status");
+		expect(html).toContain("Filter Prioritas");
+		expect(html).toContain("Semua status");
+		expect(html).toContain("Semua prioritas");
+	});
+
+	it("renders request detail and status history regions for selected reports", () => {
+		const html = renderToString(createElement(App));
+
+		expect(html).toContain("Detail Laporan");
+		expect(html).toContain("Pilih laporan dari daftar untuk melihat detail.");
+		expect(html).toContain("Riwayat Status");
+	});
 });
