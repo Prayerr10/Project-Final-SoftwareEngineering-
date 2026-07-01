@@ -56,4 +56,15 @@ describe("React foundation shell", () => {
 		expect(html).toContain("Catatan Progres atau Penyelesaian");
 		expect(html).toContain("Tugas teknisi akan tampil sesuai assignment aktif.");
 	});
+
+	it("renders confirmation, close, and reopen workflow surfaces", () => {
+		const html = renderToString(createElement(App));
+
+		expect(html).toContain("Konfirmasi Pelapor");
+		expect(html).toContain("Belum ada konfirmasi Pelapor");
+		expect(html).toContain("Catatan Konfirmasi");
+		expect(html).toContain("Catatan Close");
+		expect(html).toContain("Manual override tanpa konfirmasi Pelapor");
+		expect(html).toContain("Catatan Reopen");
+	});
 });

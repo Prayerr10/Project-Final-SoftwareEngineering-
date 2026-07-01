@@ -38,12 +38,21 @@ type StoredComment = {
 
 type StoredInternalNote = StoredComment;
 
+type StoredReporterConfirmation = {
+	id: string;
+	request_id: string;
+	confirmed_by_role: string;
+	confirmation_note: string | null;
+	confirmed_at: string;
+};
+
 class FakeWorkspaceD1Database {
 	constructor(
 		private requests: StoredRequest[],
 		private statusHistory: StoredStatusHistory[] = [],
 		private comments: StoredComment[] = [],
 		private internalNotes: StoredInternalNote[] = [],
+		private confirmations: StoredReporterConfirmation[] = [],
 	) {}
 
 	prepare(sql: string) {
@@ -98,6 +107,18 @@ class FakeWorkspaceD1Database {
 						};
 					},
 					async first() {
+						if (sql.includes("FROM reporter_confirmations")) {
+							const [requestId] = values as string[];
+
+							return (
+								database.confirmations
+									.filter((confirmation) => confirmation.request_id === requestId)
+									.sort((left, right) =>
+										right.confirmed_at.localeCompare(left.confirmed_at),
+									)[0] ?? null
+							);
+						}
+
 						const [requestId] = values as string[];
 						return (
 							database.requests.find((request) => request.id === requestId) ??
@@ -353,6 +374,7 @@ describe("GET /api/requests/:id detail", () => {
 					},
 				],
 				comments: [],
+				confirmation: null,
 			},
 		});
 		expect(response.status).toBe(200);

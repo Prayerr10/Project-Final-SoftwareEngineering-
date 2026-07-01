@@ -40,6 +40,18 @@ type CommentInput = {
 	body?: string;
 };
 
+type ConfirmResolutionInput = {
+	role?: string;
+	confirmationNote?: string;
+};
+
+type CloseRequestInput = {
+	role?: string;
+	note?: string;
+	manualOverride?: boolean;
+	manualOverrideNote?: string | null;
+};
+
 const STATUSES = [
 	"SUBMITTED",
 	"UNDER_REVIEW",
@@ -151,6 +163,14 @@ type AssignmentRow = {
 	is_current: number;
 };
 
+type ReporterConfirmationRow = {
+	id: string;
+	request_id: string;
+	confirmed_by_role: string;
+	confirmation_note: string | null;
+	confirmed_at: string;
+};
+
 type TechnicianTaskRow = RequestSummaryRow & {
 	assignment_id: string;
 	technician_id: string;
@@ -246,6 +266,16 @@ function toApiComment(row: {
 	};
 }
 
+function toApiReporterConfirmation(row: ReporterConfirmationRow) {
+	return {
+		id: row.id,
+		requestId: row.request_id,
+		confirmedByRole: row.confirmed_by_role,
+		confirmationNote: row.confirmation_note,
+		confirmedAt: row.confirmed_at,
+	};
+}
+
 export default {
 	async fetch(request: Request, env: Env): Promise<Response> {
 		const url = new URL(request.url);
@@ -278,6 +308,15 @@ export default {
 		);
 		const requestInternalNotesMatch = url.pathname.match(
 			/^\/api\/requests\/([^/]+)\/internal-notes$/,
+		);
+		const requestConfirmResolutionMatch = url.pathname.match(
+			/^\/api\/requests\/([^/]+)\/confirm-resolution$/,
+		);
+		const requestCloseMatch = url.pathname.match(
+			/^\/api\/requests\/([^/]+)\/close$/,
+		);
+		const requestReopenMatch = url.pathname.match(
+			/^\/api\/requests\/([^/]+)\/reopen$/,
 		);
 
 		if (url.pathname === "/api/health" && request.method === "GET") {
@@ -406,6 +445,15 @@ export default {
 							.bind(requestId)
 							.all()
 					: null;
+			const confirmationRow = (await env.DB.prepare(`
+				SELECT id, request_id, confirmed_by_role, confirmation_note, confirmed_at
+				FROM reporter_confirmations
+				WHERE request_id = ?
+				ORDER BY confirmed_at DESC
+				LIMIT 1
+			`)
+				.bind(requestId)
+				.first()) as ReporterConfirmationRow | null;
 
 			return json({
 				data: {
@@ -450,6 +498,9 @@ export default {
 								),
 							}
 						: {}),
+					confirmation: confirmationRow
+						? toApiReporterConfirmation(confirmationRow)
+						: null,
 				},
 			});
 		}
@@ -1133,6 +1184,243 @@ export default {
 				},
 				201,
 			);
+		}
+
+		if (requestConfirmResolutionMatch && request.method === "PATCH") {
+			const requestId = decodeURIComponent(requestConfirmResolutionMatch[1]);
+			const input = (await request.json()) as ConfirmResolutionInput;
+
+			if (input.role !== "REPORTER") {
+				return forbidden();
+			}
+
+			const requestRow = await env.DB.prepare(`
+				SELECT id, request_number, title, location,
+				category, priority, priority_suggestion, status,
+				reporter_name, reporter_type, reviewed_at, reviewed_by_role
+				FROM service_requests
+				WHERE id = ?
+			`)
+				.bind(requestId)
+				.first();
+
+			if (!requestRow) {
+				return notFound();
+			}
+
+			const storedRequest = requestRow as RequestSummaryRow;
+
+			if (storedRequest.status !== "RESOLVED") {
+				return invalidStatusTransition(storedRequest.status, ["RESOLVED"]);
+			}
+
+			const id = crypto.randomUUID();
+			const now = new Date().toISOString();
+			const confirmationNote = requiredText(input.confirmationNote)
+				? input.confirmationNote!.trim()
+				: null;
+
+			await env.DB.prepare(`
+				INSERT INTO reporter_confirmations
+				(id, request_id, confirmed_by_role, confirmation_note, confirmed_at)
+				VALUES (?, ?, 'REPORTER', ?, ?)
+			`)
+				.bind(id, requestId, confirmationNote, now)
+				.run();
+
+			return json({
+				data: {
+					id,
+					requestId,
+					confirmedByRole: "REPORTER",
+					confirmationNote,
+					confirmedAt: now,
+				},
+			});
+		}
+
+		if (requestCloseMatch && request.method === "PATCH") {
+			const requestId = decodeURIComponent(requestCloseMatch[1]);
+			const input = (await request.json()) as CloseRequestInput;
+
+			if (input.role !== "ADMINISTRATOR") {
+				return forbidden();
+			}
+
+			const fields: Record<string, string> = {};
+
+			if (!requiredText(input.note)) {
+				fields.note = "Catatan close wajib diisi.";
+			}
+
+			if (input.manualOverride === true && !requiredText(input.manualOverrideNote)) {
+				fields.manualOverrideNote = "Catatan manual override wajib diisi.";
+			}
+
+			if (Object.keys(fields).length > 0) {
+				return validationError(fields);
+			}
+
+			const requestRow = await env.DB.prepare(`
+				SELECT id, request_number, title, location,
+				category, priority, priority_suggestion, status,
+				reporter_name, reporter_type, reviewed_at, reviewed_by_role
+				FROM service_requests
+				WHERE id = ?
+			`)
+				.bind(requestId)
+				.first();
+
+			if (!requestRow) {
+				return notFound();
+			}
+
+			const storedRequest = requestRow as RequestSummaryRow;
+
+			if (storedRequest.status !== "RESOLVED") {
+				return invalidStatusTransition(storedRequest.status, ["RESOLVED"]);
+			}
+
+			const confirmationRow = await env.DB.prepare(`
+				SELECT id
+				FROM reporter_confirmations
+				WHERE request_id = ?
+				ORDER BY confirmed_at DESC
+				LIMIT 1
+			`)
+				.bind(requestId)
+				.first();
+
+			if (!confirmationRow && input.manualOverride !== true) {
+				return validationError({
+					manualOverride:
+						"Close tanpa konfirmasi Pelapor membutuhkan manualOverride true.",
+					manualOverrideNote:
+						"Close tanpa konfirmasi Pelapor membutuhkan catatan manual override.",
+				});
+			}
+
+			const historyId = crypto.randomUUID();
+			const now = new Date().toISOString();
+			const manualOverrideUsed = input.manualOverride === true ? 1 : 0;
+			const manualOverrideNote =
+				manualOverrideUsed === 1 ? input.manualOverrideNote!.trim() : null;
+
+			await env.DB.prepare(`
+				UPDATE service_requests
+				SET status = 'CLOSED',
+					closed_at = ?,
+					closed_by_role = 'ADMINISTRATOR',
+					manual_override_used = ?,
+					manual_override_note = ?,
+					updated_at = ?
+				WHERE id = ?
+			`)
+				.bind(
+					now,
+					manualOverrideUsed,
+					manualOverrideNote,
+					now,
+					requestId,
+				)
+				.run();
+
+			await env.DB.prepare(`
+				INSERT INTO request_status_history
+				(id, request_id, from_status, to_status, changed_by_role, note, created_at)
+				VALUES (?, ?, ?, ?, ?, ?, ?)
+			`)
+				.bind(
+					historyId,
+					requestId,
+					"RESOLVED",
+					"CLOSED",
+					"ADMINISTRATOR",
+					input.note!.trim(),
+					now,
+				)
+				.run();
+
+			return json({
+				data: toApiRequest({
+					...storedRequest,
+					status: "CLOSED",
+				}),
+			});
+		}
+
+		if (requestReopenMatch && request.method === "PATCH") {
+			const requestId = decodeURIComponent(requestReopenMatch[1]);
+			const input = (await request.json()) as ReviewRequestInput;
+
+			if (input.role !== "ADMINISTRATOR") {
+				return forbidden();
+			}
+
+			const fields: Record<string, string> = {};
+
+			if (!requiredText(input.note)) {
+				fields.note = "Catatan reopen wajib diisi.";
+			}
+
+			if (Object.keys(fields).length > 0) {
+				return validationError(fields);
+			}
+
+			const requestRow = await env.DB.prepare(`
+				SELECT id, request_number, title, location,
+				category, priority, priority_suggestion, status,
+				reporter_name, reporter_type, reviewed_at, reviewed_by_role
+				FROM service_requests
+				WHERE id = ?
+			`)
+				.bind(requestId)
+				.first();
+
+			if (!requestRow) {
+				return notFound();
+			}
+
+			const storedRequest = requestRow as RequestSummaryRow;
+
+			if (storedRequest.status !== "CLOSED") {
+				return invalidStatusTransition(storedRequest.status, ["CLOSED"]);
+			}
+
+			const historyId = crypto.randomUUID();
+			const now = new Date().toISOString();
+
+			await env.DB.prepare(`
+				UPDATE service_requests
+				SET status = 'UNDER_REVIEW',
+					updated_at = ?
+				WHERE id = ?
+			`)
+				.bind(now, requestId)
+				.run();
+
+			await env.DB.prepare(`
+				INSERT INTO request_status_history
+				(id, request_id, from_status, to_status, changed_by_role, note, created_at)
+				VALUES (?, ?, ?, ?, ?, ?, ?)
+			`)
+				.bind(
+					historyId,
+					requestId,
+					"CLOSED",
+					"UNDER_REVIEW",
+					"ADMINISTRATOR",
+					input.note!.trim(),
+					now,
+				)
+				.run();
+
+			return json({
+				data: toApiRequest({
+					...storedRequest,
+					status: "UNDER_REVIEW",
+				}),
+			});
 		}
 
 		if (url.pathname === "/api/requests" && request.method === "POST") {

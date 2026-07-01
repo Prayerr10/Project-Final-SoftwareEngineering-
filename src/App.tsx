@@ -32,6 +32,14 @@ type CommunicationEntry = {
 	createdAt: string;
 };
 
+type ReporterConfirmation = {
+	id: string;
+	requestId: string;
+	confirmedByRole: string;
+	confirmationNote: string | null;
+	confirmedAt: string;
+};
+
 type RequestDetail = ServiceRequest & {
 	description: string;
 	createdAt: string;
@@ -39,6 +47,7 @@ type RequestDetail = ServiceRequest & {
 	statusHistory: StatusHistoryEntry[];
 	comments: CommunicationEntry[];
 	internalNotes?: CommunicationEntry[];
+	confirmation: ReporterConfirmation | null;
 };
 
 type TechnicianTask = ServiceRequest & {
@@ -115,6 +124,12 @@ export default function App() {
 	const [commentBody, setCommentBody] = useState("");
 	const [internalNoteBody, setInternalNoteBody] = useState("");
 	const [communicationMessage, setCommunicationMessage] = useState("");
+	const [confirmationNote, setConfirmationNote] = useState("");
+	const [confirmationMessage, setConfirmationMessage] = useState("");
+	const [closeNote, setCloseNote] = useState("");
+	const [manualOverride, setManualOverride] = useState(false);
+	const [manualOverrideNote, setManualOverrideNote] = useState("");
+	const [reopenNote, setReopenNote] = useState("");
 	const [message, setMessage] = useState("");
 	const [adminMessage, setAdminMessage] = useState("");
 	const [foundationStatus, setFoundationStatus] = useState(
@@ -304,7 +319,7 @@ export default function App() {
 
 	async function runAdminAction(
 		path: string,
-		body: Record<string, string>,
+		body: Record<string, string | boolean | null>,
 		successMessage: string,
 	) {
 		if (!selectedRequest) {
@@ -357,6 +372,64 @@ export default function App() {
 			"Laporan ditugaskan dan dipindahkan ke ASSIGNED.",
 		);
 		setAssignmentNote("");
+	}
+
+	async function confirmSelectedResolution(event: React.FormEvent) {
+		event.preventDefault();
+
+		if (!selectedRequest) {
+			return;
+		}
+
+		setConfirmationMessage("");
+
+		const response = await fetch(
+			`/api/requests/${selectedRequest.id}/confirm-resolution`,
+			{
+				method: "PATCH",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					role: "REPORTER",
+					confirmationNote,
+				}),
+			},
+		);
+		const result = await response.json();
+
+		if (!response.ok) {
+			setConfirmationMessage(
+				result.error?.message ?? "Konfirmasi hasil gagal disimpan.",
+			);
+			return;
+		}
+
+		setConfirmationNote("");
+		setConfirmationMessage("Konfirmasi Pelapor disimpan.");
+		await loadRequestDetail(selectedRequest.id);
+	}
+
+	async function closeSelectedRequest() {
+		await runAdminAction(
+			"close",
+			{
+				note: closeNote,
+				manualOverride,
+				manualOverrideNote: manualOverride ? manualOverrideNote : null,
+			},
+			"Laporan dipindahkan ke CLOSED.",
+		);
+		setCloseNote("");
+		setManualOverride(false);
+		setManualOverrideNote("");
+	}
+
+	async function reopenSelectedRequest() {
+		await runAdminAction(
+			"reopen",
+			{ note: reopenNote },
+			"Laporan dipindahkan kembali ke UNDER_REVIEW.",
+		);
+		setReopenNote("");
 	}
 
 	async function runTechnicianAction(
@@ -791,10 +864,18 @@ export default function App() {
 									</p>
 									<h4>Riwayat Status</h4>
 									<p>Riwayat status akan tampil setelah laporan dipilih.</p>
+									<h4>Konfirmasi Pelapor</h4>
+									<p>Belum ada konfirmasi Pelapor untuk laporan ini.</p>
+									<h4>Catatan Konfirmasi</h4>
+									<p>Catatan konfirmasi akan tampil saat laporan RESOLVED.</p>
 									<h4>Komentar Publik</h4>
 									<p>Komentar publik akan tampil setelah laporan dipilih.</p>
 									<h4>Catatan Internal</h4>
 									<p>Catatan internal hanya tampil untuk Administrator dan Teknisi.</p>
+									<h4>Catatan Close</h4>
+									<p>Manual override tanpa konfirmasi Pelapor membutuhkan catatan.</p>
+									<h4>Catatan Reopen</h4>
+									<p>Reopen mengembalikan laporan ke UNDER_REVIEW.</p>
 									<button type="button" disabled>
 										Tambah Komentar
 									</button>
@@ -861,6 +942,49 @@ export default function App() {
 													</li>
 												))}
 											</ol>
+										)}
+									</section>
+
+									<section className="confirmation-panel" aria-live="polite">
+										<h4>Konfirmasi Pelapor</h4>
+										{selectedRequest.confirmation ? (
+											<p className="confirmation-summary">
+												Dikonfirmasi oleh{" "}
+												{selectedRequest.confirmation.confirmedByRole} pada{" "}
+												{selectedRequest.confirmation.confirmedAt}
+												{selectedRequest.confirmation.confirmationNote
+													? `: ${selectedRequest.confirmation.confirmationNote}`
+													: "."}
+											</p>
+										) : (
+											<p className="empty-state">
+												Belum ada konfirmasi Pelapor untuk laporan ini.
+											</p>
+										)}
+
+										{activeRole === "REPORTER" &&
+											selectedRequest.status === "RESOLVED" &&
+											!selectedRequest.confirmation && (
+												<form
+													className="communication-form"
+													onSubmit={confirmSelectedResolution}
+												>
+													<label>
+														Catatan Konfirmasi
+														<textarea
+															value={confirmationNote}
+															onChange={(event) =>
+																setConfirmationNote(event.target.value)
+															}
+															placeholder="Contoh: Perbaikan sudah diterima."
+														/>
+													</label>
+													<button type="submit">Konfirmasi Hasil</button>
+												</form>
+											)}
+
+										{confirmationMessage && (
+											<p className="form-message">{confirmationMessage}</p>
 										)}
 									</section>
 
@@ -1030,6 +1154,67 @@ export default function App() {
 														</button>
 													</div>
 												</>
+											)}
+
+											{selectedRequest.status === "RESOLVED" && (
+												<div className="action-block">
+													<label>
+														Catatan Close
+														<textarea
+															value={closeNote}
+															onChange={(event) =>
+																setCloseNote(event.target.value)
+															}
+															placeholder="Contoh: Laporan ditutup setelah konfirmasi."
+														/>
+													</label>
+
+													<label className="checkbox-label">
+														<input
+															type="checkbox"
+															checked={manualOverride}
+															onChange={(event) =>
+																setManualOverride(event.target.checked)
+															}
+														/>
+														Manual override tanpa konfirmasi Pelapor
+													</label>
+
+													{manualOverride && (
+														<label>
+															Catatan Manual Override
+															<textarea
+																value={manualOverrideNote}
+																onChange={(event) =>
+																	setManualOverrideNote(event.target.value)
+																}
+																placeholder="Wajib diisi jika memakai manual override."
+															/>
+														</label>
+													)}
+
+													<button type="button" onClick={closeSelectedRequest}>
+														Tutup Laporan
+													</button>
+												</div>
+											)}
+
+											{selectedRequest.status === "CLOSED" && (
+												<div className="action-block">
+													<label>
+														Catatan Reopen
+														<textarea
+															value={reopenNote}
+															onChange={(event) =>
+																setReopenNote(event.target.value)
+															}
+															placeholder="Contoh: Masalah muncul kembali."
+														/>
+													</label>
+													<button type="button" onClick={reopenSelectedRequest}>
+														Buka Kembali
+													</button>
+												</div>
 											)}
 
 											{adminMessage && (
