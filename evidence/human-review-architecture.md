@@ -20,8 +20,8 @@ Skill 06 - Architecture Design (`06-architecture-design`)
 2. Traceability awal untuk NFR belum lengkap pada level arsitektur. NFR-06 tentang automated testing dan CI belum punya keputusan arsitektur yang menjelaskan bagaimana desain dibuat testable, sedangkan NFR-07 dan NFR-08 tentang traceability dan Human Review belum punya design ID khusus walaupun keduanya adalah constraint wajib project.
 3. `docs/requirements/traceability.md` awal mengisi Design untuk NFR-06 dengan `ARCH-10`, padahal `ARCH-10` berisi accessibility-first frontend constraint, bukan automated testing/CI. Ini membuat link Design untuk NFR-06 tidak akurat.
 4. Tabel `Traceability Links` di `docs/design/architecture.md` awal sudah mencantumkan `ARCH-12` untuk deployment architecture, tetapi tabel `Architecture Decisions` belum memiliki baris keputusan `ARCH-12`. Akibatnya ada design ID yang dipakai di traceability tetapi belum dijelaskan sebagai keputusan arsitektur.
-5. Evidence Human Review Skill 06 awal masih berupa placeholder kosong pada bagian "Masalah yang Ditemukan" dan "Perbaikan", sehingga belum setara kedalamannya dengan `evidence/human-review-validation.md` yang mencatat temuan dan koreksi aktual.
-6. Format evidence sudah memakai enam section dari Template Human Review, tetapi perlu dicek ulang agar tidak ada section tambahan seperti "Penggunaan AI" atau "Reviewer" yang seharusnya berada di body Pull Request, bukan di file evidence.
+5. Evidence Human Review Skill 06 awal masih berisi isian kosong pada bagian "Masalah yang Ditemukan" dan "Perbaikan", sehingga belum setara kedalamannya dengan `evidence/human-review-validation.md` yang mencatat temuan dan koreksi aktual.
+6. Format evidence sudah memakai enam section dari Template Human Review, tetapi perlu dicek ulang agar tidak ada section tambahan di luar template yang seharusnya berada di body Pull Request, bukan di file evidence.
 
 ## Perbaikan
 
@@ -44,7 +44,7 @@ Catatan: Test otomatis tidak dijalankan karena perubahan Skill 06 hanya pada dok
 
 ## Keputusan
 
-- [ ] Disetujui
+- [x] Disetujui
 - [ ] Perlu revisi
 - [ ] Ditolak
 - [ ] Terblokir

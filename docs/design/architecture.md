@@ -1,9 +1,9 @@
 # Architecture Design
 
-| Review Status | Needs Human Review |
+| Review Status | Human Reviewed & Approved |
 | --- | --- |
 | Skill AI | Skill 06 - Architecture Design (`06-architecture-design`) |
-| Human decision | Pending Human Review |
+| Human decision | Disetujui |
 
 ## Source Summary
 
@@ -237,7 +237,7 @@ Traceability: NFR-02, NFR-03, NFR-04, NFR-05, NFR-09.
 | ASSUMPTION-01 | ASSUMPTION | Role context is selected in UI for the project baseline because full authentication is not required. | API validation checks role/action but does not provide real user identity assurance. |
 | ASSUMPTION-02 | ASSUMPTION | Dashboard can be built from D1 report and assignment data without separate analytics storage. | Supports Cloudflare free-tier constraint and Skill 07 later designs query shape. |
 | OPEN-02 | OPEN QUESTION | Extra reporter identity beyond `reporter_name` and `reporter_type` is undefined. | Skill 07 must not require extra identity fields unless approved. |
-| OPEN-03 | OPEN QUESTION | Valid manual override conditions are undefined. | Worker closure validation needs review-ready placeholder logic later, not invented policy in Skill 06. |
+| OPEN-03 | OPEN QUESTION | Valid manual override conditions are undefined. | Worker closure validation needs review-ready logic later, not invented policy in Skill 06. |
 | OPEN-04 | OPEN QUESTION | Reopen initiation is unclear. | Architecture keeps Administrator as the actor that performs reopen per current FR/BR, while trigger details need Human Review. |
 | OPEN-05 | OPEN QUESTION | Final fixed category list is undefined. | Architecture supports controlled vocabulary but does not define final values. |
 | OPEN-06 | OPEN QUESTION | Priority criteria are undefined. | Architecture supports controlled priority values and Lecturer HIGH suggestion, but not detailed policy. |
