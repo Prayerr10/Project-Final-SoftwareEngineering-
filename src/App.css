@@ -49,6 +49,39 @@
 	padding: 9px 10px;
 }
 
+.role-action-summary {
+	margin-top: 16px;
+	border: 1px solid #bfdbfe;
+	border-radius: 8px;
+	background: #eff6ff;
+	padding: 14px 16px;
+}
+
+.role-action-summary h2 {
+	margin: 0 0 8px;
+	color: #1e3a8a;
+	font-size: 1rem;
+}
+
+.role-action-summary ul {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.role-action-summary li {
+	border: 1px solid #93c5fd;
+	border-radius: 999px;
+	background: #ffffff;
+	color: #1d4ed8;
+	font-size: 0.9rem;
+	font-weight: 700;
+	padding: 6px 10px;
+}
+
 .foundation-status {
 	margin-top: 20px;
 	border: 1px solid #d1fae5;
