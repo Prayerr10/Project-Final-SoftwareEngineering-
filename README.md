@@ -2,348 +2,135 @@
 
 [![CI](https://github.com/Prayerr10/Project-Final-SoftwareEngineering-/actions/workflows/ci.yml/badge.svg?branch=development)](https://github.com/Prayerr10/Project-Final-SoftwareEngineering-/actions/workflows/ci.yml)
 [![Deployment](https://img.shields.io/badge/Cloudflare-Workers-F38020?logo=cloudflare&logoColor=white)](https://campus-maintenance.pkaawoan24.workers.dev)
-[![Database](https://img.shields.io/badge/Database-Cloudflare%20D1-F38020?logo=cloudflare&logoColor=white)](./database/migrations)
 [![Tests](https://img.shields.io/badge/Tests-90%20passing-2ea44f)](./tests)
-[![Software Engineering](https://img.shields.io/badge/Course-Software%20Engineering-0969da)](./CASE.md)
 
-Sistem pelaporan dan pemeliharaan fasilitas kampus berbasis React, TypeScript, Cloudflare Workers, dan Cloudflare D1. Proyek ini dibuat sebagai tugas akhir mata kuliah Software Engineering dengan fokus pada requirement engineering, traceability, AI-assisted workflow, automated testing, acceptance testing, dan deployment Cloudflare.
+Sistem pelaporan dan pemeliharaan fasilitas kampus berbasis web untuk membuat, meninjau, menugaskan, mengerjakan, dan menutup laporan kerusakan fasilitas. Proyek ini dibuat untuk tugas akhir mata kuliah Software Engineering dengan dokumentasi requirements, design, testing, deployment, traceability, dan AI-assisted workflow.
 
-> Production: [campus-maintenance.pkaawoan24.workers.dev](https://campus-maintenance.pkaawoan24.workers.dev)<br>
-> Health check: [/api/health](https://campus-maintenance.pkaawoan24.workers.dev/api/health)<br>
-> Branch pengembangan: `development`<br>
-> Branch final submission: `main` setelah merge final dari `development`
+## URL Aplikasi
 
-## Gambaran Sistem
+https://campus-maintenance.pkaawoan24.workers.dev
 
-Campus Service Request and Maintenance System membantu civitas kampus membuat laporan kerusakan fasilitas, lalu memprosesnya melalui Administrator, Teknisi, dan Manajer Fasilitas sampai laporan selesai dan ditutup.
+Health check:
 
-```text
-Pelapor
-  |
-  | buat laporan
-  v
-SUBMITTED
-  |
-  | review Administrator
-  v
-UNDER_REVIEW
-  |
-  | prioritas + penugasan Teknisi
-  v
-ASSIGNED
-  |
-  | Teknisi mulai kerja
-  v
-IN_PROGRESS
-  |
-  | pekerjaan selesai
-  v
-RESOLVED
-  |
-  | konfirmasi Pelapor + close Administrator
-  v
-CLOSED
-  |
-  | reopen bila perlu
-  v
-UNDER_REVIEW
-```
+https://campus-maintenance.pkaawoan24.workers.dev/api/health
 
-## Sorotan Fitur
+Repository:
 
-| Area | Fitur |
-| --- | --- |
-| Autentikasi | Login sungguhan per role memakai akun D1 dan httpOnly session cookie. |
-| Pelaporan | Buat laporan, lihat daftar laporan, cari/filter, lihat detail laporan. |
-| Review Admin | Review laporan, klasifikasi kategori, tentukan prioritas, assign Teknisi. |
-| Pengerjaan Teknisi | Lihat tugas, terima tugas, ubah status kerja, tandai resolved. |
-| Kolaborasi | Komentar publik, catatan internal, riwayat status otomatis. |
-| Kontrol Akhir | Close laporan, reopen laporan, konfirmasi resolved oleh Pelapor. |
-| Monitoring | Dashboard ringkas untuk status laporan dan beban kerja Teknisi. |
+https://github.com/Prayerr10/Project-Final-SoftwareEngineering-
 
-## Aktor
+## Fitur Utama
 
-| Aktor | Peran Utama |
-| --- | --- |
-| Pelapor | Membuat dan memantau laporan layanan fasilitas kampus. |
-| Administrator | Memvalidasi laporan, menentukan prioritas, dan menugaskan Teknisi. |
-| Teknisi | Menangani pekerjaan lapangan dan memperbarui status pekerjaan. |
-| Manajer Fasilitas | Melihat ringkasan operasional dan beban kerja. |
+- Pelaporan kerusakan fasilitas kampus.
+- Daftar, pencarian, filter, dan detail laporan.
+- Review admin, prioritas, dan assignment teknisi.
+- Update status pekerjaan dan riwayat perubahan status.
+- Komentar publik dan catatan internal sesuai role.
+- Dashboard untuk Pelapor, Administrator, Teknisi, dan Manajer Fasilitas.
+- Premium UI redesign.
+- Login berbasis role dengan session cookie.
+- Logout dan endpoint `/api/auth/me` untuk validasi sesi aktif.
 
-## Akun Demo untuk Penilaian
-
-Akun berikut adalah akun demo khusus untuk penilaian tugas. Password sengaja dibuat sederhana agar dosen dapat mencoba setiap role dengan cepat; ini bukan credential production sungguhan.
+## Akun Demo
 
 | Role | Username | Password |
-| --- | --- | --- |
-| Pelapor | `pelapor_demo` | `pelapor123` |
-| Administrator | `admin_demo` | `admin123` |
-| Teknisi | `teknisi_demo` | `teknisi123` |
-| Manajer Fasilitas | `manajer_demo` | `manajer123` |
+|---|---|---|
+| Pelapor | pelapor_demo | pelapor123 |
+| Administrator | admin_demo | admin123 |
+| Teknisi | teknisi_demo | teknisi123 |
+| Manajer Fasilitas | manajer_demo | manajer123 |
 
-Catatan teknis:
+Akun ini hanya digunakan untuk demonstrasi tugas. Jangan gunakan ulang password ini untuk sistem nyata.
 
-- Password disimpan di D1 sebagai `password_hash` PBKDF2-SHA256 + `salt`, bukan plaintext.
-- Session login dikirim sebagai httpOnly cookie `csr_session`.
-- Worker membutuhkan secret `AUTH_SECRET` untuk signing session token. Untuk production, set melalui Cloudflare secret, misalnya `wrangler secret put AUTH_SECRET`.
+## Menjalankan Secara Lokal
 
-## Stack Teknologi
+1. Install dependency:
 
-| Layer | Teknologi | Lokasi |
-| --- | --- | --- |
-| Frontend | React, TypeScript, Vite | [`src/`](./src) |
-| Backend/API | Cloudflare Workers | [`worker/`](./worker) |
-| Database | Cloudflare D1, SQLite migration | [`database/migrations/`](./database/migrations) |
-| Testing | Vitest | [`tests/`](./tests) |
-| CI | GitHub Actions | [`.github/workflows/`](./.github/workflows) |
-| Deployment | Wrangler | [`wrangler.jsonc`](./wrangler.jsonc) |
+   ```bash
+   npm install
+   ```
 
-## Struktur Repository
+2. Buat file `.dev.vars` lokal berisi `AUTH_SECRET`.
 
-```text
-.
-|-- README.md
-|-- CASE.md
-|-- skills/
-|   |-- 01-inception-stakeholder/SKILL.md
-|   |-- 02-elicitation/SKILL.md
-|   |-- 03-specification/SKILL.md
-|   |-- 04-prioritization/SKILL.md
-|   |-- 05-validation-change/SKILL.md
-|   |-- 06-architecture-design/SKILL.md
-|   |-- 07-database-api-design/SKILL.md
-|   |-- 08-ui-design/SKILL.md
-|   |-- 09-issue-planning/SKILL.md
-|   |-- 10-implementation/SKILL.md
-|   |-- 11-code-review/SKILL.md
-|   |-- 12-test-planning/SKILL.md
-|   |-- 13-automated-testing/SKILL.md
-|   |-- 14-acceptance-testing/SKILL.md
-|   `-- 15-deployment/SKILL.md
-|-- docs/
-|   |-- requirements/
-|   |-- design/
-|   |-- testing/
-|   `-- deployment/
-|-- src/
-|-- worker/
-|-- database/
-|   `-- migrations/
-|-- tests/
-|   |-- unit/
-|   |-- integration/
-|   `-- acceptance/
-|-- evidence/
-|-- .github/
-`-- wrangler.jsonc
-```
+   Jangan commit `.dev.vars` dan jangan menulis nilai rahasia di README.
 
-## Requirement dan Traceability
+3. Jalankan migration lokal yang diperlukan sesuai urutan file di `database/migrations/`.
 
-| Artefak | Jumlah |
-| --- | ---: |
-| Functional Requirements | 24 |
-| Non-Functional Requirements | 9 |
-| Business Rules | 12 |
-| User Stories | 17 |
-| Acceptance Criteria | 40 |
-| Change Request | 1 |
-| Automated Tests | 90 passing |
+   ```bash
+   npx wrangler d1 execute campus-maintenance-db --local --file=database/migrations/0001_initial.sql
+   ```
 
-Dokumen utama:
+   Ulangi untuk migration berikutnya bila database lokal masih kosong.
 
-- [`docs/requirements/requirements.md`](./docs/requirements/requirements.md)
-- [`docs/requirements/user-stories.md`](./docs/requirements/user-stories.md)
-- [`docs/requirements/prioritization.md`](./docs/requirements/prioritization.md)
-- [`docs/requirements/validation.md`](./docs/requirements/validation.md)
-- [`docs/requirements/change-request.md`](./docs/requirements/change-request.md)
-- [`docs/requirements/traceability.md`](./docs/requirements/traceability.md)
-- [`docs/design/architecture.md`](./docs/design/architecture.md)
-- [`docs/design/database-api.md`](./docs/design/database-api.md)
-- [`docs/design/ui-flow.md`](./docs/design/ui-flow.md)
+4. Jalankan aplikasi:
 
-```text
-Requirement Docs
-      |
-      v
-Traceability Matrix
-      |
-      +--> Design Docs
-      +--> GitHub Issues and PR
-      +--> Source Code
-      +--> Automated and Acceptance Tests
-                |
-                v
-          Evidence and Human Review
-```
+   ```bash
+   npm run dev
+   ```
+
+5. Buka URL lokal yang ditampilkan terminal.
+
+## Testing dan Validasi
+
+Hasil validasi terbaru:
+
+- 90 automated tests dalam 16 test files.
+- `npm test -- --run`: PASS.
+- `npx tsc -b`: PASS.
+- `npm run build`: PASS.
+- `git diff --check`: PASS.
+
+CI GitHub Actions menjalankan test dan build pada pull request serta branch utama proyek.
+
+## Known Limitation
+
+`npm run lint` masih memiliki temuan baseline/pre-existing pada beberapa file lama dan generated file. Hal ini tidak menghambat test, build, CI, atau deployment saat ini.
+
+## Status Implementasi
+
+- Authentication/login/logout/auth-me: selesai dan deployed.
+- Premium UI redesign: selesai.
+- Cloudflare Workers + D1 deployment: selesai.
+- URL publik telah diverifikasi.
+
+## Teknologi
+
+| Area | Teknologi |
+|---|---|
+| Frontend | React, TypeScript, Vite |
+| Backend/API | Cloudflare Workers |
+| Database | Cloudflare D1 |
+| Testing | Vitest |
+| CI/CD | GitHub Actions, Wrangler |
 
 ## API Utama
 
 | Method | Endpoint | Fungsi |
-| --- | --- | --- |
+|---|---|---|
 | GET | `/api/health` | Health check API dan D1. |
-| POST | `/api/auth/login` | Login username/password dan set httpOnly session cookie. |
-| POST | `/api/auth/logout` | Logout dan hapus session cookie. |
+| POST | `/api/auth/login` | Login username/password dan membuat session cookie. |
+| POST | `/api/auth/logout` | Logout dan menghapus session cookie. |
 | GET | `/api/auth/me` | Mengembalikan user, role, dan display name dari session aktif. |
-| GET | `/api/requests` | List, search, dan filter laporan. |
+| GET | `/api/requests` | Daftar laporan dengan search dan filter. |
 | POST | `/api/requests` | Membuat laporan baru. |
-| GET | `/api/requests/:id` | Detail laporan, riwayat status, komentar, dan catatan sesuai role. |
-| GET | `/api/technicians` | Daftar Teknisi aktif untuk Administrator. |
-| GET | `/api/technicians/:id/tasks` | Daftar tugas Teknisi. |
+| GET | `/api/requests/:id` | Detail laporan, status history, komentar, dan catatan sesuai role. |
 | PATCH | `/api/requests/:id/review` | Review laporan oleh Administrator. |
-| PATCH | `/api/requests/:id/classification` | Menentukan kategori dan prioritas. |
 | PATCH | `/api/requests/:id/assignment` | Menugaskan Teknisi. |
-| PATCH | `/api/requests/:id/accept` | Teknisi menerima tugas. |
-| PATCH | `/api/requests/:id/progress` | Mengubah status ke `IN_PROGRESS`. |
-| PATCH | `/api/requests/:id/resolve` | Mengubah status ke `RESOLVED`. |
-| POST | `/api/requests/:id/comments` | Menambahkan komentar publik. |
-| POST | `/api/requests/:id/internal-notes` | Menambahkan catatan internal. |
-| PATCH | `/api/requests/:id/confirm-resolution` | Pelapor mengonfirmasi pekerjaan resolved. |
-| PATCH | `/api/requests/:id/close` | Administrator menutup laporan. |
-| PATCH | `/api/requests/:id/reopen` | Administrator membuka kembali laporan. |
-| GET | `/api/dashboard/summary` | Dashboard operasional. |
+| PATCH | `/api/requests/:id/progress` | Mengubah status pengerjaan. |
+| PATCH | `/api/requests/:id/resolve` | Menandai laporan selesai dikerjakan. |
+| PATCH | `/api/requests/:id/close` | Menutup laporan. |
+| GET | `/api/dashboard/summary` | Ringkasan dashboard sesuai role. |
 
-## Cara Menjalankan Lokal
+## Dokumentasi Proyek
 
-Prasyarat:
+- Requirements: `docs/requirements/`
+- Design: `docs/design/`
+- Testing: `docs/testing/`
+- Deployment: `docs/deployment/`
+- AI evidence dan human review: `evidence/`
+- Reusable AI skills: `skills/`
 
-- Node.js 22 atau lebih baru.
-- npm.
-- Akun Cloudflare untuk deployment.
+## Catatan Keamanan
 
-Install dependency:
-
-```bash
-npm ci
-```
-
-Jalankan development server:
-
-```bash
-npm run dev
-```
-
-Jalankan test:
-
-```bash
-npm test -- --run
-```
-
-Build production:
-
-```bash
-npm run build
-```
-
-Deploy ke Cloudflare:
-
-```bash
-npm run deploy
-```
-
-## Database
-
-Migration D1 berada di [`database/migrations/`](./database/migrations):
-
-- `0001_initial.sql`
-- `0002_create_request_identity_and_history.sql`
-- `0003_create_technicians_and_assignments.sql`
-- `0004_create_request_comments_and_internal_notes.sql`
-- `0005_create_reporter_confirmations.sql`
-- `0006_enforce_request_status_priority.sql`
-- `0007_add_users.sql`
-
-Binding D1 di [`wrangler.jsonc`](./wrangler.jsonc):
-
-```jsonc
-"d1_databases": [
-  {
-    "binding": "DB",
-    "database_name": "campus-maintenance-db"
-  }
-]
-```
-
-## Testing dan CI
-
-Test suite menggunakan Vitest dan dibagi menjadi:
-
-- [`tests/unit/`](./tests/unit)
-- [`tests/integration/`](./tests/integration)
-- [`tests/acceptance/`](./tests/acceptance)
-
-CI GitHub Actions menjalankan:
-
-```bash
-npm ci
-npm test -- --run
-npm run build
-```
-
-Workflow CI berjalan pada pull request, push ke `development`, dan push ke `main`.
-
-## Catatan Penggunaan AI dan Skill
-
-Pada tahap awal pengembangan, proyek ini menggunakan bantuan skill umum dari Matt Pocock dan beberapa skill awal buatan sendiri untuk mendukung perencanaan, implementasi, dan review. Menjelang finalisasi submission, folder [`skills/`](./skills) dirapikan ulang menjadi 15 `SKILL.md` sesuai template dosen agar seluruh proses Software Engineering terdokumentasi secara konsisten.
-
-Skill 01-15 pada repository ini berfungsi sebagai dokumentasi final dan reusable process dari aktivitas yang sudah dilakukan melalui requirement, issue, pull request, implementasi, testing, deployment, dan human review. Commit finalisasi skill dibuat di akhir sebagai tahap audit dan standardisasi dokumentasi, bukan karena proyek dibuat ulang dari nol.
-
-AI digunakan sebagai asisten kerja, bukan pengganti keputusan manusia. Bukti penggunaan AI disimpan di:
-
-- [`skills/`](./skills)
-- [`evidence/`](./evidence)
-- [`docs/templates/human-review-template.md`](./docs/templates/human-review-template.md)
-- Pull request body GitHub
-- Human Review documents
-
-Setiap work product penting mencatat:
-
-- Prompt yang dipakai.
-- Output awal AI.
-- Kesalahan yang ditemukan.
-- Revisi manusia.
-- Hasil final.
-- Keputusan human review.
-
-## Branch dan Pull Request Workflow
-
-```text
-main
-  |
-  +-- development
-        |
-        +-- feature/skill-xx atau feature/issue-xx
-        |     |
-        |     +-- commit kecil sesuai issue/skill
-        |     +-- test dan human review
-        |     +-- pull request
-        |
-        +-- merge PR ke development setelah CI PASS
-        |
-        +-- merge final ke main saat semua instruksi dosen sudah final
-```
-
-Workflow yang digunakan:
-
-1. Requirement dan design dibuat melalui branch feature.
-2. Implementasi dikerjakan melalui issue-based branch.
-3. Pull request dibuat ke `development`.
-4. CI menjalankan test dan build otomatis.
-5. Human review dicatat di PR dan folder `evidence/`.
-6. Setelah semua gap selesai, `development` dapat di-merge ke `main` untuk final submission.
-
-## Checklist Submit
-
-- [x] URL Cloudflare aktif tersedia di README.
-- [x] Health check `/api/health` tersedia.
-- [x] Folder `skills/` berisi 15 `SKILL.md`.
-- [x] Requirement, design, testing, deployment, dan evidence terdokumentasi.
-- [x] `npm test -- --run` PASS.
-- [x] `npm run build` PASS.
-- [x] CI terakhir pada `development` PASS.
-- [x] Tidak ada secret, token, password, atau API key production yang sengaja disimpan di repository.
-- [ ] Merge final `development` ke `main` dilakukan setelah seluruh instruksi dosen dianggap final.
-
-## Konteks Akademik
-
-Repository ini dibuat untuk kebutuhan akademik mata kuliah Software Engineering oleh Prayer Yosua Immanuel Kaawoan. Semua data dummy yang dipakai pada testing dan deployment smoke test tidak berisi data pribadi atau credential production.
+- `.dev.vars` tidak boleh di-commit.
+- Secret environment production disimpan di Cloudflare, bukan di repository.
+- Dokumentasi ini hanya mencantumkan akun demo untuk kebutuhan penilaian.

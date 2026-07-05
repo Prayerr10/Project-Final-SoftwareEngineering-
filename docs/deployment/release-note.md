@@ -1,38 +1,46 @@
-# Release Note
+# Release Note Final
 
 ## Release
 
 | Item | Value |
 | --- | --- |
-| Release date | 2026-07-05 Asia/Makassar |
+| Release date | 2026-07-06 Asia/Makassar |
 | Environment | Cloudflare Workers + D1 |
-| URL | `https://campus-maintenance.pkaawoan24.workers.dev` |
-| Version ID | `cdf32974-c66c-45f3-b51b-54b27559e826` |
-| Source commit | `1e1cf37c023f80d3eb39e4f8037117e2493a8534` |
+| Public URL | `https://campus-maintenance.pkaawoan24.workers.dev` |
+| Final development commit before documentation finalization | `4a61cf6` |
+| Final runtime change | `fix(auth): make PBKDF2 compatible with Cloudflare runtime` |
 
 ## Changes Released
 
-- Completed Skill 14 acceptance testing evidence.
-- Fixed internal-note role visibility so Pelapor no longer sees internal-note controls.
-- Preserved Administrator and Teknisi access to internal notes.
-- Verified the full status workflow from `SUBMITTED` to `CLOSED`.
-- Deployed the application to Cloudflare Workers with D1 production migrations applied.
-- Redeployed from the latest `origin/development` runtime source so production reflects the refined dashboard UI commit.
-- Added final-submission documentation updates: 15 formal `SKILL.md` folders, Indonesian README, AI evidence summaries, and endpoint traceability for `GET /api/technicians`.
+- Authentication, login, logout, and `/api/auth/me` are implemented and deployed.
+- Demo role accounts are available in remote D1 for Pelapor, Administrator, Teknisi, and Manajer Fasilitas.
+- Session handling uses role-based authentication and httpOnly session cookies.
+- PBKDF2 password verification is compatible with the Cloudflare runtime.
+- Premium UI redesign is complete.
+- Dashboard views for Pelapor, Administrator, Teknisi, and Manajer Fasilitas are available.
+- Cloudflare Workers deployment uses the public URL listed above.
 
 ## Validation Summary
 
 | Check | Result |
 | --- | --- |
-| `npm test -- --run` | PASS: 13 test files, 81 tests |
+| `npm test -- --run` | PASS: 16 test files, 90 tests |
+| `npx tsc -b` | PASS |
 | `npm run build` | PASS |
-| Remote D1 migration | PASS: no new migration required on 2026-07-05 |
-| `npm run deploy` | PASS |
+| `git diff --check` | PASS |
 | Production `/api/health` | PASS |
-| Production root URL check | PASS: HTTP 200 text/html |
+| Production root URL | PASS |
+| Login demo | PASS |
+| `/api/auth/me` after login | PASS |
+| Dashboard after login | PASS |
+| Remote D1 data load | PASS |
+| Logout | PASS |
 
-## Known Notes
+## Known Limitation
 
-- Production contains one dummy smoke-test request: `CSR-1782948495444`.
-- No secret, token, password, API key, or production credential was added to the repository.
-- Human review remains required before final academic submission.
+`npm run lint` masih memiliki temuan baseline/pre-existing pada beberapa file lama dan generated file. Hal ini tidak menghambat test, build, CI, atau deployment saat ini.
+
+## Security Notes
+
+- No production credential or sensitive environment value is stored in this release note.
+- Demo account passwords are documented only for academic evaluation.
