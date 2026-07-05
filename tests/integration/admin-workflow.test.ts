@@ -1,5 +1,5 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
-import worker from "../../worker";
+﻿import { afterEach, describe, expect, it, vi } from "vitest";
+import { fetchWithSession } from "../helpers/auth";
 
 type StoredRequest = {
 	id: string;
@@ -209,7 +209,7 @@ describe("Administrator review, classify, and assign workflow", () => {
 		vi.spyOn(crypto, "randomUUID").mockReturnValueOnce("history-review");
 		const database = new FakeAdminD1Database([submittedRequest()]);
 
-		const response = await worker.fetch(
+		const response = await fetchWithSession(
 			new Request("http://localhost/api/requests/request-1/review", {
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },
@@ -240,7 +240,7 @@ describe("Administrator review, classify, and assign workflow", () => {
 			},
 		]);
 
-		const forbiddenResponse = await worker.fetch(
+		const forbiddenResponse = await fetchWithSession(
 			new Request("http://localhost/api/requests/request-1/review", {
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },
@@ -263,7 +263,7 @@ describe("Administrator review, classify, and assign workflow", () => {
 			submittedRequest({ status: "UNDER_REVIEW" }),
 		]);
 
-		const response = await worker.fetch(
+		const response = await fetchWithSession(
 			new Request("http://localhost/api/requests/request-1/classification", {
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },
@@ -310,7 +310,7 @@ describe("Administrator review, classify, and assign workflow", () => {
 			],
 		);
 
-		const response = await worker.fetch(
+		const response = await fetchWithSession(
 			new Request("http://localhost/api/requests/request-1/assignment", {
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },
@@ -356,7 +356,7 @@ describe("Administrator review, classify, and assign workflow", () => {
 	});
 
 	it("rejects invalid classification values and assignment before review", async () => {
-		const invalidClassificationResponse = await worker.fetch(
+		const invalidClassificationResponse = await fetchWithSession(
 			new Request("http://localhost/api/requests/request-1/classification", {
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },
@@ -384,7 +384,7 @@ describe("Administrator review, classify, and assign workflow", () => {
 		});
 		expect(invalidClassificationResponse.status).toBe(422);
 
-		const assignmentBeforeReviewResponse = await worker.fetch(
+		const assignmentBeforeReviewResponse = await fetchWithSession(
 			new Request("http://localhost/api/requests/request-1/assignment", {
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },

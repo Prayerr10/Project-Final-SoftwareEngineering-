@@ -69,8 +69,93 @@ Design ID utama:
 | DB-05 | `request_comments` sebagai Komentar Publik. |
 | DB-06 | `request_internal_notes` sebagai Catatan Internal. |
 | DB-07 | `reporter_confirmations` sebagai konfirmasi hasil oleh Pelapor. |
+| DB-08 | `users` sebagai akun demo role-based login. |
 
 ASSUMPTION: User/account table tidak dirancang pada Skill 07 karena autentikasi penuh tidak menjadi requirement final. Role context disimulasikan dan divalidasi oleh API sebagai baseline project.
+
+## Fase 2 Authentication Addendum
+
+Addendum ini memperbarui implementasi setelah scope Fase 2 disetujui. Catatan lama tentang role simulator hanya berlaku untuk baseline sebelum Fase 2. Setelah Fase 2, API tidak lagi mempercayai `role` dari query string atau request body.
+
+### DB-08 - `users`
+
+Tujuan: Menyimpan akun demo untuk Pelapor, Administrator, Teknisi, dan Manajer Fasilitas.
+
+| Column | Type | Required | Default | Constraint / Notes |
+| --- | --- | --- | --- | --- |
+| `id` | TEXT | Yes | assigned UUID/text id | Primary key. Untuk demo Teknisi, `id = tech-audio-visual` agar akun teknisi terhubung ke data assignment. |
+| `username` | TEXT | Yes | none | Unique. |
+| `password_hash` | TEXT | Yes | none | Hash PBKDF2-SHA256, bukan plaintext. Tidak pernah dikembalikan API. |
+| `salt` | TEXT | Yes | none | Salt per user. Tidak pernah dikembalikan API. |
+| `role` | TEXT | Yes | none | `pelapor`, `administrator`, `teknisi`, `manajer_fasilitas`. |
+| `display_name` | TEXT | Yes | none | Nama tampilan untuk UI session. |
+| `created_at` | TEXT | Yes | current timestamp | ISO-compatible timestamp. |
+
+Indexes:
+
+- `idx_users_username` on `username`.
+- `idx_users_role` on `role`.
+
+Security notes:
+
+- Password demo hanya didokumentasikan di README untuk penilaian.
+- Database hanya menyimpan `password_hash` dan `salt`.
+- Session token ditandatangani dengan HMAC SHA-256 via Web Crypto API dan dikirim sebagai httpOnly cookie `csr_session`.
+- Worker membutuhkan secret `AUTH_SECRET`; nilai secret tidak disimpan di repository.
+
+### Auth API
+
+| API ID | Method | Path | Roles | Purpose | Traceability |
+| --- | --- | --- | --- | --- | --- |
+| API-AUTH-01 | POST | `/api/auth/login` | Public login form | Verifikasi username/password dari D1, set httpOnly cookie. | Fase 2 auth, FR-24, NFR-09 |
+| API-AUTH-02 | POST | `/api/auth/logout` | Authenticated user | Menghapus session cookie. | Fase 2 auth, FR-24 |
+| API-AUTH-03 | GET | `/api/auth/me` | Authenticated user | Mengembalikan public user data: id, username, role, appRole, displayName, technicianId. | Fase 2 auth, FR-24 |
+
+Request body `POST /api/auth/login`:
+
+```json
+{
+  "username": "admin_demo",
+  "password": "admin123"
+}
+```
+
+Success `200`:
+
+```json
+{
+  "data": {
+    "id": "user-admin-demo",
+    "username": "admin_demo",
+    "role": "administrator",
+    "appRole": "ADMINISTRATOR",
+    "displayName": "Administrator Demo",
+    "technicianId": null
+  }
+}
+```
+
+Error `401` untuk username/password salah:
+
+```json
+{
+  "error": {
+    "code": "AUTHENTICATION_FAILED",
+    "message": "Username atau password salah."
+  }
+}
+```
+
+### Role Validation Update
+
+Mulai Fase 2, role action ditentukan dari session backend:
+
+- `REPORTER` berasal dari user role `pelapor`.
+- `ADMINISTRATOR` berasal dari user role `administrator`.
+- `TECHNICIAN` berasal dari user role `teknisi`; `technicianId` diambil dari `users.id`, bukan dari payload frontend.
+- `FACILITY_MANAGER` berasal dari user role `manajer_fasilitas`.
+
+Semua endpoint operasional API-02 sampai API-17 membaca role dari cookie session. Parameter `role` lama pada contoh baseline dianggap legacy planning context dan tidak lagi menjadi sumber otorisasi.
 
 ## Table Specifications
 

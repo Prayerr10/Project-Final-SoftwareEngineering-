@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
-import worker from "../../worker";
+﻿import { describe, expect, it } from "vitest";
+import { fetchWithSession } from "../helpers/auth";
 
 describe("GET /api/health", () => {
 	it("returns an explicit healthy response after checking the D1 binding", async () => {
@@ -15,7 +15,7 @@ describe("GET /api/health", () => {
 			},
 		};
 
-		const response = await worker.fetch(
+		const response = await fetchWithSession(
 			new Request("http://localhost/api/health"),
 			env as Env,
 		);

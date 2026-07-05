@@ -18,6 +18,16 @@
 	margin-bottom: var(--space-5);
 }
 
+.login-shell {
+	min-height: 100svh;
+	display: grid;
+	align-items: center;
+}
+
+.login-page-header {
+	align-items: stretch;
+}
+
 .hero-copy,
 .role-switcher,
 .role-action-summary,
@@ -179,6 +189,11 @@
 	gap: var(--space-3);
 }
 
+.role-tabs-single {
+	grid-template-columns: minmax(0, 1fr) auto;
+	align-items: stretch;
+}
+
 .role-tab {
 	display: grid;
 	grid-template-columns: auto minmax(0, 1fr);
@@ -256,6 +271,15 @@
 	color: var(--color-primary-700);
 }
 
+.session-role-card {
+	cursor: default;
+}
+
+.session-card .secondary-button {
+	align-self: stretch;
+	min-width: 116px;
+}
+
 .role-action-summary,
 .foundation-status {
 	display: grid;
@@ -319,6 +343,12 @@
 	gap: var(--space-4);
 	grid-column: 1;
 	padding: var(--space-5);
+}
+
+.login-form {
+	grid-column: 2;
+	grid-row: 2 / span 2;
+	align-self: stretch;
 }
 
 .request-form h2,

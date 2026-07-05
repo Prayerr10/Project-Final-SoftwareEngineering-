@@ -27,11 +27,15 @@ Dokumen ini adalah output Skill 08. Isinya hanya membuat desain UI flow, navigas
 | UI-SRC-14 | `https://www.figma.com/community` | Referensi prinsip open design, wireframe, component inventory, dan design token inspiration; bukan dependency implementasi. |
 | UI-SRC-15 | `https://github.com/nextlevelbuilder/ui-ux-pro-max-skill` | Referensi prinsip accessibility, dashboard, responsive states, checklist UI; bukan dependency implementasi. |
 
+## Fase 2 Authentication Addendum
+
+Baseline Skill 08 mendesain `RoleSwitcher` sebagai simulasi karena autentikasi penuh belum masuk scope pada saat desain awal. Fase 2 mengganti pola tersebut dengan login sungguhan: user memilih role sebagai pintu masuk, mengisi username/password, Worker membuat httpOnly session cookie, dan UI membaca session melalui `/api/auth/me`. Referensi `RoleSwitcher` atau `simulasi role` pada bagian historis dokumen ini dipahami sebagai baseline lama yang sudah diganti oleh login/session shell.
+
 ## Scope and Non-Scope
 
 Scope Skill 08:
 
-- Struktur navigasi aplikasi dan RoleSwitcher untuk Pelapor, Administrator, Teknisi, dan Manajer Fasilitas.
+- Struktur navigasi aplikasi dan login/session shell untuk Pelapor, Administrator, Teknisi, dan Manajer Fasilitas.
 - Page/view utama: Request Workspace, Create Request, Request Detail, Administrator Review/Classify/Assign, Technician Tasks, dan Dashboard Summary.
 - Wireframe deskriptif berbentuk teks terstruktur, bukan gambar dan bukan kode.
 - Component-driven UI plan untuk komponen reusable minimal yang diminta.
@@ -53,7 +57,7 @@ Non-scope Skill 08:
 
 1. Accessibility-first: semua layar harus dapat dipakai dengan keyboard, screen reader, visible focus, pesan error yang terhubung ke field, dan kontras minimal WCAG AA.
 2. Contract-aware UI: setiap aksi dan state UI mengikuti response success/error dari `docs/design/database-api.md`.
-3. Role-aware but API-trusted: Role-Based UI hanya mengatur visibilitas atau disabled state; Role-Based API Validation tetap sumber kebenaran.
+3. Role-aware but API-trusted: Role-Based UI hanya mengatur visibilitas atau disabled state; Role-Based API Validation tetap sumber kebenaran dan membaca role dari session backend.
 4. Master-detail first: Request Workspace menjadi surface utama untuk list, filter, dan detail agar pengguna dapat memantau laporan tanpa berpindah konteks berlebihan.
 5. Progressive disclosure: action panel menampilkan aksi yang relevan dengan role dan status saat ini, sementara aksi tidak relevan disembunyikan atau diberi disabled reason.
 6. Status is text plus shape, not color only: StatusBadge dan PriorityBadge harus memakai label teks, bentuk, ikon/indikator, dan helper text, bukan warna saja.
@@ -65,7 +69,7 @@ Non-scope Skill 08:
 
 | Region | Content | Notes |
 | --- | --- | --- |
-| Header | Nama aplikasi singkat, RoleSwitcher, global feedback region. | RoleSwitcher selalu terlihat agar simulasi role transparan. |
+| Header | Nama aplikasi singkat, session aktif, tombol logout, global feedback region. | Setelah login, user melihat role aktif dari session backend dan tidak dapat mengganti role tanpa logout/login ulang. |
 | Primary navigation | Requests, Create Request, Technician Tasks, Dashboard. | Item dapat hidden/disabled sesuai role, tetapi direct URL tetap harus menampilkan forbidden/not found state sesuai API. |
 | Main area | View aktif. | Menggunakan heading hierarchy berurutan dan landmark yang jelas pada fase implementasi. |
 | Detail/action side panel | RequestDetailPanel dan ActionPanel pada Request Workspace. | Pada mobile, panel detail dapat menjadi view bertingkat setelah memilih laporan. |
@@ -80,13 +84,13 @@ Non-scope Skill 08:
 | Teknisi | Technician Tasks | Technician Tasks, Requests | Requests dipakai untuk membuka detail tugas yang relevan; ActionPanel fokus accept/progress/resolve. |
 | Manajer Fasilitas | Dashboard Summary | Dashboard, Requests summary | Detail access adalah Needs Human Review via OPEN-10; baseline UI harus membatasi ke summary-safe data. |
 
-ASSUMPTION: RoleSwitcher adalah simulasi role untuk kebutuhan project karena autentikasi penuh tidak termasuk requirement final. UI tetap mengirim role context ke API sesuai Skill 07, dan API tetap memvalidasi role/action.
+FASE 2 UPDATE: RoleSwitcher tidak lagi dipakai untuk mengaktifkan role tanpa autentikasi. UI memakai role dari `/api/auth/me`; Worker tetap memvalidasi semua aksi dari session cookie.
 
 ## Role-Based UI Matrix
 
 | UI capability | Pelapor | Administrator | Teknisi | Manajer Fasilitas | API validation |
 | --- | --- | --- | --- | --- | --- |
-| Switch active role | Yes | Yes | Yes | Yes | Role context divalidasi oleh endpoint terkait. |
+| Login/logout role | Yes | Yes | Yes | Yes | Role berasal dari session cookie, bukan query/body frontend. |
 | Create request | Visible | Hidden/forbidden | Hidden/forbidden | Hidden/forbidden | API-03 only `REPORTER`. |
 | View request list/search/filter | Visible | Visible | Visible | Summary-safe visible | API-02 all roles with role-aware shaping. |
 | View request detail | Visible | Visible | Visible for relevant work | Needs Human Review | API-04 with OPEN-10 visibility constraints. |
@@ -110,7 +114,7 @@ Important boundary: disabled or hidden UI controls are usability support only. T
 
 | View ID | View | Primary roles | Main components | API contract |
 | --- | --- | --- | --- | --- |
-| UI-01 | Application Shell and RoleSwitcher | All roles | RoleSwitcher, FeedbackMessage, ErrorState | All endpoints role context |
+| UI-01 | Application Shell and Login Session | All roles | LoginRolePicker, LoginForm, SessionSummary, LogoutButton, FeedbackMessage, ErrorState | API-AUTH-01, API-AUTH-02, API-AUTH-03, protected endpoints |
 | UI-02 | Request Workspace | All roles | RequestSearchFilter, RequestList, RequestDetailPanel, ActionPanel, EmptyState, LoadingState, ErrorState | API-02, API-04 |
 | UI-03 | Create Request | Pelapor | RequestForm, FeedbackMessage, LoadingState, ErrorState | API-03 |
 | UI-04 | Request Detail | All roles with visibility rules | RequestDetailPanel, StatusHistoryTimeline, CommentArea, InternalNoteArea, ActionPanel | API-04, API-12, API-13 |
@@ -121,28 +125,28 @@ Important boundary: disabled or hidden UI controls are usability support only. T
 
 ## Descriptive Wireframes
 
-### UI-01 - Application Shell and RoleSwitcher
+### UI-01 - Application Shell and Login Session
 
-Purpose: Menyediakan kerangka navigasi aplikasi dan simulasi role untuk 4 aktor.
+Purpose: Menyediakan kerangka navigasi aplikasi, login role, session aktif, dan logout untuk 4 aktor.
 
 Actors: Pelapor, Administrator, Teknisi, Manajer Fasilitas.
 
 Structured layout:
 
-1. Header: application title, active role label, RoleSwitcher.
+1. Header: application title, active session label, role label, and logout button.
 2. Navigation: role-aware links to Request Workspace, Create Request, Technician Tasks, Dashboard Summary.
 3. Main: currently selected view.
 4. Feedback region: persistent command result and error summary.
 
-Data shown from Skill 07: active role value (`REPORTER`, `ADMINISTRATOR`, `TECHNICIAN`, `FACILITY_MANAGER`) and response feedback from the active endpoint.
+Data shown from Fase 2 auth API: active user id, username, display name, DB role, app role (`REPORTER`, `ADMINISTRATOR`, `TECHNICIAN`, `FACILITY_MANAGER`), optional technician id, and response feedback from the active endpoint.
 
-Primary actions: switch role, navigate between allowed views.
+Primary actions: choose role entry point, submit username/password, logout, navigate between allowed views.
 
 Secondary actions: recover from forbidden or server error by returning to an allowed view.
 
-State coverage: loading is not required for shell only; forbidden appears when a route is not allowed; error state appears when role context is invalid or API rejects a direct action.
+State coverage: session loading, login form error, forbidden route/action, expired session redirect, and API rejection for direct action attempts.
 
-Accessibility notes: RoleSwitcher must be keyboard operable, expose selected role, and move focus predictably after role change without trapping focus.
+Accessibility notes: login role cards, form fields, logout button, and navigation must be keyboard operable, expose selected/authenticated role, and move focus predictably after login/logout without trapping focus.
 
 Traceability: FR-24, US-17, NFR-01.
 
@@ -359,7 +363,10 @@ Traceability: NFR-01, NFR-06, FR-24, all protected workflow endpoints.
 
 | Component | Purpose | Input data | States | Role visibility | Accessibility requirement | Traceability/API |
 | --- | --- | --- | --- | --- | --- | --- |
-| RoleSwitcher | Switch simulated active role. | Current role, available roles. | Default, focus, changed, invalid role feedback. | All roles. | Keyboard operable segmented/radio pattern; selected role announced. | FR-24, US-17, all role context. |
+| LoginRolePicker | Choose the role-specific login entry point. | Available roles and selected role. | Default, focus, selected, validation/login feedback. | Public before login. | Keyboard operable card/radio pattern; selected role announced. | FR-24, US-17, API-AUTH-01. |
+| LoginForm | Authenticate a demo account. | username, password, selected role. | Idle, submitting, field error, generic authentication error, success. | Public before login. | Visible labels, password input semantics, error summary, disabled submit announced. | FR-24, NFR-09, API-AUTH-01. |
+| SessionSummary | Display authenticated user and role. | displayName, username, appRole, optional technicianId. | Loading, authenticated, expired/unauthenticated. | All logged-in roles. | Announces session state without relying on color only. | FR-24, API-AUTH-03. |
+| LogoutButton | End active session. | Current session. | Default, focus, loading, completed. | All logged-in roles. | Button name must be explicit and keyboard reachable. | FR-24, API-AUTH-02. |
 | RequestForm | Create service request. | reporterName, reporterType, title, description, location, category. | Idle, submitting, field error, form error, success. | Pelapor; forbidden for others. | Visible labels, helper text, error summary, disabled submit announced. | API-03, FR-01, FR-02. |
 | RequestList | Display request summaries. | requestNumber, title, location, status, priority, category, assignment summary. | Loading, empty, populated, selected, error. | All roles with role-shaped data. | Keyboard selection and clear selected state. | API-02, FR-03. |
 | RequestSearchFilter | Search/filter list. | keyword, status, priority, page/pageSize. | Idle, applying, empty result, validation error. | All roles. | Labelled inputs and clear filters control. | API-02, FR-04, FR-05. |
@@ -409,7 +416,7 @@ Traceability: NFR-01, NFR-06, FR-24, all protected workflow endpoints.
 
 - [ ] Use semantic landmarks for header, nav, main, section, form, list/table, and dialog/confirmation in implementation.
 - [ ] Maintain ordered heading hierarchy for shell, view, panel, and form sections.
-- [ ] Ensure keyboard navigation for RoleSwitcher, nav, filters, RequestList selection, forms, action panels, confirmation dialogs, comments, and dashboard controls.
+- [ ] Ensure keyboard navigation for login role picker, logout, nav, filters, RequestList selection, forms, action panels, confirmation dialogs, comments, and dashboard controls.
 - [ ] Provide visible focus state for all interactive elements.
 - [ ] Connect field errors to fields and provide form-level error summary.
 - [ ] Announce loading and command result messages through accessible feedback regions.
@@ -463,7 +470,7 @@ Reference note: Figma Community and UI UX Pro Max may inspire component inventor
 
 | Design ID | Design area | Related requirement/rule/story |
 | --- | --- | --- |
-| UI-01 | Application shell, navigation, RoleSwitcher | FR-24, US-17, NFR-01 |
+| UI-01 | Application shell, navigation, login/session controls | FR-24, US-17, NFR-01, NFR-09 |
 | UI-02 | Request Workspace list/search/filter/detail | FR-03, FR-04, FR-05, FR-06, FR-18, US-02 sampai US-05 |
 | UI-03 | Create Request form and feedback | FR-01, FR-02, FR-10, BR-01, BR-05, US-01 |
 | UI-04 | Request Detail, comments, notes, status history | FR-06, FR-16, FR-17, FR-18, BR-09, BR-10, US-05, US-11, US-12 |
@@ -505,7 +512,7 @@ Bagian ini menuliskan cakupan eksplisit agar reviewer dapat mencocokkan setiap F
 | FR-21 | UI-05 reopen action. | ActionPanel, API-16. | Administrator-only baseline; OPEN-04 preserved. |
 | FR-22 | UI-07 Dashboard Summary. | DashboardCards, API-17. | Operational summary represented. |
 | FR-23 | UI-07 workload source display. | DashboardCards, API-08/API-17. | Workload formula remains OPEN-07 Needs Human Review. |
-| FR-24 | UI-01 RoleSwitcher and Role-Based UI Matrix. | RoleSwitcher, ActionPanel, API role validation. | UI adjusts visible actions but API validation remains authoritative. |
+| FR-24 | UI-01 login/session shell and Role-Based UI Matrix. | LoginRolePicker, LoginForm, SessionSummary, ActionPanel, API session validation. | UI adjusts visible actions from `/api/auth/me`; Worker validation remains authoritative. |
 
 ### Non-Functional Requirement Coverage
 
@@ -558,13 +565,13 @@ Bagian ini menuliskan cakupan eksplisit agar reviewer dapat mencocokkan setiap F
 | US-14 | UI-05 close action with confirmation/override note feedback. | OPEN-03 and OPEN-11 preserved. |
 | US-15 | UI-05 reopen action and timeline refresh. | OPEN-04 preserved. |
 | US-16 | UI-07 dashboard summary and workload source display. | OPEN-07 and OPEN-10 preserved. |
-| US-17 | UI-01 RoleSwitcher and Role-Based UI Matrix. | Visible actions change by selected role. |
+| US-17 | UI-01 login/session shell and Role-Based UI Matrix. | Visible actions change by authenticated role. |
 
 ## Risks, Assumptions, and Open Questions
 
 | ID | Type | UI impact |
 | --- | --- | --- |
-| ASSUMPTION-08-01 | ASSUMPTION | RoleSwitcher is used for role simulation because full authentication is not in the approved scope. |
+| ASSUMPTION-08-01 | SUPERSEDED | RoleSwitcher simulation was the Skill 08 baseline; Fase 2 replaces it with D1-backed login and session-based authorization. |
 | ASSUMPTION-08-02 | ASSUMPTION | Request Workspace uses master-detail layout because Skill 06 approved this application shell direction. |
 | ASSUMPTION-08-03 | ASSUMPTION | Dashboard can show summary-safe operational data without exposing internal note content until OPEN-10 is resolved. |
 | OPEN-02 | OPEN QUESTION | Create Request only includes approved `reporter_name` and `reporter_type`; extra reporter fields must wait for Human Review. |
@@ -584,7 +591,7 @@ Bagian ini menuliskan cakupan eksplisit agar reviewer dapat mencocokkan setiap F
 | Review status and source summary are present. | PASS |
 | Required inputs were read, including approved architecture and approved database/API design. | PASS |
 | UI covers four actors: Pelapor, Administrator, Teknisi, Manajer Fasilitas. | PASS |
-| Navigation model and RoleSwitcher are documented. | PASS |
+| Navigation model and login/session shell are documented. | PASS |
 | Required views are documented: Request Workspace, Create Request, Request Detail, Administrator Review/Classify/Assign, Technician Tasks, Dashboard Summary. | PASS |
 | Wireframes are descriptive text, not images or code. | PASS |
 | Required reusable components are covered. | PASS |
@@ -602,7 +609,7 @@ Bagian ini menuliskan cakupan eksplisit agar reviewer dapat mencocokkan setiap F
 
 - [x] UI design follows `instruksi-dosen.md`, `CASE.md`, final requirements, Skill 06, and Skill 07.
 - [x] No new requirement, feature, status, actor, or scope is added.
-- [x] Navigation and RoleSwitcher are clear for 4 actors.
+- [x] Navigation and login/session flow are clear for 4 actors.
 - [x] Required views and wireframes are clear enough for later implementation planning.
 - [x] Component inventory is sufficient and reusable.
 - [x] Every UI action maps to the correct Skill 07 endpoint.

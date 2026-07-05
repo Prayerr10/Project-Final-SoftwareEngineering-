@@ -1,5 +1,5 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
-import worker from "../../worker";
+﻿import { afterEach, describe, expect, it, vi } from "vitest";
+import { fetchWithSession } from "../helpers/auth";
 
 type StoredRequest = {
 	id: string;
@@ -618,7 +618,7 @@ async function patch(
 	path: string,
 	body: Record<string, unknown>,
 ) {
-	return worker.fetch(
+	return fetchWithSession(
 		new Request(`http://localhost${path}`, {
 			method: "PATCH",
 			headers: { "Content-Type": "application/json" },
@@ -633,7 +633,7 @@ async function post(
 	path: string,
 	body: Record<string, unknown>,
 ) {
-	return worker.fetch(
+	return fetchWithSession(
 		new Request(`http://localhost${path}`, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
@@ -775,13 +775,13 @@ describe("Skill 13 automated workflow coverage from docs/testing/test-plan.md", 
 			}),
 		]);
 
-		const matchedResponse = await worker.fetch(
+		const matchedResponse = await fetchWithSession(
 			new Request(
 				"http://localhost/api/requests?search=mira&status=UNDER_REVIEW&priority=HIGH",
 			),
 			{ DB: database } as unknown as Env,
 		);
-		const emptyResponse = await worker.fetch(
+		const emptyResponse = await fetchWithSession(
 			new Request(
 				"http://localhost/api/requests?search=mira&status=SUBMITTED&priority=HIGH",
 			),
@@ -801,7 +801,7 @@ describe("Skill 13 automated workflow coverage from docs/testing/test-plan.md", 
 
 	// FR-05, BR-02, BR-07: unsupported list filters are rejected instead of silently widening results.
 	it("rejects invalid status and priority filters", async () => {
-		const response = await worker.fetch(
+		const response = await fetchWithSession(
 			new Request("http://localhost/api/requests?status=WAITING&priority=CRITICAL"),
 			{ DB: new Skill13D1Database([requestFixture()]) } as unknown as Env,
 		);
@@ -842,7 +842,7 @@ describe("Skill 13 automated workflow coverage from docs/testing/test-plan.md", 
 			},
 		);
 
-		const response = await worker.fetch(
+		const response = await fetchWithSession(
 			new Request("http://localhost/api/requests/request-1?role=REPORTER"),
 			{ DB: database } as unknown as Env,
 		);
@@ -862,7 +862,7 @@ describe("Skill 13 automated workflow coverage from docs/testing/test-plan.md", 
 
 	// FR-24, FR-17: Facility Manager cannot open full detail while OPEN-10 is unresolved.
 	it("rejects Facility Manager full request detail access", async () => {
-		const response = await worker.fetch(
+		const response = await fetchWithSession(
 			new Request("http://localhost/api/requests/request-1?role=FACILITY_MANAGER"),
 			{ DB: new Skill13D1Database([requestFixture()]) } as unknown as Env,
 		);
@@ -1038,7 +1038,7 @@ describe("Skill 13 automated workflow coverage from docs/testing/test-plan.md", 
 
 	// FR-12, FR-24: technician task list is scoped to the active technician context.
 	it("forbids technician task list access with the wrong active technician context", async () => {
-		const response = await worker.fetch(
+		const response = await fetchWithSession(
 			new Request(
 				"http://localhost/api/technicians/tech-1/tasks?role=TECHNICIAN&technicianId=tech-2",
 			),
@@ -1218,7 +1218,7 @@ describe("Skill 13 automated workflow coverage from docs/testing/test-plan.md", 
 			role: "REPORTER",
 			body: "Mohon update setelah teknisi memeriksa proyektor.",
 		});
-		const detailResponse = await worker.fetch(
+		const detailResponse = await fetchWithSession(
 			new Request("http://localhost/api/requests/request-1?role=REPORTER"),
 			{ DB: database } as unknown as Env,
 		);
@@ -1246,11 +1246,11 @@ describe("Skill 13 automated workflow coverage from docs/testing/test-plan.md", 
 			role: "ADMINISTRATOR",
 			body: "Teknisi perlu cek kabel HDMI sebelum mengganti proyektor.",
 		});
-		const adminDetailResponse = await worker.fetch(
+		const adminDetailResponse = await fetchWithSession(
 			new Request("http://localhost/api/requests/request-1?role=ADMINISTRATOR"),
 			{ DB: database } as unknown as Env,
 		);
-		const reporterDetailResponse = await worker.fetch(
+		const reporterDetailResponse = await fetchWithSession(
 			new Request("http://localhost/api/requests/request-1?role=REPORTER"),
 			{ DB: database } as unknown as Env,
 		);
@@ -1464,7 +1464,7 @@ describe("Skill 13 automated workflow coverage from docs/testing/test-plan.md", 
 			created_at: createdAt,
 		});
 
-		const response = await worker.fetch(
+		const response = await fetchWithSession(
 			new Request("http://localhost/api/dashboard/summary?role=FACILITY_MANAGER"),
 			{ DB: database } as unknown as Env,
 		);
@@ -1498,7 +1498,7 @@ describe("Skill 13 automated workflow coverage from docs/testing/test-plan.md", 
 	// FR-22, FR-24: operational roles cannot access manager dashboard summary.
 	it("forbids dashboard access for operational roles", async () => {
 		for (const role of ["REPORTER", "TECHNICIAN"]) {
-			const response = await worker.fetch(
+			const response = await fetchWithSession(
 				new Request(`http://localhost/api/dashboard/summary?role=${role}`),
 				{ DB: new Skill13D1Database() } as unknown as Env,
 			);

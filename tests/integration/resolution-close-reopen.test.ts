@@ -1,5 +1,5 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
-import worker from "../../worker";
+﻿import { afterEach, describe, expect, it, vi } from "vitest";
+import { fetchWithSession } from "../helpers/auth";
 
 type StoredRequest = {
 	id: string;
@@ -204,7 +204,7 @@ describe("resolution confirmation, close, and reopen workflow", () => {
 		vi.spyOn(crypto, "randomUUID").mockReturnValueOnce("confirmation-1");
 		const database = new FakeResolutionD1Database([resolvedRequest()]);
 
-		const response = await worker.fetch(
+		const response = await fetchWithSession(
 			new Request(
 				"http://localhost/api/requests/request-1/confirm-resolution",
 				{
@@ -251,7 +251,7 @@ describe("resolution confirmation, close, and reopen workflow", () => {
 			confirmed_at: "2026-07-01T03:10:00.000Z",
 		});
 
-		const response = await worker.fetch(
+		const response = await fetchWithSession(
 			new Request("http://localhost/api/requests/request-1/close", {
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },
@@ -289,7 +289,7 @@ describe("resolution confirmation, close, and reopen workflow", () => {
 	});
 
 	it("requires manual override data to close without Reporter confirmation", async () => {
-		const missingOverrideResponse = await worker.fetch(
+		const missingOverrideResponse = await fetchWithSession(
 			new Request("http://localhost/api/requests/request-1/close", {
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },
@@ -315,7 +315,7 @@ describe("resolution confirmation, close, and reopen workflow", () => {
 		});
 		expect(missingOverrideResponse.status).toBe(422);
 
-		const missingNoteResponse = await worker.fetch(
+		const missingNoteResponse = await fetchWithSession(
 			new Request("http://localhost/api/requests/request-1/close", {
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },
@@ -344,7 +344,7 @@ describe("resolution confirmation, close, and reopen workflow", () => {
 		vi.spyOn(crypto, "randomUUID").mockReturnValueOnce("history-override-close");
 		const database = new FakeResolutionD1Database([resolvedRequest()]);
 
-		const response = await worker.fetch(
+		const response = await fetchWithSession(
 			new Request("http://localhost/api/requests/request-1/close", {
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },
@@ -389,7 +389,7 @@ describe("resolution confirmation, close, and reopen workflow", () => {
 			}),
 		]);
 
-		const response = await worker.fetch(
+		const response = await fetchWithSession(
 			new Request("http://localhost/api/requests/request-1/reopen", {
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },
@@ -421,7 +421,7 @@ describe("resolution confirmation, close, and reopen workflow", () => {
 	});
 
 	it("covers forbidden roles and invalid transitions for Issue 19 endpoints", async () => {
-		const administratorConfirmResponse = await worker.fetch(
+		const administratorConfirmResponse = await fetchWithSession(
 			new Request(
 				"http://localhost/api/requests/request-1/confirm-resolution",
 				{
@@ -441,7 +441,7 @@ describe("resolution confirmation, close, and reopen workflow", () => {
 		});
 		expect(administratorConfirmResponse.status).toBe(403);
 
-		const reporterCloseResponse = await worker.fetch(
+		const reporterCloseResponse = await fetchWithSession(
 			new Request("http://localhost/api/requests/request-1/close", {
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },
@@ -458,7 +458,7 @@ describe("resolution confirmation, close, and reopen workflow", () => {
 		});
 		expect(reporterCloseResponse.status).toBe(403);
 
-		const reporterReopenResponse = await worker.fetch(
+		const reporterReopenResponse = await fetchWithSession(
 			new Request("http://localhost/api/requests/request-1/reopen", {
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },
@@ -475,7 +475,7 @@ describe("resolution confirmation, close, and reopen workflow", () => {
 		});
 		expect(reporterReopenResponse.status).toBe(403);
 
-		const confirmWrongStatusResponse = await worker.fetch(
+		const confirmWrongStatusResponse = await fetchWithSession(
 			new Request(
 				"http://localhost/api/requests/request-1/confirm-resolution",
 				{
@@ -499,7 +499,7 @@ describe("resolution confirmation, close, and reopen workflow", () => {
 		});
 		expect(confirmWrongStatusResponse.status).toBe(409);
 
-		const closeWrongStatusResponse = await worker.fetch(
+		const closeWrongStatusResponse = await fetchWithSession(
 			new Request("http://localhost/api/requests/request-1/close", {
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },
@@ -522,7 +522,7 @@ describe("resolution confirmation, close, and reopen workflow", () => {
 		});
 		expect(closeWrongStatusResponse.status).toBe(409);
 
-		const reopenWrongStatusResponse = await worker.fetch(
+		const reopenWrongStatusResponse = await fetchWithSession(
 			new Request("http://localhost/api/requests/request-1/reopen", {
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },

@@ -104,34 +104,59 @@ type DashboardSummary = {
 	openQuestions: string[];
 };
 
+type DbRole =
+	| "pelapor"
+	| "administrator"
+	| "teknisi"
+	| "manajer_fasilitas";
+
+type AppRole =
+	| "REPORTER"
+	| "ADMINISTRATOR"
+	| "TECHNICIAN"
+	| "FACILITY_MANAGER";
+
+type AuthSession = {
+	id: string;
+	username: string;
+	role: DbRole;
+	appRole: AppRole;
+	displayName: string;
+	technicianId: string | null;
+};
+
 const categories = ["Internet", "AC", "Peralatan Kelas", "Kebersihan", "Lainnya"];
 const priorities = ["LOW", "MEDIUM", "HIGH", "URGENT"];
 const roleOptions = [
 	{
 		value: "REPORTER",
+		dbRole: "pelapor",
 		label: "Pelapor",
 		hint: "Buat dan pantau laporan",
 		icon: "PL",
 	},
 	{
 		value: "ADMINISTRATOR",
+		dbRole: "administrator",
 		label: "Administrator",
 		hint: "Review, klasifikasi, assignment",
 		icon: "AD",
 	},
 	{
 		value: "TECHNICIAN",
+		dbRole: "teknisi",
 		label: "Teknisi",
 		hint: "Kerjakan tugas aktif",
 		icon: "TK",
 	},
 	{
 		value: "FACILITY_MANAGER",
+		dbRole: "manajer_fasilitas",
 		label: "Manajer",
 		hint: "Pantau dashboard",
 		icon: "MF",
 	},
-];
+] as const;
 const emptyDashboardSummary: DashboardSummary = {
 	totalRequests: 0,
 	byStatus: [],
@@ -142,21 +167,6 @@ const emptyDashboardSummary: DashboardSummary = {
 		"Source data: current assignments grouped by active request statuses; final workload formula remains OPEN-07.",
 	openQuestions: ["OPEN-07", "OPEN-10"],
 };
-const technicianContextOptions = [
-	{
-		id: "tech-audio-visual",
-		name: "Nadia Teknisi",
-	},
-	{
-		id: "tech-building-services",
-		name: "Bima Teknisi",
-	},
-	{
-		id: "tech-network",
-		name: "Sari Teknisi",
-	},
-];
-
 function roleActionSummary(role: string) {
 	if (role === "ADMINISTRATOR") {
 		return [
@@ -222,7 +232,13 @@ function SummaryList({
 
 export default function App() {
 	const [requests, setRequests] = useState<ServiceRequest[]>([]);
-	const [activeRole, setActiveRole] = useState("REPORTER");
+	const [session, setSession] = useState<AuthSession | null>(null);
+	const [activeRole, setActiveRole] = useState<AppRole>("REPORTER");
+	const [selectedLoginRole, setSelectedLoginRole] = useState<DbRole>("pelapor");
+	const [loginUsername, setLoginUsername] = useState("");
+	const [loginPassword, setLoginPassword] = useState("");
+	const [loginMessage, setLoginMessage] = useState("Masuk dengan akun demo sesuai role.");
+	const [authLoading, setAuthLoading] = useState(true);
 	const [requestListEmpty, setRequestListEmpty] = useState(true);
 	const [search, setSearch] = useState("");
 	const [statusFilter, setStatusFilter] = useState("");
@@ -243,9 +259,7 @@ export default function App() {
 	const [adminPriority, setAdminPriority] = useState("MEDIUM");
 	const [reviewNote, setReviewNote] = useState("");
 	const [assignmentNote, setAssignmentNote] = useState("");
-	const [selectedTechnicianId, setSelectedTechnicianId] = useState(
-		"tech-audio-visual",
-	);
+	const [selectedTechnicianId, setSelectedTechnicianId] = useState("");
 	const [technicianTasks, setTechnicianTasks] = useState<TechnicianTask[]>([]);
 	const [technicianNote, setTechnicianNote] = useState("");
 	const [technicianMessage, setTechnicianMessage] = useState("");
@@ -269,8 +283,100 @@ export default function App() {
 	const [foundationStatus, setFoundationStatus] = useState(
 		"Memeriksa koneksi API dan D1",
 	);
+	const selectedLoginOption =
+		roleOptions.find((role) => role.dbRole === selectedLoginRole) ??
+		roleOptions[0];
+
+	function handleUnauthorized(status: number) {
+		if (status === 401) {
+			setSession(null);
+			setLoginMessage("Sesi berakhir. Silakan login kembali.");
+		}
+	}
+
+	async function loadSession() {
+		setAuthLoading(true);
+
+		try {
+			const response = await fetch("/api/auth/me", {
+				credentials: "same-origin",
+			});
+			const result = await response.json();
+
+			if (!response.ok) {
+				setSession(null);
+				setLoginMessage("Pilih role lalu masuk dengan akun demo.");
+				return;
+			}
+
+			const nextSession = result.data as AuthSession;
+			setSession(nextSession);
+			setActiveRole(nextSession.appRole);
+
+			if (nextSession.technicianId) {
+				setSelectedTechnicianId(nextSession.technicianId);
+			}
+		} catch {
+			setSession(null);
+			setLoginMessage("Koneksi autentikasi belum tersedia.");
+		} finally {
+			setAuthLoading(false);
+		}
+	}
+
+	async function submitLogin(event: React.FormEvent) {
+		event.preventDefault();
+		setLoginMessage("Memeriksa kredensial.");
+
+		const response = await fetch("/api/auth/login", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			credentials: "same-origin",
+			body: JSON.stringify({
+				username: loginUsername,
+				password: loginPassword,
+			}),
+		});
+		const result = await response.json();
+
+		if (!response.ok) {
+			setLoginMessage(result.error?.message ?? "Login gagal.");
+			return;
+		}
+
+		const nextSession = result.data as AuthSession;
+		setSession(nextSession);
+		setActiveRole(nextSession.appRole);
+		setSelectedLoginRole(nextSession.role);
+		setLoginPassword("");
+		setLoginMessage(`Login berhasil sebagai ${nextSession.displayName}.`);
+
+		if (nextSession.technicianId) {
+			setSelectedTechnicianId(nextSession.technicianId);
+		}
+	}
+
+	async function logout() {
+		await fetch("/api/auth/logout", {
+			method: "POST",
+			credentials: "same-origin",
+		});
+		setSession(null);
+		setRequests([]);
+		setSelectedRequest(null);
+		setSelectedRequestId("");
+		setTechnicianTasks([]);
+		setDashboardSummary(emptyDashboardSummary);
+		setLoginMessage("Logout berhasil. Silakan login kembali.");
+	}
 
 	async function loadRequests() {
+		if (!session || activeRole === "FACILITY_MANAGER") {
+			setRequests([]);
+			setRequestListEmpty(true);
+			return;
+		}
+
 		const params = new URLSearchParams();
 
 		if (search.trim()) {
@@ -288,22 +394,38 @@ export default function App() {
 		const queryString = params.toString();
 		const response = await fetch(
 			`/api/requests${queryString ? `?${queryString}` : ""}`,
+			{ credentials: "same-origin" },
 		);
 		const result = await response.json();
+
+		handleUnauthorized(response.status);
+
+		if (!response.ok) {
+			setRequests([]);
+			setRequestListEmpty(true);
+			return;
+		}
+
 		setRequests(result.data ?? []);
 		setRequestListEmpty(result.meta?.empty ?? (result.data ?? []).length === 0);
 	}
 
 	async function loadRequestDetail(requestId: string) {
+		if (!session) {
+			setDetailMessage("Silakan login untuk melihat detail laporan.");
+			return;
+		}
+
 		setSelectedRequestId(requestId);
 		setDetailMessage("Memuat detail laporan.");
 		setSelectedRequest(null);
 
-		const params = new URLSearchParams({ role: activeRole });
 		const response = await fetch(
-			`/api/requests/${encodeURIComponent(requestId)}?${params.toString()}`,
+			`/api/requests/${encodeURIComponent(requestId)}`,
+			{ credentials: "same-origin" },
 		);
 		const result = await response.json();
+		handleUnauthorized(response.status);
 
 		if (!response.ok) {
 			setDetailMessage(result.error?.message ?? "Detail laporan gagal dimuat.");
@@ -317,13 +439,22 @@ export default function App() {
 	}
 
 	async function loadTechnicians() {
-		if (activeRole !== "ADMINISTRATOR") {
+		if (!session || activeRole !== "ADMINISTRATOR") {
 			setTechnicians([]);
 			return;
 		}
 
-		const response = await fetch("/api/technicians?role=ADMINISTRATOR");
+		const response = await fetch("/api/technicians", {
+			credentials: "same-origin",
+		});
 		const result = await response.json();
+		handleUnauthorized(response.status);
+
+		if (!response.ok) {
+			setTechnicians([]);
+			return;
+		}
+
 		const nextTechnicians = result.data ?? [];
 
 		setTechnicians(nextTechnicians);
@@ -334,23 +465,23 @@ export default function App() {
 	}
 
 	async function loadTechnicianTasks() {
-		if (activeRole !== "TECHNICIAN" || !selectedTechnicianId) {
+		const technicianId = session?.technicianId ?? selectedTechnicianId;
+
+		if (!session || activeRole !== "TECHNICIAN" || !technicianId) {
 			setTechnicianTasks([]);
 			return;
 		}
 
 		setTechnicianMessage("Memuat daftar tugas teknisi.");
 
-		const params = new URLSearchParams({
-			role: "TECHNICIAN",
-			technicianId: selectedTechnicianId,
-		});
 		const response = await fetch(
 			`/api/technicians/${encodeURIComponent(
-				selectedTechnicianId,
-			)}/tasks?${params.toString()}`,
+				technicianId,
+			)}/tasks`,
+			{ credentials: "same-origin" },
 		);
 		const result = await response.json();
+		handleUnauthorized(response.status);
 
 		if (!response.ok) {
 			setTechnicianMessage(
@@ -368,7 +499,10 @@ export default function App() {
 	}
 
 	async function loadDashboardSummary() {
-		if (activeRole !== "FACILITY_MANAGER" && activeRole !== "ADMINISTRATOR") {
+		if (
+			!session ||
+			(activeRole !== "FACILITY_MANAGER" && activeRole !== "ADMINISTRATOR")
+		) {
 			setDashboardSummary(emptyDashboardSummary);
 			setDashboardMessage(
 				"Dashboard hanya tersedia untuk Manajer Fasilitas dan Administrator.",
@@ -378,10 +512,11 @@ export default function App() {
 
 		setDashboardMessage("Memuat dashboard operasional.");
 
-		const response = await fetch(
-			`/api/dashboard/summary?${new URLSearchParams({ role: activeRole })}`,
-		);
+		const response = await fetch("/api/dashboard/summary", {
+			credentials: "same-origin",
+		});
 		const result = await response.json();
+		handleUnauthorized(response.status);
 
 		if (!response.ok) {
 			setDashboardMessage(
@@ -421,33 +556,33 @@ export default function App() {
 
 	useEffect(() => {
 		loadFoundationStatus();
-		loadRequests();
+		loadSession();
 	}, []);
 
 	useEffect(() => {
 		loadRequests();
-	}, [search, statusFilter, priorityFilter]);
+	}, [session, activeRole, search, statusFilter, priorityFilter]);
 
 	useEffect(() => {
 		loadTechnicians();
-	}, [activeRole]);
+	}, [session, activeRole]);
 
 	useEffect(() => {
 		loadTechnicianTasks();
-	}, [activeRole, selectedTechnicianId]);
+	}, [session, activeRole, selectedTechnicianId]);
 
 	useEffect(() => {
 		loadDashboardSummary();
-	}, [activeRole]);
+	}, [session, activeRole]);
 
 	useEffect(() => {
-		if (selectedRequestId) {
+		if (session && selectedRequestId) {
 			loadRequestDetail(selectedRequestId);
 		}
 
 		setCommunicationMessage("");
 		setInternalNoteBody("");
-	}, [activeRole]);
+	}, [session, activeRole]);
 
 	async function submitRequest(event: React.FormEvent) {
 		event.preventDefault();
@@ -461,8 +596,8 @@ export default function App() {
 		const response = await fetch("/api/requests", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
+			credentials: "same-origin",
 			body: JSON.stringify({
-				role: activeRole,
 				reporterName,
 				reporterType,
 				title,
@@ -473,6 +608,7 @@ export default function App() {
 		});
 
 		const result = await response.json();
+		handleUnauthorized(response.status);
 
 		if (!response.ok) {
 			setMessage(result.error?.message ?? "Laporan gagal dibuat.");
@@ -508,12 +644,11 @@ export default function App() {
 		const response = await fetch(`/api/requests/${selectedRequest.id}/${path}`, {
 			method: "PATCH",
 			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({
-				role: "ADMINISTRATOR",
-				...body,
-			}),
+			credentials: "same-origin",
+			body: JSON.stringify(body),
 		});
 		const result = await response.json();
+		handleUnauthorized(response.status);
 
 		if (!response.ok) {
 			setAdminMessage(result.error?.message ?? "Aksi Administrator gagal.");
@@ -565,13 +700,14 @@ export default function App() {
 			{
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },
+				credentials: "same-origin",
 				body: JSON.stringify({
-					role: "REPORTER",
 					confirmationNote,
 				}),
 			},
 		);
 		const result = await response.json();
+		handleUnauthorized(response.status);
 
 		if (!response.ok) {
 			setConfirmationMessage(
@@ -616,10 +752,7 @@ export default function App() {
 	) {
 		setTechnicianMessage("");
 
-		const body: Record<string, string> = {
-			role: "TECHNICIAN",
-			technicianId: selectedTechnicianId,
-		};
+		const body: Record<string, string> = {};
 
 		if (path !== "accept") {
 			body.note = technicianNote;
@@ -628,9 +761,11 @@ export default function App() {
 		const response = await fetch(`/api/requests/${requestId}/${path}`, {
 			method: "PATCH",
 			headers: { "Content-Type": "application/json" },
+			credentials: "same-origin",
 			body: JSON.stringify(body),
 		});
 		const result = await response.json();
+		handleUnauthorized(response.status);
 
 		if (!response.ok) {
 			setTechnicianMessage(result.error?.message ?? "Aksi Teknisi gagal.");
@@ -661,13 +796,14 @@ export default function App() {
 			{
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
+				credentials: "same-origin",
 				body: JSON.stringify({
-					role: activeRole,
 					body: commentBody,
 				}),
 			},
 		);
 		const result = await response.json();
+		handleUnauthorized(response.status);
 
 		if (!response.ok) {
 			setCommunicationMessage(
@@ -697,13 +833,14 @@ export default function App() {
 			{
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
+				credentials: "same-origin",
 				body: JSON.stringify({
-					role: activeRole,
 					body: internalNoteBody,
 				}),
 			},
 		);
 		const result = await response.json();
+		handleUnauthorized(response.status);
 
 		if (!response.ok) {
 			setCommunicationMessage(
@@ -721,6 +858,132 @@ export default function App() {
 
 	const canUseInternalNotes =
 		activeRole === "ADMINISTRATOR" || activeRole === "TECHNICIAN";
+
+	if (authLoading) {
+		return (
+			<main className="app-shell">
+				<section className="hero-copy">
+					<div>
+						<p className="eyebrow">Campus Maintenance</p>
+						<h1>Campus Service Request</h1>
+						<p>Memeriksa sesi login dan koneksi aplikasi.</p>
+					</div>
+					<div className="hero-visual" aria-hidden="true">
+						<div className="hero-ticket">
+							<span>AUTH</span>
+							<strong>Loading</strong>
+							<small>Session check</small>
+						</div>
+					</div>
+				</section>
+			</main>
+		);
+	}
+
+	if (!session) {
+		return (
+			<main className="app-shell login-shell">
+				<section className="page-header login-page-header">
+					<div className="hero-copy">
+						<div>
+							<p className="eyebrow">Campus Maintenance</p>
+							<h1>Campus Service Request</h1>
+							<p>
+								Masuk dengan akun demo sesuai role untuk menguji alur laporan,
+								penugasan teknisi, dashboard, dan otorisasi backend.
+							</p>
+						</div>
+						<div className="hero-visual" aria-hidden="true">
+							<div className="hero-ticket">
+								<span>LOGIN</span>
+								<strong>Protected</strong>
+								<small>Role session</small>
+							</div>
+							<div className="hero-steps">
+								<span>Pilih</span>
+								<span>Login</span>
+								<span>Kerja</span>
+							</div>
+						</div>
+					</div>
+
+					<section className="role-switcher" aria-labelledby="login-role-title">
+						<div>
+							<h2 id="login-role-title">Login sebagai apa?</h2>
+							<p>Pilih pintu masuk role, lalu isi username dan password.</p>
+						</div>
+						<div className="role-tabs" role="tablist" aria-label="Pilihan login role">
+							{roleOptions.map((role) => (
+								<button
+									type="button"
+									key={role.value}
+									className={
+										selectedLoginRole === role.dbRole
+											? "role-tab active"
+											: "role-tab"
+									}
+									aria-pressed={selectedLoginRole === role.dbRole}
+									onClick={() => {
+										setSelectedLoginRole(role.dbRole);
+										setLoginMessage("Masukkan kredensial akun demo role ini.");
+									}}
+								>
+									<span className="role-icon" aria-hidden="true">
+										{role.icon}
+									</span>
+									<span className="role-copy">
+										<strong>{role.label}</strong>
+										<span>{role.hint}</span>
+									</span>
+								</button>
+							))}
+						</div>
+					</section>
+
+					<form className="request-form login-form" onSubmit={submitLogin}>
+						<p className="eyebrow">Secure Access</p>
+						<h2>Form Login {selectedLoginOption.label}</h2>
+						<label className="field">
+							<span className="field-label">Username</span>
+							<input
+								name="username"
+								value={loginUsername}
+								onChange={(event) => setLoginUsername(event.target.value)}
+								placeholder="Contoh: admin_demo"
+								autoComplete="username"
+								required
+							/>
+							<span className="field-hint">
+								Gunakan username demo sesuai role yang dipilih.
+							</span>
+						</label>
+						<label className="field">
+							<span className="field-label">Password</span>
+							<input
+								type="password"
+								name="password"
+								value={loginPassword}
+								onChange={(event) => setLoginPassword(event.target.value)}
+								placeholder="Password akun demo"
+								autoComplete="current-password"
+								required
+							/>
+							<span className="field-hint">
+								Password hanya dikirim ke endpoint auth backend.
+							</span>
+						</label>
+						<button type="submit">Masuk</button>
+						{loginMessage && <p className="form-message">{loginMessage}</p>}
+					</form>
+
+					<section className="foundation-status" aria-live="polite">
+						<h2>Status Fondasi</h2>
+						<p>{foundationStatus}</p>
+					</section>
+				</section>
+			</main>
+		);
+	}
 
 	return (
 		<main className="app-shell">
@@ -747,31 +1010,31 @@ export default function App() {
 						</div>
 					</div>
 				</div>
-				<section className="role-switcher" aria-labelledby="role-switcher-title">
+				<section className="role-switcher session-card" aria-labelledby="role-switcher-title">
 					<div>
-						<h2 id="role-switcher-title">Simulasi Role</h2>
-						<p>Role aktif mengatur tampilan aksi. API tetap memvalidasi izin.</p>
+						<h2 id="role-switcher-title">Sesi Aktif</h2>
+						<p>
+							{session.displayName} masuk sebagai{" "}
+							{roleOptions.find((role) => role.value === activeRole)?.label}.
+						</p>
 					</div>
-					<div className="role-tabs" role="tablist" aria-label="Simulasi Role">
-						{roleOptions.map((role) => (
-							<button
-								type="button"
-								key={role.value}
-								className={
-									activeRole === role.value ? "role-tab active" : "role-tab"
-								}
-								aria-pressed={activeRole === role.value}
-								onClick={() => setActiveRole(role.value)}
-							>
-								<span className="role-icon" aria-hidden="true">
-									{role.icon}
-								</span>
-								<span className="role-copy">
-									<strong>{role.label}</strong>
-									<span>{role.hint}</span>
-								</span>
-							</button>
-						))}
+					<div className="role-tabs role-tabs-single" aria-label="Role login aktif">
+						{roleOptions
+							.filter((role) => role.value === activeRole)
+							.map((role) => (
+								<div key={role.value} className="role-tab active session-role-card">
+									<span className="role-icon" aria-hidden="true">
+										{role.icon}
+									</span>
+									<span className="role-copy">
+										<strong>{role.label}</strong>
+										<span>{role.hint}</span>
+									</span>
+								</div>
+							))}
+						<button type="button" className="secondary-button" onClick={logout}>
+							Logout
+						</button>
 					</div>
 				</section>
 				<section className="role-action-summary" aria-live="polite">
@@ -789,7 +1052,7 @@ export default function App() {
 			</section>
 
 			<section className="content-grid">
-				{activeRole === "REPORTER" ? (
+				{activeRole === "REPORTER" && (
 					<form className="request-form" onSubmit={submitRequest}>
 						<h2>Buat Laporan Baru</h2>
 
@@ -877,15 +1140,6 @@ export default function App() {
 						<button type="submit">Kirim Laporan</button>
 						{message && <p className="form-message">{message}</p>}
 					</form>
-				) : (
-					<section className="request-form" aria-live="polite">
-						<h2>Buat Laporan Baru</h2>
-						<div className="empty-state empty-state-card">
-							<strong>Form terkunci untuk role ini</strong>
-							<p>Form laporan baru hanya tersedia untuk role Pelapor.</p>
-						</div>
-						{message && <p className="form-message">{message}</p>}
-					</section>
 				)}
 
 				<section
@@ -907,20 +1161,10 @@ export default function App() {
 							</button>
 						</div>
 
-						<label>
-							Konteks Teknisi
-							<select
-								name="technicianContext"
-								value={selectedTechnicianId}
-								onChange={(event) => setSelectedTechnicianId(event.target.value)}
-							>
-								{technicianContextOptions.map((technician) => (
-									<option key={technician.id} value={technician.id}>
-										{technician.name}
-									</option>
-								))}
-							</select>
-						</label>
+						<p className="form-message">
+							Tugas ditampilkan untuk akun teknisi yang sedang login:
+							{" "}{session.displayName}.
+						</p>
 
 						<label>
 							Catatan Progres atau Penyelesaian
@@ -1095,7 +1339,11 @@ export default function App() {
 					</section>
 				</section>
 
-				<section className="request-workspace" aria-labelledby="workspace-title">
+				<section
+					className="request-workspace"
+					aria-labelledby="workspace-title"
+					hidden={activeRole === "FACILITY_MANAGER"}
+				>
 					<div className="workspace-header">
 						<div>
 							<p className="eyebrow">Request Workspace</p>

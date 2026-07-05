@@ -1,5 +1,20 @@
+﻿import {
+	AUTH_COOKIE_NAME,
+	type AppRole,
+	type AuthenticatedUser,
+	type DbRole,
+	createSessionCookie,
+	createSessionToken,
+	expireSessionCookie,
+	readCookie,
+	toPublicUser,
+	verifyPassword,
+	verifySessionToken,
+} from "./auth";
+
 interface Env {
 	DB: D1Database;
+	AUTH_SECRET: string;
 }
 
 type CreateRequestInput = {
@@ -52,6 +67,31 @@ type CloseRequestInput = {
 	manualOverrideNote?: string | null;
 };
 
+type LoginRequestInput = {
+	username?: string;
+	password?: string;
+};
+
+type UserRow = {
+	id: string;
+	username: string;
+	password_hash: string;
+	salt: string;
+	role: DbRole;
+	display_name: string;
+	created_at: string;
+};
+
+type AuthResult =
+	| {
+			ok: true;
+			user: AuthenticatedUser;
+	  }
+	| {
+			ok: false;
+			response: Response;
+	  };
+
 const STATUSES = [
 	"SUBMITTED",
 	"UNDER_REVIEW",
@@ -70,8 +110,8 @@ const CATEGORIES = [
 	"Lainnya",
 ] as const;
 
-function json(data: unknown, status = 200) {
-	return Response.json(data, { status });
+function json(data: unknown, status = 200, headers?: HeadersInit) {
+	return Response.json(data, { status, headers });
 }
 
 function validationError(fields: Record<string, string>) {
@@ -111,6 +151,42 @@ function forbidden() {
 	);
 }
 
+function unauthenticated() {
+	return json(
+		{
+			error: {
+				code: "UNAUTHENTICATED",
+				message: "Silakan login terlebih dahulu.",
+			},
+		},
+		401,
+	);
+}
+
+function authenticationFailed() {
+	return json(
+		{
+			error: {
+				code: "AUTHENTICATION_FAILED",
+				message: "Username atau password salah.",
+			},
+		},
+		401,
+	);
+}
+
+function authConfigurationError() {
+	return json(
+		{
+			error: {
+				code: "AUTH_CONFIGURATION_ERROR",
+				message: "Konfigurasi autentikasi belum tersedia.",
+			},
+		},
+		500,
+	);
+}
+
 function invalidStatusTransition(
 	currentStatus: string,
 	allowedStatuses: string[],
@@ -130,6 +206,67 @@ function invalidStatusTransition(
 
 function requiredText(value: unknown) {
 	return typeof value === "string" && value.trim().length > 0;
+}
+
+function hasAuthSecret(env: Env) {
+	return requiredText(env.AUTH_SECRET);
+}
+
+async function parseJson<T>(request: Request): Promise<T> {
+	return (await request.json()) as T;
+}
+
+async function currentUser(request: Request, env: Env) {
+	if (!hasAuthSecret(env)) {
+		return null;
+	}
+
+	const token = readCookie(request.headers.get("Cookie"), AUTH_COOKIE_NAME);
+
+	if (!token) {
+		return null;
+	}
+
+	return verifySessionToken(token, env.AUTH_SECRET);
+}
+
+async function requireAuthenticatedUser(
+	request: Request,
+	env: Env,
+): Promise<AuthResult> {
+	if (!hasAuthSecret(env)) {
+		return { ok: false, response: authConfigurationError() };
+	}
+
+	const user = await currentUser(request, env);
+
+	if (!user) {
+		return { ok: false, response: unauthenticated() };
+	}
+
+	return { ok: true, user };
+}
+
+async function requireRole(
+	request: Request,
+	env: Env,
+	allowedRoles: readonly AppRole[],
+): Promise<AuthResult> {
+	const auth = await requireAuthenticatedUser(request, env);
+
+	if (!auth.ok) {
+		return auth;
+	}
+
+	if (!allowedRoles.includes(auth.user.appRole)) {
+		return { ok: false, response: forbidden() };
+	}
+
+	return auth;
+}
+
+function roleOf(user: AuthenticatedUser) {
+	return user.appRole;
 }
 
 type RequestSummaryRow = {
@@ -378,11 +515,93 @@ export default {
 			});
 		}
 
-		if (url.pathname === "/api/dashboard/summary" && request.method === "GET") {
-			const role = url.searchParams.get("role")?.trim();
+		if (url.pathname === "/api/auth/login" && request.method === "POST") {
+			if (!hasAuthSecret(env)) {
+				return authConfigurationError();
+			}
 
-			if (role !== "FACILITY_MANAGER" && role !== "ADMINISTRATOR") {
-				return forbidden();
+			const input = await parseJson<LoginRequestInput>(request);
+			const username = input.username?.trim() ?? "";
+			const password = input.password ?? "";
+
+			if (!username || !password) {
+				return authenticationFailed();
+			}
+
+			const userRow = (await env.DB.prepare(`
+				SELECT id, username, password_hash, salt, role, display_name, created_at
+				FROM users
+				WHERE username = ?
+				LIMIT 1
+			`)
+				.bind(username)
+				.first()) as UserRow | null;
+
+			if (!userRow) {
+				return authenticationFailed();
+			}
+
+			const passwordMatches = await verifyPassword(
+				password,
+				userRow.salt,
+				userRow.password_hash,
+			);
+
+			if (!passwordMatches) {
+				return authenticationFailed();
+			}
+
+			const user = toPublicUser({
+				id: userRow.id,
+				username: userRow.username,
+				role: userRow.role,
+				displayName: userRow.display_name,
+			});
+			const token = await createSessionToken(user, env.AUTH_SECRET);
+
+			return json(
+				{ data: user },
+				200,
+				{
+					"Set-Cookie": createSessionCookie(token, request.url),
+				},
+			);
+		}
+
+		if (url.pathname === "/api/auth/me" && request.method === "GET") {
+			const auth = await requireAuthenticatedUser(request, env);
+
+			if (!auth.ok) {
+				return auth.response;
+			}
+
+			return json({
+				data: auth.user,
+			});
+		}
+
+		if (url.pathname === "/api/auth/logout" && request.method === "POST") {
+			return json(
+				{
+					data: {
+						loggedOut: true,
+					},
+				},
+				200,
+				{
+					"Set-Cookie": expireSessionCookie(request.url),
+				},
+			);
+		}
+
+		if (url.pathname === "/api/dashboard/summary" && request.method === "GET") {
+			const auth = await requireRole(request, env, [
+				"FACILITY_MANAGER",
+				"ADMINISTRATOR",
+			]);
+
+			if (!auth.ok) {
+				return auth.response;
 			}
 
 			const totalRow = (await env.DB.prepare(`
@@ -454,6 +673,17 @@ export default {
 		}
 
 		if (url.pathname === "/api/requests" && request.method === "GET") {
+			const auth = await requireRole(request, env, [
+				"REPORTER",
+				"ADMINISTRATOR",
+				"TECHNICIAN",
+				"FACILITY_MANAGER",
+			]);
+
+			if (!auth.ok) {
+				return auth.response;
+			}
+
 			const search = url.searchParams.get("search")?.trim() || null;
 			const status = url.searchParams.get("status")?.trim() || null;
 			const priority = url.searchParams.get("priority")?.trim() || null;
@@ -522,11 +752,17 @@ export default {
 
 		if (requestDetailMatch && request.method === "GET") {
 			const requestId = decodeURIComponent(requestDetailMatch[1]);
-			const role = url.searchParams.get("role")?.trim() || null;
+			const auth = await requireRole(request, env, [
+				"REPORTER",
+				"ADMINISTRATOR",
+				"TECHNICIAN",
+			]);
 
-			if (role === "FACILITY_MANAGER") {
-				return forbidden();
+			if (!auth.ok) {
+				return auth.response;
 			}
+
+			const role = roleOf(auth.user);
 
 			const requestRow = await env.DB.prepare(`
 				SELECT id, request_number, title, description, location,
@@ -632,10 +868,10 @@ export default {
 		}
 
 		if (url.pathname === "/api/technicians" && request.method === "GET") {
-			const role = url.searchParams.get("role")?.trim();
+			const auth = await requireRole(request, env, ["ADMINISTRATOR"]);
 
-			if (role !== "ADMINISTRATOR") {
-				return forbidden();
+			if (!auth.ok) {
+				return auth.response;
 			}
 
 			const result = await env.DB.prepare(`
@@ -666,16 +902,21 @@ export default {
 
 		if (technicianTasksMatch && request.method === "GET") {
 			const technicianId = decodeURIComponent(technicianTasksMatch[1]);
-			const role = url.searchParams.get("role")?.trim();
-			const activeTechnicianId = url.searchParams.get("technicianId")?.trim();
+			const auth = await requireRole(request, env, [
+				"TECHNICIAN",
+				"ADMINISTRATOR",
+			]);
 			const status = url.searchParams.get("status")?.trim() || null;
 			const fields: Record<string, string> = {};
 
-			if (role !== "TECHNICIAN" && role !== "ADMINISTRATOR") {
-				return forbidden();
+			if (!auth.ok) {
+				return auth.response;
 			}
 
-			if (role === "TECHNICIAN" && activeTechnicianId !== technicianId) {
+			if (
+				roleOf(auth.user) === "TECHNICIAN" &&
+				auth.user.technicianId !== technicianId
+			) {
 				return forbidden();
 			}
 
@@ -749,12 +990,13 @@ export default {
 
 		if (requestReviewMatch && request.method === "PATCH") {
 			const requestId = decodeURIComponent(requestReviewMatch[1]);
-			const input = (await request.json()) as ReviewRequestInput;
+			const auth = await requireRole(request, env, ["ADMINISTRATOR"]);
 
-			if (input.role !== "ADMINISTRATOR") {
-				return forbidden();
+			if (!auth.ok) {
+				return auth.response;
 			}
 
+			const input = await parseJson<ReviewRequestInput>(request);
 			const fields: Record<string, string> = {};
 
 			if (!requiredText(input.note)) {
@@ -827,12 +1069,13 @@ export default {
 
 		if (requestClassificationMatch && request.method === "PATCH") {
 			const requestId = decodeURIComponent(requestClassificationMatch[1]);
-			const input = (await request.json()) as ClassificationRequestInput;
+			const auth = await requireRole(request, env, ["ADMINISTRATOR"]);
 
-			if (input.role !== "ADMINISTRATOR") {
-				return forbidden();
+			if (!auth.ok) {
+				return auth.response;
 			}
 
+			const input = await parseJson<ClassificationRequestInput>(request);
 			const fields: Record<string, string> = {};
 
 			if (!CATEGORIES.includes(input.category as (typeof CATEGORIES)[number])) {
@@ -892,12 +1135,13 @@ export default {
 
 		if (requestAssignmentMatch && request.method === "PATCH") {
 			const requestId = decodeURIComponent(requestAssignmentMatch[1]);
-			const input = (await request.json()) as AssignmentRequestInput;
+			const auth = await requireRole(request, env, ["ADMINISTRATOR"]);
 
-			if (input.role !== "ADMINISTRATOR") {
-				return forbidden();
+			if (!auth.ok) {
+				return auth.response;
 			}
 
+			const input = await parseJson<AssignmentRequestInput>(request);
 			const fields: Record<string, string> = {};
 
 			if (!requiredText(input.technicianId)) {
@@ -1017,20 +1261,16 @@ export default {
 
 		if (requestAcceptMatch && request.method === "PATCH") {
 			const requestId = decodeURIComponent(requestAcceptMatch[1]);
-			const input = (await request.json()) as TechnicianActionInput;
+			const auth = await requireRole(request, env, ["TECHNICIAN"]);
 
-			if (input.role !== "TECHNICIAN") {
+			if (!auth.ok) {
+				return auth.response;
+			}
+
+			const technicianId = auth.user.technicianId;
+
+			if (!technicianId) {
 				return forbidden();
-			}
-
-			const fields: Record<string, string> = {};
-
-			if (!requiredText(input.technicianId)) {
-				fields.technicianId = "Konteks Teknisi wajib diisi.";
-			}
-
-			if (Object.keys(fields).length > 0) {
-				return validationError(fields);
 			}
 
 			const requestRow = await env.DB.prepare(`
@@ -1061,7 +1301,7 @@ export default {
 					AND technician_id = ?
 					AND is_current = 1
 			`)
-				.bind(requestId, input.technicianId!.trim())
+				.bind(requestId, technicianId)
 				.first()) as AssignmentRow | null;
 
 			if (!assignment) {
@@ -1077,7 +1317,7 @@ export default {
 					AND technician_id = ?
 					AND is_current = 1
 			`)
-				.bind(now, requestId, input.technicianId!.trim())
+				.bind(now, requestId, technicianId)
 				.run();
 
 			return json({
@@ -1098,19 +1338,22 @@ export default {
 			const requestId = decodeURIComponent(
 				(requestProgressMatch ?? requestResolveMatch)![1],
 			);
-			const input = (await request.json()) as TechnicianActionInput;
+			const auth = await requireRole(request, env, ["TECHNICIAN"]);
 			const isProgress = Boolean(requestProgressMatch);
 			const fromStatus = isProgress ? "ASSIGNED" : "IN_PROGRESS";
 			const toStatus = isProgress ? "IN_PROGRESS" : "RESOLVED";
 
-			if (input.role !== "TECHNICIAN") {
-				return forbidden();
+			if (!auth.ok) {
+				return auth.response;
 			}
+
+			const input = await parseJson<TechnicianActionInput>(request);
+			const technicianId = auth.user.technicianId;
 
 			const fields: Record<string, string> = {};
 
-			if (!requiredText(input.technicianId)) {
-				fields.technicianId = "Konteks Teknisi wajib diisi.";
+			if (!technicianId) {
+				return forbidden();
 			}
 
 			if (!requiredText(input.note)) {
@@ -1151,7 +1394,7 @@ export default {
 					AND technician_id = ?
 					AND is_current = 1
 			`)
-				.bind(requestId, input.technicianId!.trim())
+				.bind(requestId, technicianId)
 				.first();
 
 			if (!assignment) {
@@ -1196,15 +1439,18 @@ export default {
 
 		if (requestCommentsMatch && request.method === "POST") {
 			const requestId = decodeURIComponent(requestCommentsMatch[1]);
-			const input = (await request.json()) as CommentInput;
+			const auth = await requireRole(request, env, [
+				"REPORTER",
+				"ADMINISTRATOR",
+				"TECHNICIAN",
+			]);
 
-			if (
-				input.role !== "REPORTER" &&
-				input.role !== "ADMINISTRATOR" &&
-				input.role !== "TECHNICIAN"
-			) {
-				return forbidden();
+			if (!auth.ok) {
+				return auth.response;
 			}
+
+			const input = await parseJson<CommentInput>(request);
+			const role = roleOf(auth.user);
 
 			const fields: Record<string, string> = {};
 
@@ -1237,7 +1483,7 @@ export default {
 				(id, request_id, author_role, body, visibility, created_at)
 				VALUES (?, ?, ?, ?, 'PUBLIC', ?)
 			`)
-				.bind(id, requestId, input.role, body, now)
+				.bind(id, requestId, role, body, now)
 				.run();
 
 			return json(
@@ -1245,7 +1491,7 @@ export default {
 					data: {
 						id,
 						requestId,
-						authorRole: input.role,
+						authorRole: role,
 						body,
 						visibility: "PUBLIC",
 						createdAt: now,
@@ -1257,11 +1503,17 @@ export default {
 
 		if (requestInternalNotesMatch && request.method === "POST") {
 			const requestId = decodeURIComponent(requestInternalNotesMatch[1]);
-			const input = (await request.json()) as CommentInput;
+			const auth = await requireRole(request, env, [
+				"ADMINISTRATOR",
+				"TECHNICIAN",
+			]);
 
-			if (input.role !== "ADMINISTRATOR" && input.role !== "TECHNICIAN") {
-				return forbidden();
+			if (!auth.ok) {
+				return auth.response;
 			}
+
+			const input = await parseJson<CommentInput>(request);
+			const role = roleOf(auth.user);
 
 			const fields: Record<string, string> = {};
 
@@ -1294,7 +1546,7 @@ export default {
 				(id, request_id, author_role, body, visibility, created_at)
 				VALUES (?, ?, ?, ?, 'INTERNAL', ?)
 			`)
-				.bind(id, requestId, input.role, body, now)
+				.bind(id, requestId, role, body, now)
 				.run();
 
 			return json(
@@ -1302,7 +1554,7 @@ export default {
 					data: {
 						id,
 						requestId,
-						authorRole: input.role,
+						authorRole: role,
 						body,
 						visibility: "INTERNAL",
 						createdAt: now,
@@ -1314,12 +1566,13 @@ export default {
 
 		if (requestConfirmResolutionMatch && request.method === "PATCH") {
 			const requestId = decodeURIComponent(requestConfirmResolutionMatch[1]);
-			const input = (await request.json()) as ConfirmResolutionInput;
+			const auth = await requireRole(request, env, ["REPORTER"]);
 
-			if (input.role !== "REPORTER") {
-				return forbidden();
+			if (!auth.ok) {
+				return auth.response;
 			}
 
+			const input = await parseJson<ConfirmResolutionInput>(request);
 			const requestRow = await env.DB.prepare(`
 				SELECT id, request_number, title, location,
 				category, priority, priority_suggestion, status,
@@ -1367,12 +1620,13 @@ export default {
 
 		if (requestCloseMatch && request.method === "PATCH") {
 			const requestId = decodeURIComponent(requestCloseMatch[1]);
-			const input = (await request.json()) as CloseRequestInput;
+			const auth = await requireRole(request, env, ["ADMINISTRATOR"]);
 
-			if (input.role !== "ADMINISTRATOR") {
-				return forbidden();
+			if (!auth.ok) {
+				return auth.response;
 			}
 
+			const input = await parseJson<CloseRequestInput>(request);
 			const fields: Record<string, string> = {};
 
 			if (!requiredText(input.note)) {
@@ -1477,12 +1731,13 @@ export default {
 
 		if (requestReopenMatch && request.method === "PATCH") {
 			const requestId = decodeURIComponent(requestReopenMatch[1]);
-			const input = (await request.json()) as ReviewRequestInput;
+			const auth = await requireRole(request, env, ["ADMINISTRATOR"]);
 
-			if (input.role !== "ADMINISTRATOR") {
-				return forbidden();
+			if (!auth.ok) {
+				return auth.response;
 			}
 
+			const input = await parseJson<ReviewRequestInput>(request);
 			const fields: Record<string, string> = {};
 
 			if (!requiredText(input.note)) {
@@ -1550,12 +1805,14 @@ export default {
 		}
 
 		if (url.pathname === "/api/requests" && request.method === "POST") {
-			const input = (await request.json()) as CreateRequestInput;
-			const fields: Record<string, string> = {};
+			const auth = await requireRole(request, env, ["REPORTER"]);
 
-			if (input.role !== "REPORTER") {
-				fields.role = "Role REPORTER wajib digunakan untuk membuat laporan.";
+			if (!auth.ok) {
+				return auth.response;
 			}
+
+			const input = await parseJson<CreateRequestInput>(request);
+			const fields: Record<string, string> = {};
 
 			if (!requiredText(input.reporterName)) {
 				fields.reporterName = "Nama pelapor wajib diisi.";

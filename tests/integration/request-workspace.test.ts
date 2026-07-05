@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
-import worker from "../../worker";
+﻿import { describe, expect, it } from "vitest";
+import { fetchWithSession } from "../helpers/auth";
 
 type StoredRequest = {
 	id: string;
@@ -237,7 +237,7 @@ const storedRequests: StoredRequest[] = [
 
 describe("GET /api/requests workspace queries", () => {
 	it("returns stored requests with list metadata", async () => {
-		const response = await worker.fetch(
+		const response = await fetchWithSession(
 			new Request("http://localhost/api/requests"),
 			{ DB: new FakeWorkspaceD1Database(storedRequests) } as unknown as Env,
 		);
@@ -272,13 +272,13 @@ describe("GET /api/requests workspace queries", () => {
 	it("applies search, status, and priority filters together and marks no-result queries empty", async () => {
 		const database = new FakeWorkspaceD1Database(storedRequests);
 
-		const matchedResponse = await worker.fetch(
+		const matchedResponse = await fetchWithSession(
 			new Request(
 				"http://localhost/api/requests?search=proyektor&status=UNDER_REVIEW&priority=HIGH",
 			),
 			{ DB: database } as unknown as Env,
 		);
-		const noResultResponse = await worker.fetch(
+		const noResultResponse = await fetchWithSession(
 			new Request(
 				"http://localhost/api/requests?search=proyektor&status=SUBMITTED&priority=HIGH",
 			),
@@ -312,7 +312,7 @@ describe("GET /api/requests workspace queries", () => {
 
 describe("GET /api/requests/:id detail", () => {
 	it("returns selected request detail with ordered status history", async () => {
-		const response = await worker.fetch(
+		const response = await fetchWithSession(
 			new Request("http://localhost/api/requests/request-1"),
 			{
 				DB: new FakeWorkspaceD1Database(storedRequests, [
@@ -383,7 +383,7 @@ describe("GET /api/requests/:id detail", () => {
 	it("stores a public comment and returns it in request detail for Reporter", async () => {
 		const database = new FakeWorkspaceD1Database(storedRequests);
 
-		const commentResponse = await worker.fetch(
+		const commentResponse = await fetchWithSession(
 			new Request("http://localhost/api/requests/request-1/comments", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
@@ -405,7 +405,7 @@ describe("GET /api/requests/:id detail", () => {
 		});
 		expect(commentResponse.status).toBe(201);
 
-		const detailResponse = await worker.fetch(
+		const detailResponse = await fetchWithSession(
 			new Request("http://localhost/api/requests/request-1?role=REPORTER"),
 			{ DB: database } as unknown as Env,
 		);
@@ -424,7 +424,7 @@ describe("GET /api/requests/:id detail", () => {
 		});
 
 		for (const role of ["ADMINISTRATOR", "TECHNICIAN"]) {
-			const roleDetailResponse = await worker.fetch(
+			const roleDetailResponse = await fetchWithSession(
 				new Request(`http://localhost/api/requests/request-1?role=${role}`),
 				{ DB: database } as unknown as Env,
 			);
@@ -447,7 +447,7 @@ describe("GET /api/requests/:id detail", () => {
 	it("stores an internal note for Administrator and hides it from Reporter detail", async () => {
 		const database = new FakeWorkspaceD1Database(storedRequests);
 
-		const noteResponse = await worker.fetch(
+		const noteResponse = await fetchWithSession(
 			new Request("http://localhost/api/requests/request-1/internal-notes", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
@@ -469,7 +469,7 @@ describe("GET /api/requests/:id detail", () => {
 		});
 		expect(noteResponse.status).toBe(201);
 
-		const adminDetailResponse = await worker.fetch(
+		const adminDetailResponse = await fetchWithSession(
 			new Request("http://localhost/api/requests/request-1?role=ADMINISTRATOR"),
 			{ DB: database } as unknown as Env,
 		);
@@ -487,7 +487,7 @@ describe("GET /api/requests/:id detail", () => {
 			},
 		});
 
-		const reporterDetailResponse = await worker.fetch(
+		const reporterDetailResponse = await fetchWithSession(
 			new Request("http://localhost/api/requests/request-1?role=REPORTER"),
 			{ DB: database } as unknown as Env,
 		);
@@ -498,7 +498,7 @@ describe("GET /api/requests/:id detail", () => {
 	});
 
 	it("rejects Facility Manager full detail while OPEN-10 remains unresolved", async () => {
-		const response = await worker.fetch(
+		const response = await fetchWithSession(
 			new Request("http://localhost/api/requests/request-1?role=FACILITY_MANAGER"),
 			{ DB: new FakeWorkspaceD1Database(storedRequests) } as unknown as Env,
 		);
@@ -515,7 +515,7 @@ describe("GET /api/requests/:id detail", () => {
 	it("validates empty bodies and rejects Reporter or Facility Manager internal notes", async () => {
 		const database = new FakeWorkspaceD1Database(storedRequests);
 
-		const emptyCommentResponse = await worker.fetch(
+		const emptyCommentResponse = await fetchWithSession(
 			new Request("http://localhost/api/requests/request-1/comments", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
@@ -537,7 +537,7 @@ describe("GET /api/requests/:id detail", () => {
 		});
 		expect(emptyCommentResponse.status).toBe(422);
 
-		const emptyInternalNoteResponse = await worker.fetch(
+		const emptyInternalNoteResponse = await fetchWithSession(
 			new Request("http://localhost/api/requests/request-1/internal-notes", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
@@ -560,7 +560,7 @@ describe("GET /api/requests/:id detail", () => {
 		expect(emptyInternalNoteResponse.status).toBe(422);
 
 		for (const role of ["REPORTER", "FACILITY_MANAGER"]) {
-			const forbiddenResponse = await worker.fetch(
+			const forbiddenResponse = await fetchWithSession(
 				new Request("http://localhost/api/requests/request-1/internal-notes", {
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
@@ -580,7 +580,7 @@ describe("GET /api/requests/:id detail", () => {
 	});
 
 	it("returns not found when the selected request does not exist", async () => {
-		const response = await worker.fetch(
+		const response = await fetchWithSession(
 			new Request("http://localhost/api/requests/missing-request"),
 			{ DB: new FakeWorkspaceD1Database(storedRequests) } as unknown as Env,
 		);
