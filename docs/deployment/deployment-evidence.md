@@ -2,20 +2,21 @@
 
 | Item | Result |
 | --- | --- |
-| Deployment date | 2026-07-02 Asia/Makassar |
+| Deployment date | 2026-07-05 Asia/Makassar |
 | Cloudflare URL | `https://campus-maintenance.pkaawoan24.workers.dev` |
 | Worker name | `campus-maintenance` |
-| Cloudflare version ID | `b481daf5-b865-4830-a06c-234b8cb12d7f` |
-| GitHub PR merged before deploy | PR #41, merge commit `9feba3e387338783f25ab0f561602bfa27ca39b0` |
-| Deployed local tree commit | `01977677a7cd6a6a9fb9879f9f961ce7a9ca7d65` |
+| Cloudflare version ID | `cdf32974-c66c-45f3-b51b-54b27559e826` |
+| Source branch before final main merge | `codex/fix-submission-gaps`, based on `origin/development` |
+| Deployed source commit | `1e1cf37c023f80d3eb39e4f8037117e2493a8534` |
 | D1 database | `campus-maintenance-db` |
 | Deployment result | PASS |
 
 ## Preconditions
 
 - Skill 14 acceptance report is PASS after DEF-14-01 was fixed.
-- PR #41 was merged into `development`.
-- Local working tree was clean before Skill 15 deployment evidence files were created.
+- Branch `codex/fix-submission-gaps` was created from latest `origin/development`.
+- Application source deployed from commit `1e1cf37c023f80d3eb39e4f8037117e2493a8534`.
+- Working tree contains documentation, skills, and evidence fixes for final submission readiness; no application runtime code changed after `1e1cf37`.
 - `npm test -- --run` passed: 13 test files, 81 tests.
 - `npm run build` passed.
 - Secret scan found only documentation/comment/test references to secret/token wording; no credential value was identified.
@@ -34,9 +35,7 @@ The build produced Worker and client bundles under `dist/`.
 
 ## Production D1 Migration
 
-Wrangler's migration command looked for a default `migrations/` folder, while this repository stores migrations in `database/migrations/`. Remote D1 was checked before migration and only contained `_cf_KV`.
-
-The following SQL files were applied to remote D1 in order using `wrangler d1 execute --remote --file`:
+No new migration files were added for the 2026-07-05 redeploy. Production D1 already uses the migration set stored in `database/migrations/`:
 
 1. `database/migrations/0001_initial.sql`
 2. `database/migrations/0002_create_request_identity_and_history.sql`
@@ -45,14 +44,7 @@ The following SQL files were applied to remote D1 in order using `wrangler d1 ex
 5. `database/migrations/0005_create_reporter_confirmations.sql`
 6. `database/migrations/0006_enforce_request_status_priority.sql`
 
-Result: PASS.
-
-Remote D1 verification after migration:
-
-```text
-request_count = 0
-technician_count = 3
-```
+Result: PASS - no remote schema change required for this redeploy.
 
 ## Cloudflare Deploy
 
@@ -70,7 +62,7 @@ Wrangler output:
 Uploaded campus-maintenance
 Deployed campus-maintenance triggers
 https://campus-maintenance.pkaawoan24.workers.dev
-Current Version ID: b481daf5-b865-4830-a06c-234b8cb12d7f
+Current Version ID: cdf32974-c66c-45f3-b51b-54b27559e826
 ```
 
 ## Production Health Check
@@ -89,22 +81,28 @@ Response:
 
 Result: PASS.
 
-## Production Browser Smoke Test
+## Production Root Check
 
-Browser automation: MCP Chrome DevTools.
+URL:
 
-Smoke test steps:
+```text
+https://campus-maintenance.pkaawoan24.workers.dev
+```
 
-1. Opened `https://campus-maintenance.pkaawoan24.workers.dev`.
-2. Verified the main UI loaded and displayed `API dan D1 siap digunakan`.
-3. Created one non-sensitive dummy request:
-   - Reporter: `Deployment Tester`
-   - Title: `Deployment smoke test request`
-   - Location: `Gedung Demo, Ruang Smoke`
-   - Category: `Lainnya`
-4. Verified the request appeared in the list as `SUBMITTED`.
+Response:
 
-Production smoke request:
+```text
+HTTP 200
+Content-Type: text/html
+```
+
+Result: PASS.
+
+## Production Smoke Test History
+
+The 2026-07-05 redeploy used non-mutating checks only: root URL HTTP 200 and `/api/health` PASS. No new production dummy request was created.
+
+Previous Skill 15 browser smoke test created one non-sensitive dummy request:
 
 ```text
 CSR-1782948495444
@@ -114,10 +112,10 @@ Evidence:
 
 - `evidence/skill-15-production-smoke-create-list.png`
 
-Result: PASS.
+Historical result: PASS.
 
 ## Notes and Follow-Up
 
-- The production smoke request is dummy non-sensitive data and can remain as demo data unless the project owner wants production D1 cleaned manually.
+- The production smoke request from the previous deploy is dummy non-sensitive data and can remain as demo data unless the project owner wants production D1 cleaned manually.
 - Future deployment quality improvement: add `migrations_dir = "database/migrations"` or equivalent Wrangler-supported configuration if the project wants to use `wrangler d1 migrations apply` directly instead of `wrangler d1 execute --file`.
 - Human review should verify that the Cloudflare URL is the final URL intended for submission.

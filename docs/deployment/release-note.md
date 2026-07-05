@@ -4,10 +4,11 @@
 
 | Item | Value |
 | --- | --- |
-| Release date | 2026-07-02 Asia/Makassar |
+| Release date | 2026-07-05 Asia/Makassar |
 | Environment | Cloudflare Workers + D1 |
 | URL | `https://campus-maintenance.pkaawoan24.workers.dev` |
-| Version ID | `b481daf5-b865-4830-a06c-234b8cb12d7f` |
+| Version ID | `cdf32974-c66c-45f3-b51b-54b27559e826` |
+| Source commit | `1e1cf37c023f80d3eb39e4f8037117e2493a8534` |
 
 ## Changes Released
 
@@ -16,6 +17,8 @@
 - Preserved Administrator and Teknisi access to internal notes.
 - Verified the full status workflow from `SUBMITTED` to `CLOSED`.
 - Deployed the application to Cloudflare Workers with D1 production migrations applied.
+- Redeployed from the latest `origin/development` runtime source so production reflects the refined dashboard UI commit.
+- Added final-submission documentation updates: 15 formal `SKILL.md` folders, Indonesian README, AI evidence summaries, and endpoint traceability for `GET /api/technicians`.
 
 ## Validation Summary
 
@@ -23,10 +26,10 @@
 | --- | --- |
 | `npm test -- --run` | PASS: 13 test files, 81 tests |
 | `npm run build` | PASS |
-| Remote D1 migration | PASS |
+| Remote D1 migration | PASS: no new migration required on 2026-07-05 |
 | `npm run deploy` | PASS |
 | Production `/api/health` | PASS |
-| Production browser smoke test | PASS |
+| Production root URL check | PASS: HTTP 200 text/html |
 
 ## Known Notes
 
