@@ -129,6 +129,10 @@ CI GitHub Actions menjalankan test dan build pada pull request serta branch utam
 - AI evidence dan human review: `evidence/`
 - Reusable AI skills: `skills/`
 
+## AI Workflow and Evidence
+
+Lihat `evidence/ai-skill-usage-and-human-review.md` untuk pemetaan skill, penggunaan AI, human review, dan bukti final.
+
 ## Catatan Keamanan
 
 - `.dev.vars` tidak boleh di-commit.
