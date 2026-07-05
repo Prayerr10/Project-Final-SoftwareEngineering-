@@ -1,5 +1,5 @@
-import { describe, expect, it, vi } from "vitest";
-import worker from "../../worker";
+﻿import { describe, expect, it, vi } from "vitest";
+import { fetchWithSession } from "../helpers/auth";
 
 type StoredRequest = {
 	id: string;
@@ -116,7 +116,7 @@ describe("POST /api/requests", () => {
 			.mockReturnValueOnce("history-1");
 		const database = new FakeD1Database();
 
-		const response = await worker.fetch(
+		const response = await fetchWithSession(
 			new Request("http://localhost/api/requests", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
@@ -169,7 +169,7 @@ describe("POST /api/requests", () => {
 	it("rejects missing reporter identity without storing a request or suggestion", async () => {
 		const database = new FakeD1Database();
 
-		const response = await worker.fetch(
+		const response = await fetchWithSession(
 			new Request("http://localhost/api/requests", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },

@@ -39,11 +39,11 @@ Current automated baseline:
 | Area | Baseline |
 | --- | --- |
 | Test command | `npm test -- --run` |
-| Current result | PASS: 12 test files, 52 tests |
+| Current result | PASS: 16 test files, 90 tests |
 | Build command | `npm run build` |
-| Existing unit tests | `tests/unit/request-validation.test.ts` |
-| Existing integration tests | 11 files under `tests/integration` |
-| Existing acceptance tests | No executable acceptance test file yet; acceptance coverage is planned from user stories and current integration/UI state tests |
+| Existing unit tests | `tests/unit/request-validation.test.ts`, `tests/unit/auth-password.test.ts` |
+| Existing integration tests | 13 files under `tests/integration` |
+| Existing acceptance tests | `tests/acceptance/role-authorization.test.ts` plus browser acceptance evidence in `docs/testing/acceptance-test-results.md` |
 | CI evidence | `.github/workflows/ci.yml` runs install, test, and build |
 
 ## 2. Test Objectives
@@ -59,9 +59,9 @@ Current automated baseline:
 
 | Test level | Purpose | Existing coverage | Planned Skill 13/14 direction |
 | --- | --- | --- | --- |
-| Unit test | Validate isolated payload rules, field trimming, controlled values, and helper behavior. | `tests/unit/request-validation.test.ts` | Add unit tests only for reusable validation/status helpers if they become separate modules. |
-| Integration test | Verify Worker API, role validation, D1-like persistence behavior, workflow commands, dashboard, and deployment guardrails. | `tests/integration/*.test.ts` | Keep this as the main automated safety net for Worker and API behavior. |
-| Acceptance test | Verify user-story level flows by actor. | Covered partly by integration tests and `react-foundation.test.ts`; no `tests/acceptance/*.test.ts` executable file yet. | Add lightweight actor-flow acceptance tests in Skill 14 if needed. |
+| Unit test | Validate isolated payload rules, field trimming, controlled values, password hashing, and helper behavior. | `tests/unit/request-validation.test.ts`, `tests/unit/auth-password.test.ts` | Add unit tests only for reusable validation/status/auth helpers if they become separate modules. |
+| Integration test | Verify Worker API, auth login, role validation, D1-like persistence behavior, workflow commands, dashboard, and deployment guardrails. | `tests/integration/*.test.ts` | Keep this as the main automated safety net for Worker and API behavior. |
+| Acceptance test | Verify user-story level flows by actor. | `tests/acceptance/role-authorization.test.ts` and browser acceptance evidence in `acceptance-test-results.md`. | Add more executable actor-flow acceptance tests if manual/browser findings need regression coverage. |
 | Regression test | Protect issues found during Skill 11 and high-risk workflow/role behavior. | `role-validation-states`, `deployment-readiness`, `traceability-evidence`. | Add regression tests for any future bug found in review or CI. |
 | Deployment readiness test | Verify Cloudflare Worker, D1 binding, free-tier boundary, migration guidance, and build readiness. | `deployment-readiness.test.ts`, `npm run build`. | Keep deployment checklist synced with final Cloudflare URL evidence. |
 | Security/secret-safety check | Verify no credential-like values are stored in tracked files and sensitive local files stay ignored. | `deployment-readiness.test.ts`; tracked-file `git grep` scan. | Repeat before PR, final deployment, and release. |
@@ -106,7 +106,7 @@ Current automated baseline:
 | NFR-03 | Verify D1 binding, migrations, and DB guard constraints. | `worker-health.test.ts`, `deployment-readiness.test.ts`, migration review |
 | NFR-04 | Verify only free Cloudflare Workers, D1, and assets are required. | `deployment-readiness.test.ts`, `deployment-readiness.md` review |
 | NFR-05 | Verify branch/commit/PR workflow and CI gate. | Git history, PR, `.github/workflows/ci.yml` |
-| NFR-06 | Verify at least 20 automated tests and CI test/build commands. | `automated-test-inventory.md`, `npm test -- --run` reports 52 tests |
+| NFR-06 | Verify at least 20 automated tests and CI test/build commands. | `automated-test-inventory.md`, `npm test -- --run` reports 90 tests |
 | NFR-07 | Verify traceability from requirement to design, issue, code, and test. | `traceability-evidence.test.ts`, `docs/requirements/traceability.md` |
 | NFR-08 | Verify human-review evidence for AI work products. | `traceability-evidence.test.ts`, evidence files |
 | NFR-09 | Verify no tracked credential values and secret handling guidance. | `deployment-readiness.test.ts`, tracked-file secret scan |
@@ -437,7 +437,7 @@ Resumption criteria:
 | Test data strategy included | PASS |
 | Entry/exit/suspension/resumption criteria included | PASS |
 | Defect severity categories included | PASS |
-| Existing 12 test files / 52 tests recorded | PASS |
+| Existing 16 test files / 90 tests recorded | PASS |
 | Open questions preserved as assumptions/gaps | PASS |
 | No application code changes required | PASS |
 
@@ -448,6 +448,6 @@ Human review should verify that this plan:
 1. Covers all requirement and acceptance criteria IDs without changing their meaning.
 2. Matches `instruksi-dosen.md`, CASE, requirements, design, deployment, and traceability documents.
 3. Keeps Skill 12 scoped to test planning.
-4. Correctly records current automated baseline as 12 test files and 52 tests.
+4. Correctly records current automated baseline as 16 test files and 90 tests.
 5. Includes role validation, workflow transition, forbidden access, invalid transitions, D1 guard, dashboard, traceability, evidence, deployment readiness, and secret-safety checks.
 6. Preserves open questions instead of inventing new facts.

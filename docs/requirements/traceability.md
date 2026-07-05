@@ -19,6 +19,13 @@ Traceability ini mencatat relasi requirement ke user story dari Skill 03, priori
 | --- | --- | --- | --- |
 | Test plan for Issue #13 sampai #24 after Skill 11 | `docs/testing/test-plan.md` | `evidence/human-review-skill-12-test-planning.md` | PASS; test plan maps FR-01 through FR-24, NFR-01 through NFR-09, BR-01 through BR-12, and US-01 through US-17 to existing tests or planned scenarios, including role validation, workflow transitions, forbidden access, invalid transitions, D1 guard, dashboard, deployment readiness, traceability, evidence, and secret-safety checks |
 
+## Fase 2 Authentication Traceability Addendum
+
+| Requirement | User Story | Design | Issue | Kode | Test | Status |
+| --- | --- | --- | --- | --- | --- | --- |
+| FR-24 | US-17 | DB-08, API-AUTH-01, API-AUTH-02, API-AUTH-03, Role Validation Update | #47 | `worker/auth.ts`, `worker/index.ts`, `database/migrations/0007_add_users.sql`, `src/App.tsx`, `src/App.css` | `tests/unit/auth-password.test.ts`, `tests/integration/auth-login.test.ts`, `tests/acceptance/role-authorization.test.ts`, existing workflow integration tests updated to session cookie | Selesai di branch Fase 2; role simulator replaced by real login and Worker authorization reads backend session, menunggu PR draft review sebelum merge |
+| NFR-09 | Semua user story | DB-08, Auth API security notes | #47 | `worker/auth.ts`, `worker/index.ts`, `README.md` | `tests/integration/auth-login.test.ts`, `tests/acceptance/role-authorization.test.ts` | Selesai di branch Fase 2; password hash/salt are never returned and production `AUTH_SECRET` must be configured outside repository |
+
 | **Requirement** | **User Story** | **Design Skill 06** | **Design Skill 07** | **Design Skill 08** | **Issue** | **Kode** | **Test** | **Status** |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | FR-01 | US-01 | ARCH-03, ARCH-05 | DB-01, DB-04, API-03 | UI-03, UI-09 | #14 | `worker/index.ts`, `database/migrations/0002_create_request_identity_and_history.sql`, `src/App.tsx`, `src/App.css` | `tests/integration/request-create.test.ts`, `tests/integration/react-foundation.test.ts` | Selesai untuk Issue #14; create request stores complete report and starts `SUBMITTED` |
@@ -44,7 +51,7 @@ Traceability ini mencatat relasi requirement ke user story dari Skill 03, priori
 | FR-21 | US-15 | ARCH-02, ARCH-05 | DB-04, API-16 | UI-05, UI-09 | #19 | `worker/index.ts`, `src/App.tsx`, `src/App.css` | `tests/integration/resolution-close-reopen.test.ts`, `tests/integration/react-foundation.test.ts` | Selesai untuk Issue #19; Administrator reopens `CLOSED` reports to `UNDER_REVIEW` and status history is appended |
 | FR-22 | US-16 | ARCH-03, ARCH-08 | DB-01, DB-02, DB-03, DB-04, API-17 | UI-07 | #20 | `worker/index.ts`, `src/App.tsx`, `src/App.css` | `tests/integration/dashboard-summary.test.ts`, `tests/integration/react-foundation.test.ts` | Selesai untuk Issue #20; Facility Manager and Administrator can view read-only operational report summary through `GET /api/dashboard/summary` |
 | FR-23 | US-16 | ARCH-03, ARCH-08 | DB-02, DB-03, API-08, API-17 | UI-07 | #20 | `worker/index.ts`, `src/App.tsx`, `src/App.css` | `tests/integration/dashboard-summary.test.ts`, `tests/integration/react-foundation.test.ts` | Selesai untuk Issue #20; dashboard shows technician assignment source data while preserving OPEN-07 and excluding internal note content per OPEN-10 |
-| FR-24 | US-17 | ARCH-01, ARCH-02, ARCH-09, ARCH-11 | API-02 sampai API-17 role validation | UI-01, UI-08, UI-09 | #21 | `src/App.tsx`, `src/App.css`, `worker/index.ts` | `tests/integration/react-foundation.test.ts`, `tests/integration/role-validation-states.test.ts` | Selesai untuk Issue #21; role simulator updates visible action summary while Worker enforces role/action validation |
+| FR-24 | US-17 | ARCH-01, ARCH-02, ARCH-09, ARCH-11 | API-02 sampai API-17 role validation | UI-01, UI-08, UI-09 | #21 | `src/App.tsx`, `src/App.css`, `worker/index.ts` | `tests/integration/react-foundation.test.ts`, `tests/integration/role-validation-states.test.ts` | Selesai untuk Issue #21 baseline; Fase 2 addendum (#47) replaces role simulator with real login/session validation |
 | NFR-01 | Semua user story | ARCH-01, ARCH-09, ARCH-10, ARCH-11 | API response supports React data states | UI-01 sampai UI-10 | #13, #20, #21 | `src/App.tsx`, `src/App.css` | `tests/integration/react-foundation.test.ts`, `tests/integration/role-validation-states.test.ts` | Selesai; Issue #21 adds accessible role action summary and role-driven UI state |
 | NFR-02 | Semua user story | ARCH-02, ARCH-12 | API-01 sampai API-17 | UI API-to-UI mapping | #13, #20, #21, #23 | `worker/index.ts`, `src/App.tsx`, `wrangler.jsonc`, `docs/deployment/deployment-readiness.md` | `tests/integration/worker-health.test.ts`, `tests/integration/dashboard-summary.test.ts`, `tests/integration/react-foundation.test.ts`, `tests/integration/role-validation-states.test.ts`, `tests/integration/deployment-readiness.test.ts` | Selesai untuk Issue #23; Worker entrypoint and PR deployment readiness are documented and tested |
 | NFR-03 | Semua user story | ARCH-03, ARCH-12 | DB-01 sampai DB-07 | UI data display from DB/API contracts | #13, #20, #23 | `worker/index.ts`, `database/migrations/0001_initial.sql`, `database/migrations/0002_create_request_identity_and_history.sql`, `database/migrations/0003_create_technicians_and_assignments.sql`, `database/migrations/0004_create_request_comments_and_internal_notes.sql`, `database/migrations/0005_create_reporter_confirmations.sql`, `database/migrations/0006_enforce_request_status_priority.sql`, `wrangler.jsonc`, `docs/deployment/deployment-readiness.md` | `tests/integration/worker-health.test.ts`, `tests/integration/dashboard-summary.test.ts`, `tests/integration/deployment-readiness.test.ts` | Selesai untuk Issue #23; D1 binding and safe remote migration step are documented and tested, with Skill 11 adding D1 guard triggers for status/priority values |
@@ -78,7 +85,7 @@ Status: Human Reviewed & Approved. Link design berikut ditautkan dari `docs/desi
 
 | Design ID | Design Area | Related Requirement / Rule | Status |
 | --- | --- | --- | --- |
-| ARCH-01 | React SPA, role simulator, master-detail shell | FR-03, FR-06, FR-24, NFR-01, US-02, US-05, US-17 | Approved Skill 06 |
+| ARCH-01 | React SPA, login/session shell, master-detail shell | FR-03, FR-06, FR-24, NFR-01, US-02, US-05, US-17 | Approved Skill 06, updated by Fase 2 auth addendum |
 | ARCH-02 | Cloudflare Worker API boundary and role/workflow validation | FR-07, FR-11, FR-14, FR-15, FR-19, FR-20, FR-21, FR-24, NFR-02, BR-02, BR-03, BR-11, BR-12 | Approved Skill 06 |
 | ARCH-03 | Cloudflare D1 persistence boundary | FR-01, FR-02, FR-16, FR-17, FR-18, FR-22, FR-23, NFR-03 | Approved Skill 06 |
 | ARCH-04 | Query/command API design boundary for later Skill 07 | FR-03 sampai FR-23 | Approved Skill 06 |
@@ -131,7 +138,7 @@ Status: Human Reviewed & Approved. Link design berikut ditautkan dari `docs/desi
 
 | Design ID | Design Area | Related Requirement / Rule | Status |
 | --- | --- | --- | --- |
-| UI-01 | Application shell, navigation, and RoleSwitcher | FR-24, US-17, NFR-01 | Approved through Skill 08 |
+| UI-01 | Application shell, navigation, and login/session controls | FR-24, US-17, NFR-01 | Approved through Skill 08, updated by Fase 2 auth addendum |
 | UI-02 | Request Workspace list, search, filter, detail selection | FR-03, FR-04, FR-05, FR-06, FR-18, US-02, US-03, US-04, US-05 | Approved through Skill 08 |
 | UI-03 | Create Request form and feedback | FR-01, FR-02, FR-10, BR-01, BR-05, US-01 | Approved through Skill 08 |
 | UI-04 | Request Detail, comments, internal notes, and status history | FR-06, FR-16, FR-17, FR-18, BR-09, BR-10, US-05, US-11, US-12, OPEN-10 | Approved through Skill 08 |

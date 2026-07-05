@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
-import worker from "../../worker";
+﻿import { describe, expect, it } from "vitest";
+import { fetchWithSession } from "../helpers/auth";
 
 class ReviewConflictD1 {
 	prepare(sql: string) {
@@ -34,7 +34,7 @@ class ReviewConflictD1 {
 
 describe("role-based API validation states", () => {
 	it("returns forbidden when an unsupported role opens the dashboard", async () => {
-		const response = await worker.fetch(
+		const response = await fetchWithSession(
 			new Request("http://localhost/api/dashboard/summary?role=REPORTER"),
 			{} as Env,
 		);
@@ -49,7 +49,7 @@ describe("role-based API validation states", () => {
 	});
 
 	it("returns validation fields before creating a request with missing reporter identity", async () => {
-		const response = await worker.fetch(
+		const response = await fetchWithSession(
 			new Request("http://localhost/api/requests", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
@@ -77,7 +77,7 @@ describe("role-based API validation states", () => {
 	});
 
 	it("returns invalid transition conflict for a role-valid but status-invalid action", async () => {
-		const response = await worker.fetch(
+		const response = await fetchWithSession(
 			new Request("http://localhost/api/requests/request-1/review", {
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },

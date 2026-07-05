@@ -1,26 +1,32 @@
+import { readFileSync } from "node:fs";
 import { createElement } from "react";
 import { renderToString } from "react-dom/server";
-import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import App from "../../src/App";
 
-describe("React foundation shell", () => {
-	it("renders a frontend status surface for exercising the Worker health API", () => {
+describe("React login and role-gated shell", () => {
+	it("renders the protected login landing before a session exists", () => {
 		const html = renderToString(createElement(App));
 
-		expect(html).toContain("Status Fondasi");
-		expect(html).toContain("Memeriksa koneksi API dan D1");
+		expect(html).toContain("Campus Service Request");
+		expect(html).toContain("Memeriksa sesi login dan koneksi aplikasi.");
+		expect(html).not.toContain("Simulasi Role");
 	});
 
-	it("renders reporter identity fields and Lecturer priority suggestion guidance", () => {
-		const html = renderToString(createElement(App));
+	it("defines a real login surface with four role entry points", () => {
+		const appSource = readFileSync("src/App.tsx", "utf8");
 
-		expect(html).toContain("Nama Pelapor");
-		expect(html).toContain("Tipe Pelapor");
-		expect(html).toContain("Dosen mendapat saran prioritas HIGH");
+		expect(appSource).toContain("Login sebagai apa?");
+		expect(appSource).toContain("Form Login");
+		expect(appSource).toContain("selectedLoginRole");
+		expect(appSource).toContain("/api/auth/login");
+		expect(appSource).toContain("pelapor");
+		expect(appSource).toContain("administrator");
+		expect(appSource).toContain("teknisi");
+		expect(appSource).toContain("manajer_fasilitas");
 	});
 
-	it("keeps Create Request bound to the selected Reporter role context", () => {
+	it("keeps Create Request protected by Reporter session without sending role in payload", () => {
 		const appSource = readFileSync("src/App.tsx", "utf8");
 		const submitRequestSource = appSource.slice(
 			appSource.indexOf("async function submitRequest"),
@@ -28,36 +34,45 @@ describe("React foundation shell", () => {
 		);
 
 		expect(submitRequestSource).toContain('activeRole !== "REPORTER"');
-		expect(submitRequestSource).toContain("role: activeRole");
-		expect(submitRequestSource).not.toContain('role: "REPORTER",');
-		expect(appSource).toContain('activeRole === "REPORTER" ?');
+		expect(submitRequestSource).toContain('credentials: "same-origin"');
+		expect(submitRequestSource).not.toContain("role: activeRole");
+		expect(submitRequestSource).not.toContain('role: "REPORTER"');
+		expect(appSource).toContain('activeRole === "REPORTER" &&');
 	});
 
-	it("renders request workspace search and filter controls", () => {
-		const html = renderToString(createElement(App));
-
-		expect(html).toContain("Request Workspace");
-		expect(html).toContain("Cari laporan");
-		expect(html).toContain("Filter Status");
-		expect(html).toContain("Filter Prioritas");
-		expect(html).toContain("Semua status");
-		expect(html).toContain("Semua prioritas");
-	});
-
-	it("renders request detail and status history regions for selected reports", () => {
-		const html = renderToString(createElement(App));
-
-		expect(html).toContain("Detail Laporan");
-		expect(html).toContain("Pilih laporan dari daftar untuk melihat detail.");
-		expect(html).toContain("Riwayat Status");
-	});
-
-	it("renders public comment controls and gates internal note controls by role", () => {
-		const html = renderToString(createElement(App));
+	it("uses auth session endpoints and visible logout instead of role simulation", () => {
 		const appSource = readFileSync("src/App.tsx", "utf8");
 
-		expect(html).toContain("Komentar Publik");
-		expect(html).toContain("Tambah Komentar");
+		expect(appSource).toContain("/api/auth/me");
+		expect(appSource).toContain("/api/auth/logout");
+		expect(appSource).toContain("Sesi Aktif");
+		expect(appSource).toContain("Logout");
+		expect(appSource).not.toContain("Role aktif mengatur tampilan aksi");
+	});
+
+	it("renders request workspace controls only behind role-gated source", () => {
+		const appSource = readFileSync("src/App.tsx", "utf8");
+
+		expect(appSource).toContain("Request Workspace");
+		expect(appSource).toContain("Cari laporan");
+		expect(appSource).toContain("Filter Status");
+		expect(appSource).toContain("Filter Prioritas");
+		expect(appSource).toContain('hidden={activeRole === "FACILITY_MANAGER"}');
+	});
+
+	it("keeps request detail, status history, and comments in the authenticated workspace", () => {
+		const appSource = readFileSync("src/App.tsx", "utf8");
+
+		expect(appSource).toContain("Detail Laporan");
+		expect(appSource).toContain("Pilih laporan dari daftar untuk melihat detail.");
+		expect(appSource).toContain("Riwayat Status");
+		expect(appSource).toContain("Komentar Publik");
+		expect(appSource).toContain("Tambah Komentar");
+	});
+
+	it("gates internal notes by Administrator or Technician session", () => {
+		const appSource = readFileSync("src/App.tsx", "utf8");
+
 		expect(appSource).toContain("const canUseInternalNotes");
 		expect(appSource).toContain('activeRole === "ADMINISTRATOR"');
 		expect(appSource).toContain('activeRole === "TECHNICIAN"');
@@ -65,35 +80,24 @@ describe("React foundation shell", () => {
 		expect(appSource).toContain("Tambah Catatan Internal");
 	});
 
-	it("renders the technician task lifecycle surface", () => {
-		const html = renderToString(createElement(App));
+	it("keeps Technician task lifecycle bound to the logged-in technician account", () => {
+		const appSource = readFileSync("src/App.tsx", "utf8");
 
-		expect(html).toContain("Technician Tasks");
-		expect(html).toContain("Daftar Tugas Teknisi");
-		expect(html).toContain("Konteks Teknisi");
-		expect(html).toContain("Catatan Progres atau Penyelesaian");
-		expect(html).toContain("Tugas teknisi akan tampil sesuai assignment aktif.");
+		expect(appSource).toContain("Technician Tasks");
+		expect(appSource).toContain("Daftar Tugas Teknisi");
+		expect(appSource).toContain("Tugas ditampilkan untuk akun teknisi yang sedang login");
+		expect(appSource).toContain("Catatan Progres atau Penyelesaian");
+		expect(appSource).not.toContain("technicianContextOptions");
 	});
 
-	it("renders confirmation, close, and reopen workflow surfaces", () => {
-		const html = renderToString(createElement(App));
+	it("keeps dashboard, confirmation, close, and reopen surfaces role-gated", () => {
+		const appSource = readFileSync("src/App.tsx", "utf8");
 
-		expect(html).toContain("Konfirmasi Pelapor");
-		expect(html).toContain("Belum ada konfirmasi Pelapor");
-		expect(html).toContain("Catatan Konfirmasi");
-		expect(html).toContain("Catatan Close");
-		expect(html).toContain("Manual override tanpa konfirmasi Pelapor");
-		expect(html).toContain("Catatan Reopen");
-	});
-
-	it("renders the read-only operational dashboard surface with clean workload messaging", () => {
-		const html = renderToString(createElement(App));
-
-		expect(html).toContain("Dashboard Operasional");
-		expect(html).toContain("Total Laporan");
-		expect(html).toContain("Beban Kerja Teknisi");
-		expect(html).toContain("Belum ada assignment aktif untuk ditampilkan.");
-		expect(html).not.toContain("OPEN-07");
-		expect(html).not.toContain("OPEN-10");
+		expect(appSource).toContain("Dashboard Operasional");
+		expect(appSource).toContain("Total Laporan");
+		expect(appSource).toContain("Beban Kerja Teknisi");
+		expect(appSource).toContain("Konfirmasi Pelapor");
+		expect(appSource).toContain("Catatan Close");
+		expect(appSource).toContain("Catatan Reopen");
 	});
 });

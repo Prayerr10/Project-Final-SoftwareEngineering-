@@ -3,7 +3,7 @@
 [![CI](https://github.com/Prayerr10/Project-Final-SoftwareEngineering-/actions/workflows/ci.yml/badge.svg?branch=development)](https://github.com/Prayerr10/Project-Final-SoftwareEngineering-/actions/workflows/ci.yml)
 [![Deployment](https://img.shields.io/badge/Cloudflare-Workers-F38020?logo=cloudflare&logoColor=white)](https://campus-maintenance.pkaawoan24.workers.dev)
 [![Database](https://img.shields.io/badge/Database-Cloudflare%20D1-F38020?logo=cloudflare&logoColor=white)](./database/migrations)
-[![Tests](https://img.shields.io/badge/Tests-81%20passing-2ea44f)](./tests)
+[![Tests](https://img.shields.io/badge/Tests-90%20passing-2ea44f)](./tests)
 [![Software Engineering](https://img.shields.io/badge/Course-Software%20Engineering-0969da)](./CASE.md)
 
 Sistem pelaporan dan pemeliharaan fasilitas kampus berbasis React, TypeScript, Cloudflare Workers, dan Cloudflare D1. Proyek ini dibuat sebagai tugas akhir mata kuliah Software Engineering dengan fokus pada requirement engineering, traceability, AI-assisted workflow, automated testing, acceptance testing, dan deployment Cloudflare.
@@ -53,6 +53,7 @@ UNDER_REVIEW
 
 | Area | Fitur |
 | --- | --- |
+| Autentikasi | Login sungguhan per role memakai akun D1 dan httpOnly session cookie. |
 | Pelaporan | Buat laporan, lihat daftar laporan, cari/filter, lihat detail laporan. |
 | Review Admin | Review laporan, klasifikasi kategori, tentukan prioritas, assign Teknisi. |
 | Pengerjaan Teknisi | Lihat tugas, terima tugas, ubah status kerja, tandai resolved. |
@@ -68,6 +69,23 @@ UNDER_REVIEW
 | Administrator | Memvalidasi laporan, menentukan prioritas, dan menugaskan Teknisi. |
 | Teknisi | Menangani pekerjaan lapangan dan memperbarui status pekerjaan. |
 | Manajer Fasilitas | Melihat ringkasan operasional dan beban kerja. |
+
+## Akun Demo untuk Penilaian
+
+Akun berikut adalah akun demo khusus untuk penilaian tugas. Password sengaja dibuat sederhana agar dosen dapat mencoba setiap role dengan cepat; ini bukan credential production sungguhan.
+
+| Role | Username | Password |
+| --- | --- | --- |
+| Pelapor | `pelapor_demo` | `pelapor123` |
+| Administrator | `admin_demo` | `admin123` |
+| Teknisi | `teknisi_demo` | `teknisi123` |
+| Manajer Fasilitas | `manajer_demo` | `manajer123` |
+
+Catatan teknis:
+
+- Password disimpan di D1 sebagai `password_hash` PBKDF2-SHA256 + `salt`, bukan plaintext.
+- Session login dikirim sebagai httpOnly cookie `csr_session`.
+- Worker membutuhkan secret `AUTH_SECRET` untuk signing session token. Untuk production, set melalui Cloudflare secret, misalnya `wrangler secret put AUTH_SECRET`.
 
 ## Stack Teknologi
 
@@ -130,7 +148,7 @@ UNDER_REVIEW
 | User Stories | 17 |
 | Acceptance Criteria | 40 |
 | Change Request | 1 |
-| Automated Tests | 81 passing |
+| Automated Tests | 90 passing |
 
 Dokumen utama:
 
@@ -164,6 +182,9 @@ Traceability Matrix
 | Method | Endpoint | Fungsi |
 | --- | --- | --- |
 | GET | `/api/health` | Health check API dan D1. |
+| POST | `/api/auth/login` | Login username/password dan set httpOnly session cookie. |
+| POST | `/api/auth/logout` | Logout dan hapus session cookie. |
+| GET | `/api/auth/me` | Mengembalikan user, role, dan display name dari session aktif. |
 | GET | `/api/requests` | List, search, dan filter laporan. |
 | POST | `/api/requests` | Membuat laporan baru. |
 | GET | `/api/requests/:id` | Detail laporan, riwayat status, komentar, dan catatan sesuai role. |
@@ -230,6 +251,7 @@ Migration D1 berada di [`database/migrations/`](./database/migrations):
 - `0004_create_request_comments_and_internal_notes.sql`
 - `0005_create_reporter_confirmations.sql`
 - `0006_enforce_request_status_priority.sql`
+- `0007_add_users.sql`
 
 Binding D1 di [`wrangler.jsonc`](./wrangler.jsonc):
 

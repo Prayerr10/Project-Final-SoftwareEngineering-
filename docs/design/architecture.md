@@ -27,6 +27,10 @@ Dokumen ini adalah output Skill 06. Isinya menggunakan baseline requirements yan
 | ARCH-SRC-14 | `wrangler.jsonc` | Worker entrypoint, D1 binding `DB`, assets SPA handling, observability, compatibility date, dan Cloudflare deployment configuration. |
 | ARCH-SRC-15 | `package.json` | Stack project: React, Vite, Cloudflare Vite plugin, Wrangler, TypeScript, Vitest, ESLint. |
 
+## Fase 2 Authentication Addendum
+
+Baseline Skill 06 memakai `Simulasi Role` karena full authentication belum menjadi scope saat desain awal dibuat. Fase 2 mengganti baseline tersebut dengan login role sungguhan: user login melalui akun demo yang tersimpan di D1, Worker membuat httpOnly session cookie, dan semua endpoint protected membaca role dari session backend. Referensi `role simulator` pada bagian historis dokumen ini dibaca sebagai konteks desain awal yang sudah disupersede oleh addendum Fase 2.
+
 ## Architecture Goals
 
 1. Mendukung seluruh fitur wajib dari FR-01 sampai FR-24 pada level arsitektur tanpa menambah scope baru.
@@ -40,7 +44,7 @@ Dokumen ini adalah output Skill 06. Isinya menggunakan baseline requirements yan
 
 | Constraint | Architecture impact | Traceability |
 | --- | --- | --- |
-| Frontend menggunakan React di `src/`. | UI aplikasi dibangun sebagai Single Page App dengan komponen reusable dan role simulator. | NFR-01, FR-24, US-17 |
+| Frontend menggunakan React di `src/`. | UI aplikasi dibangun sebagai Single Page App dengan komponen reusable, login role, dan session-aware action surfaces. | NFR-01, FR-24, US-17 |
 | Backend/API menggunakan Cloudflare Workers di `worker/`. | Semua command penting harus melewati API Worker, termasuk role/action validation dan workflow validation. | NFR-02, FR-07, FR-11, FR-14, FR-15, FR-19, FR-20, FR-21 |
 | Database menggunakan Cloudflare D1 dan migration di `database/migrations/`. | D1 menjadi storage utama untuk laporan, assignment, komentar/catatan, status history, dan data pendukung. Detail skema diserahkan ke Skill 07. | NFR-03, FR-01, FR-18 |
 | Deployment menggunakan Cloudflare dan Wrangler. | Build Vite dan Worker deploy memakai konfigurasi `wrangler.jsonc`, termasuk D1 binding `DB`. | NFR-04, NFR-05, NFR-09 |
@@ -53,7 +57,7 @@ Dokumen ini adalah output Skill 06. Isinya menggunakan baseline requirements yan
 
 | Layer | Main location | Responsibility | Not responsible for |
 | --- | --- | --- | --- |
-| Frontend React | `src/` | Role simulator, master-detail experience, request form, list/search/filter controls, detail view, role-based action visibility, accessible form and feedback states, dashboard presentation. | Final authorization, trusted workflow transition, trusted data filtering, database access, API contract detail. |
+| Frontend React | `src/` | Login role, session-aware master-detail experience, request form, list/search/filter controls, detail view, role-based action visibility, accessible form and feedback states, dashboard presentation. | Final authorization, trusted workflow transition, trusted data filtering, database access, API contract detail. |
 | Backend/API Worker | `worker/` | API routing, request validation, role/action validation, workflow transition validation, command/query separation, error response shape, D1 access, response shaping for visible data. | React rendering, visual layout, database schema design details, final endpoint list in this document. |
 | Database D1 | `database/migrations/` and Cloudflare D1 binding `DB` | Persistent data ownership for service requests, reporter identity, technician assignment, public comments, internal notes, status history, dashboard source data. | UI behavior, API routing, deployment secrets, detailed table/SQL design in Skill 06. |
 | Deployment layer | `wrangler.jsonc`, Vite/Cloudflare plugin, GitHub workflow later | Local/production build boundary, Worker entrypoint, SPA asset handling, D1 binding, Cloudflare free-tier compatibility, secret safety. | Feature requirement decisions, database schema details, UI wireframes, production deployment execution in Skill 06. |
@@ -62,7 +66,7 @@ Dokumen ini adalah output Skill 06. Isinya menggunakan baseline requirements yan
 
 | Architecture component | Responsibility | Related requirements |
 | --- | --- | --- |
-| Role Simulator Shell | Holds selected role for UI rendering and sends active role context to API requests for validation in the no-full-auth baseline. | FR-24, US-17, NFR-01 |
+| Role Login and Session Shell | Holds authenticated user/session state from `/api/auth/me`, renders only role-appropriate surfaces, and sends requests with httpOnly session cookie. | FR-24, US-17, NFR-01, NFR-09 |
 | Request Creation Surface | Captures report data and reporter identity, then submits through Worker API. | FR-01, FR-02, BR-01, US-01 |
 | Request List Query Surface | Displays list, empty state, debounced search input, and combined status/priority filters. | FR-03, FR-04, FR-05, US-02, US-03, US-04 |
 | Request Detail Surface | Presents selected request, status history, visible comments, visible actions, and role-appropriate feedback. | FR-06, FR-18, US-05 |
@@ -77,7 +81,7 @@ Dokumen ini adalah output Skill 06. Isinya menggunakan baseline requirements yan
 
 ### Pelapor Creates Service Request
 
-1. Pelapor selects role in the React role simulator.
+1. Pelapor logs in through the role login surface and receives a backend-signed session cookie.
 2. Frontend collects required report fields and approved reporter fields `reporter_name` and `reporter_type`.
 3. Frontend submits a create command to the Worker API.
 4. Worker validates required input, role permission, controlled values available at this design level, and initial status rule.
@@ -170,7 +174,7 @@ Needs Human Review: Whether any non-status marker from CR-05-01 should be accept
 | Teknisi | Can see assigned tasks, accept/progress/resolve actions, public comment, internal note actions. | Worker validates assignment relationship and Teknisi-only actions. | Can see Komentar Publik and Catatan Internal for relevant work. |
 | Manajer Fasilitas | Can see dashboard and report summary. | Worker validates dashboard/read query access. | OPEN QUESTION: detail access and Catatan Internal visibility require Human Review via OPEN-10. |
 
-ASSUMPTION: Because full authentication is not in the approved scope, role context is simulated in the UI and passed to API for validation. This follows the approved Simulasi Role decision, but it is not equivalent to production-grade identity verification.
+FASE 2 UPDATE: Role context is no longer trusted from UI query/body parameters. The Worker derives role from the signed httpOnly session cookie created by `/api/auth/login`, while the UI only uses `/api/auth/me` to decide which surfaces to show.
 
 ## Deployment Architecture
 
@@ -191,7 +195,7 @@ Traceability: NFR-02, NFR-03, NFR-04, NFR-05, NFR-09.
 
 | Decision ID | Decision | Rationale | Traceability |
 | --- | --- | --- | --- |
-| ARCH-01 | Use React SPA in `src/` with role simulator and master-detail application shell. | Matches approved role simulator and master-detail decision while staying within React constraint. | FR-03, FR-06, FR-24, NFR-01, US-17 |
+| ARCH-01 | Use React SPA in `src/` with login/session shell and master-detail application structure. | Matches approved master-detail decision while replacing role simulation with Fase 2 authenticated role context. | FR-03, FR-06, FR-24, NFR-01, US-17 |
 | ARCH-02 | Put all trusted workflow and role/action validation in Cloudflare Worker, not only in frontend conditional rendering. | Prevents Role-Based UI from becoming the only access boundary. | FR-07, FR-11, FR-14, FR-15, FR-19, FR-20, FR-21, FR-24, BR-02, BR-03, BR-11, BR-12, NFR-02 |
 | ARCH-03 | Treat D1 as the single persistent data store for reports, assignments, comments/notes, status history, and dashboard source data. | Meets D1 requirement and avoids paid/out-of-scope storage services. | FR-01, FR-16, FR-17, FR-18, FR-22, FR-23, NFR-03, NFR-04 |
 | ARCH-04 | Separate query responsibilities from command responsibilities at the API design level. | Skill 07 can define contracts cleanly for list/detail/dashboard reads versus workflow-changing commands and future tests can verify reads separately from state-changing commands. | FR-03 sampai FR-06, FR-07 sampai FR-21, NFR-06 |
@@ -210,7 +214,7 @@ Traceability: NFR-02, NFR-03, NFR-04, NFR-05, NFR-09.
 
 | Design ID | Covers | Requirement links |
 | --- | --- | --- |
-| ARCH-01 | Frontend React application shell, role simulator, master-detail structure. | FR-03, FR-06, FR-24, NFR-01, US-02, US-05, US-17 |
+| ARCH-01 | Frontend React application shell, login/session context, master-detail structure. | FR-03, FR-06, FR-24, NFR-01, US-02, US-05, US-17 |
 | ARCH-02 | Backend/API boundary and validation responsibility. | FR-07, FR-11, FR-14, FR-15, FR-19, FR-20, FR-21, FR-24, NFR-02, BR-02, BR-03, BR-11, BR-12 |
 | ARCH-03 | D1 persistence boundary. | FR-01, FR-02, FR-16, FR-17, FR-18, FR-22, FR-23, NFR-03 |
 | ARCH-04 | Query/command split for future API design and testable API behavior. | FR-03 sampai FR-23, NFR-06 |
@@ -231,7 +235,7 @@ Traceability: NFR-02, NFR-03, NFR-04, NFR-05, NFR-09.
 | --- | --- | --- | --- |
 | RISK-01 | Risk | Cloudflare free tier must remain sufficient for Workers, D1, and deployment. | Avoid paid dependencies and out-of-scope storage services. |
 | RISK-02 | Risk | D1 binding mismatch would break API/database integration. | Worker architecture must rely on `DB` binding from `wrangler.jsonc`. |
-| RISK-03 | Risk | Role simulator can be mistaken for real authentication. | Document as simulated role context; Worker still validates role/action, but this is not full identity security. |
+| RISK-03 | Risk | Role simulator can be mistaken for real authentication. | Mitigated in Fase 2 by replacing role simulator with D1-backed login, PBKDF2 password verification, and backend session-based role authorization. |
 | RISK-04 | Risk | Manual override behavior is incomplete. | Close workflow must stay review-sensitive until OPEN-03 is resolved. |
 | RISK-05 | Risk | Waiting confirmation representation could become an accidental seventh status. | Keep strict 6 statuses; CR-05-01 is `NEEDS CLARIFICATION`. |
 | ASSUMPTION-01 | ASSUMPTION | Role context is selected in UI for the project baseline because full authentication is not required. | API validation checks role/action but does not provide real user identity assurance. |

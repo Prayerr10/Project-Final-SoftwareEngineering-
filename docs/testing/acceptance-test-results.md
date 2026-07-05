@@ -11,6 +11,18 @@
 | Request under test | `CSR-1782947480480` |
 | Overall result | PASS |
 
+## Fase 2 Auth Addendum
+
+Setelah Fase 2 mengganti simulasi role menjadi login sungguhan, acceptance coverage ditambah dengan executable test:
+
+| Item | Result |
+| --- | --- |
+| Test file | `tests/acceptance/role-authorization.test.ts` |
+| Coverage | Role tidak dapat mengakses endpoint atau aksi role lain walau mengetahui URL langsung atau mengirim payload role palsu. |
+| Local automated result | PASS as part of `npm test -- --run`: 16 test files, 90 tests |
+
+Catatan: bagian browser evidence di bawah tetap dipertahankan sebagai hasil acceptance Skill 14 untuk lifecycle utama sebelum Fase 2 auth. Fase 2 menambahkan proteksi session/backend, bukan mengganti alur status bisnis.
+
 ## 1. Executive Summary
 
 Acceptance testing validated the main Campus Service Request lifecycle through the browser:
@@ -35,7 +47,7 @@ After migration setup:
 
 - `GET /api/health` returned healthy API/D1 status.
 - The browser flow completed without observed API 404/500 errors.
-- `npm test -- --run` passed: 13 test files, 81 tests.
+- Historical Skill 14 `npm test -- --run` passed. Current Fase 2 automated baseline is recorded above as 16 test files / 90 tests.
 - `npm run build` passed.
 
 ## 3. Evidence Files
@@ -121,7 +133,7 @@ Re-test after fix:
 
 ```text
 npm test -- --run
-Result: PASS, 13 test files, 81 tests
+Result: PASS. Current Fase 2 baseline: 16 test files / 90 tests.
 
 npm run build
 Result: PASS

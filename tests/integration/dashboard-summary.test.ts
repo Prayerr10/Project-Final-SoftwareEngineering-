@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
-import worker from "../../worker";
+﻿import { describe, expect, it } from "vitest";
+import { fetchWithSession } from "../helpers/auth";
 
 type StoredRequest = {
 	id: string;
@@ -148,7 +148,7 @@ describe("Dashboard summary", () => {
 		const allowedDatabase = new FakeDashboardD1Database();
 
 		for (const role of ["FACILITY_MANAGER", "ADMINISTRATOR"]) {
-			const response = await worker.fetch(
+			const response = await fetchWithSession(
 				new Request(`http://localhost/api/dashboard/summary?role=${role}`),
 				{ DB: allowedDatabase } as unknown as Env,
 			);
@@ -162,7 +162,7 @@ describe("Dashboard summary", () => {
 			});
 		}
 
-		const forbiddenResponse = await worker.fetch(
+		const forbiddenResponse = await fetchWithSession(
 			new Request("http://localhost/api/dashboard/summary?role=TECHNICIAN"),
 			{ DB: new FakeDashboardD1Database() } as unknown as Env,
 		);
@@ -174,7 +174,7 @@ describe("Dashboard summary", () => {
 	});
 
 	it("returns zero summary buckets when no reports exist", async () => {
-		const response = await worker.fetch(
+		const response = await fetchWithSession(
 			new Request("http://localhost/api/dashboard/summary?role=FACILITY_MANAGER"),
 			{ DB: new FakeDashboardD1Database() } as unknown as Env,
 		);
@@ -253,7 +253,7 @@ describe("Dashboard summary", () => {
 			["Catatan internal tidak boleh muncul di dashboard."],
 		);
 
-		const response = await worker.fetch(
+		const response = await fetchWithSession(
 			new Request("http://localhost/api/dashboard/summary?role=FACILITY_MANAGER"),
 			{ DB: database } as unknown as Env,
 		);

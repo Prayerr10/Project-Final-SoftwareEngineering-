@@ -1,5 +1,5 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
-import worker from "../../worker";
+﻿import { afterEach, describe, expect, it, vi } from "vitest";
+import { fetchWithSession } from "../helpers/auth";
 
 type StoredRequest = {
 	id: string;
@@ -283,7 +283,7 @@ describe("Technician task lifecycle", () => {
 			],
 		);
 
-		const response = await worker.fetch(
+		const response = await fetchWithSession(
 			new Request(
 				"http://localhost/api/technicians/tech-1/tasks?role=TECHNICIAN&technicianId=tech-1",
 			),
@@ -318,7 +318,7 @@ describe("Technician task lifecycle", () => {
 			[currentAssignment()],
 		);
 
-		const response = await worker.fetch(
+		const response = await fetchWithSession(
 			new Request("http://localhost/api/requests/request-1/accept", {
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },
@@ -352,7 +352,7 @@ describe("Technician task lifecycle", () => {
 			[currentAssignment({ accepted_at: "2026-07-01T02:30:00.000Z" })],
 		);
 
-		const response = await worker.fetch(
+		const response = await fetchWithSession(
 			new Request("http://localhost/api/requests/request-1/progress", {
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },
@@ -392,7 +392,7 @@ describe("Technician task lifecycle", () => {
 			[currentAssignment({ accepted_at: "2026-07-01T02:30:00.000Z" })],
 		);
 
-		const response = await worker.fetch(
+		const response = await fetchWithSession(
 			new Request("http://localhost/api/requests/request-1/resolve", {
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },
@@ -427,7 +427,7 @@ describe("Technician task lifecycle", () => {
 	});
 
 	it("rejects forbidden roles, wrong technician context, and invalid transitions", async () => {
-		const reporterResponse = await worker.fetch(
+		const reporterResponse = await fetchWithSession(
 			new Request("http://localhost/api/requests/request-1/progress", {
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },
@@ -451,7 +451,7 @@ describe("Technician task lifecycle", () => {
 		});
 		expect(reporterResponse.status).toBe(403);
 
-		const wrongTechnicianResponse = await worker.fetch(
+		const wrongTechnicianResponse = await fetchWithSession(
 			new Request("http://localhost/api/requests/request-1/progress", {
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },
@@ -475,7 +475,7 @@ describe("Technician task lifecycle", () => {
 		});
 		expect(wrongTechnicianResponse.status).toBe(403);
 
-		const invalidTransitionResponse = await worker.fetch(
+		const invalidTransitionResponse = await fetchWithSession(
 			new Request("http://localhost/api/requests/request-1/resolve", {
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },
