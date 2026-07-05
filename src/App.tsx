@@ -111,21 +111,25 @@ const roleOptions = [
 		value: "REPORTER",
 		label: "Pelapor",
 		hint: "Buat dan pantau laporan",
+		icon: "PL",
 	},
 	{
 		value: "ADMINISTRATOR",
 		label: "Administrator",
 		hint: "Review, klasifikasi, assignment",
+		icon: "AD",
 	},
 	{
 		value: "TECHNICIAN",
 		label: "Teknisi",
 		hint: "Kerjakan tugas aktif",
+		icon: "TK",
 	},
 	{
 		value: "FACILITY_MANAGER",
 		label: "Manajer",
 		hint: "Pantau dashboard",
+		icon: "MF",
 	},
 ];
 const emptyDashboardSummary: DashboardSummary = {
@@ -722,9 +726,26 @@ export default function App() {
 		<main className="app-shell">
 			<section className="page-header">
 				<div className="hero-copy">
-					<p className="eyebrow">Campus Maintenance</p>
-					<h1>Campus Service Request</h1>
-					<p>Laporkan masalah fasilitas kampus dan pantau statusnya.</p>
+					<div>
+						<p className="eyebrow">Campus Maintenance</p>
+						<h1>Campus Service Request</h1>
+						<p>
+							Laporkan masalah fasilitas kampus, pantau statusnya, dan jaga
+							koordinasi perbaikan tetap terlihat dari satu workspace.
+						</p>
+					</div>
+					<div className="hero-visual" aria-hidden="true">
+						<div className="hero-ticket">
+							<span>CSR</span>
+							<strong>Submitted</strong>
+							<small>Under Review</small>
+						</div>
+						<div className="hero-steps">
+							<span>Assign</span>
+							<span>Progress</span>
+							<span>Close</span>
+						</div>
+					</div>
 				</div>
 				<section className="role-switcher" aria-labelledby="role-switcher-title">
 					<div>
@@ -742,8 +763,13 @@ export default function App() {
 								aria-pressed={activeRole === role.value}
 								onClick={() => setActiveRole(role.value)}
 							>
-								<strong>{role.label}</strong>
-								<span>{role.hint}</span>
+								<span className="role-icon" aria-hidden="true">
+									{role.icon}
+								</span>
+								<span className="role-copy">
+									<strong>{role.label}</strong>
+									<span>{role.hint}</span>
+								</span>
 							</button>
 						))}
 					</div>
@@ -767,18 +793,20 @@ export default function App() {
 					<form className="request-form" onSubmit={submitRequest}>
 						<h2>Buat Laporan Baru</h2>
 
-						<label>
-							Nama Pelapor
+						<label className="field">
+							<span className="field-label">Nama Pelapor</span>
 							<input
 								name="reporterName"
 								value={reporterName}
 								onChange={(event) => setReporterName(event.target.value)}
 								placeholder="Contoh: Dr. Mira Santoso"
+								required
 							/>
+							<span className="field-hint">Wajib diisi agar laporan punya identitas pelapor.</span>
 						</label>
 
-						<label>
-							Tipe Pelapor
+						<label className="field">
+							<span className="field-label">Tipe Pelapor</span>
 							<select
 								name="reporterType"
 								value={reporterType}
@@ -794,38 +822,45 @@ export default function App() {
 							keputusan Administrator.
 						</p>
 
-						<label>
-							Judul
+						<label className="field">
+							<span className="field-label">Judul</span>
 							<input
 								name="title"
 								value={title}
 								onChange={(event) => setTitle(event.target.value)}
 								placeholder="Contoh: Proyektor ruang 302 rusak"
+								required
 							/>
+							<span className="field-hint">Wajib diisi dengan ringkasan masalah.</span>
 						</label>
 
-						<label>
-							Deskripsi
+						<label className="field">
+							<span className="field-label">Deskripsi</span>
 							<textarea
 								name="description"
 								value={description}
 								onChange={(event) => setDescription(event.target.value)}
 								placeholder="Jelaskan masalah minimal 20 karakter."
+								minLength={20}
+								required
 							/>
+							<span className="field-hint">Minimal 20 karakter agar teknisi punya konteks cukup.</span>
 						</label>
 
-						<label>
-							Lokasi
+						<label className="field">
+							<span className="field-label">Lokasi</span>
 							<input
 								name="location"
 								value={location}
 								onChange={(event) => setLocation(event.target.value)}
 								placeholder="Contoh: Gedung A, Ruang 302"
+								required
 							/>
+							<span className="field-hint">Wajib diisi agar lokasi perbaikan jelas.</span>
 						</label>
 
-						<label>
-							Kategori
+						<label className="field">
+							<span className="field-label">Kategori</span>
 							<select
 								name="category"
 								value={category}
@@ -845,9 +880,10 @@ export default function App() {
 				) : (
 					<section className="request-form" aria-live="polite">
 						<h2>Buat Laporan Baru</h2>
-						<p className="empty-state">
-							Form laporan baru hanya tersedia untuk role Pelapor.
-						</p>
+						<div className="empty-state empty-state-card">
+							<strong>Form terkunci untuk role ini</strong>
+							<p>Form laporan baru hanya tersedia untuk role Pelapor.</p>
+						</div>
 						{message && <p className="form-message">{message}</p>}
 					</section>
 				)}
@@ -901,9 +937,10 @@ export default function App() {
 						)}
 
 						{technicianTasks.length === 0 ? (
-							<p className="empty-state">
-								Tugas teknisi akan tampil sesuai assignment aktif.
-							</p>
+							<div className="empty-state empty-state-card">
+								<strong>Belum ada tugas aktif</strong>
+								<p>Tugas teknisi akan tampil sesuai assignment aktif.</p>
+							</div>
 						) : (
 							<div className="request-stack">
 								{technicianTasks.map((task) => (
@@ -1016,9 +1053,10 @@ export default function App() {
 						<h3>Beban Kerja Teknisi</h3>
 
 						{dashboardSummary.technicianWorkload.length === 0 ? (
-							<p className="empty-state">
-								Belum ada assignment aktif untuk ditampilkan.
-							</p>
+							<div className="empty-state empty-state-card">
+								<strong>Workload masih kosong</strong>
+								<p>Belum ada assignment aktif untuk ditampilkan.</p>
+							</div>
 						) : (
 							<div className="request-stack">
 								{dashboardSummary.technicianWorkload.map((workload) => (
@@ -1121,11 +1159,18 @@ export default function App() {
 							<h3>Daftar Laporan</h3>
 
 							{requestListEmpty ? (
-								<p className="empty-state">
-									{search || statusFilter || priorityFilter
-										? "Tidak ada laporan yang cocok dengan pencarian atau filter."
-										: "Belum ada laporan."}
-								</p>
+								<div className="empty-state empty-state-card">
+									<strong>
+										{search || statusFilter || priorityFilter
+											? "Tidak ada hasil"
+											: "Belum ada laporan"}
+									</strong>
+									<p>
+										{search || statusFilter || priorityFilter
+											? "Coba ubah kata kunci, status, atau prioritas yang dipilih."
+											: "Laporan baru dari Pelapor akan tampil di daftar ini."}
+									</p>
+								</div>
 							) : (
 								<div className="request-stack">
 									{requests.map((item) => (
