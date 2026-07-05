@@ -1,73 +1,136 @@
-# React + TypeScript + Vite
+# Campus Service Request and Maintenance System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+[![CI](https://github.com/Prayerr10/Project-Final-SoftwareEngineering-/actions/workflows/ci.yml/badge.svg?branch=development)](https://github.com/Prayerr10/Project-Final-SoftwareEngineering-/actions/workflows/ci.yml)
+[![Deployment](https://img.shields.io/badge/Cloudflare-Workers-F38020?logo=cloudflare&logoColor=white)](https://campus-maintenance.pkaawoan24.workers.dev)
+[![Tests](https://img.shields.io/badge/Tests-90%20passing-2ea44f)](./tests)
 
-Currently, two official plugins are available:
+Sistem pelaporan dan pemeliharaan fasilitas kampus berbasis web untuk membuat, meninjau, menugaskan, mengerjakan, dan menutup laporan kerusakan fasilitas. Proyek ini dibuat untuk tugas akhir mata kuliah Software Engineering dengan dokumentasi requirements, design, testing, deployment, traceability, dan AI-assisted workflow.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## URL Aplikasi
 
-## React Compiler
+https://campus-maintenance.pkaawoan24.workers.dev
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Health check:
 
-## Expanding the ESLint configuration
+https://campus-maintenance.pkaawoan24.workers.dev/api/health
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Repository:
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+https://github.com/Prayerr10/Project-Final-SoftwareEngineering-
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Fitur Utama
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- Pelaporan kerusakan fasilitas kampus.
+- Daftar, pencarian, filter, dan detail laporan.
+- Review admin, prioritas, dan assignment teknisi.
+- Update status pekerjaan dan riwayat perubahan status.
+- Komentar publik dan catatan internal sesuai role.
+- Dashboard untuk Pelapor, Administrator, Teknisi, dan Manajer Fasilitas.
+- Premium UI redesign.
+- Login berbasis role dengan session cookie.
+- Logout dan endpoint `/api/auth/me` untuk validasi sesi aktif.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Akun Demo
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+| Role | Username | Password |
+|---|---|---|
+| Pelapor | pelapor_demo | pelapor123 |
+| Administrator | admin_demo | admin123 |
+| Teknisi | teknisi_demo | teknisi123 |
+| Manajer Fasilitas | manajer_demo | manajer123 |
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Akun ini hanya digunakan untuk demonstrasi tugas. Jangan gunakan ulang password ini untuk sistem nyata.
+
+## Menjalankan Secara Lokal
+
+1. Install dependency:
+
+   ```bash
+   npm install
+   ```
+
+2. Buat file `.dev.vars` lokal berisi `AUTH_SECRET`.
+
+   Jangan commit `.dev.vars` dan jangan menulis nilai rahasia di README.
+
+3. Jalankan migration lokal yang diperlukan sesuai urutan file di `database/migrations/`.
+
+   ```bash
+   npx wrangler d1 execute campus-maintenance-db --local --file=database/migrations/0001_initial.sql
+   ```
+
+   Ulangi untuk migration berikutnya bila database lokal masih kosong.
+
+4. Jalankan aplikasi:
+
+   ```bash
+   npm run dev
+   ```
+
+5. Buka URL lokal yang ditampilkan terminal.
+
+## Testing dan Validasi
+
+Hasil validasi terbaru:
+
+- 90 automated tests dalam 16 test files.
+- `npm test -- --run`: PASS.
+- `npx tsc -b`: PASS.
+- `npm run build`: PASS.
+- `git diff --check`: PASS.
+
+CI GitHub Actions menjalankan test dan build pada pull request serta branch utama proyek.
+
+## Known Limitation
+
+`npm run lint` masih memiliki temuan baseline/pre-existing pada beberapa file lama dan generated file. Hal ini tidak menghambat test, build, CI, atau deployment saat ini.
+
+## Status Implementasi
+
+- Authentication/login/logout/auth-me: selesai dan deployed.
+- Premium UI redesign: selesai.
+- Cloudflare Workers + D1 deployment: selesai.
+- URL publik telah diverifikasi.
+
+## Teknologi
+
+| Area | Teknologi |
+|---|---|
+| Frontend | React, TypeScript, Vite |
+| Backend/API | Cloudflare Workers |
+| Database | Cloudflare D1 |
+| Testing | Vitest |
+| CI/CD | GitHub Actions, Wrangler |
+
+## API Utama
+
+| Method | Endpoint | Fungsi |
+|---|---|---|
+| GET | `/api/health` | Health check API dan D1. |
+| POST | `/api/auth/login` | Login username/password dan membuat session cookie. |
+| POST | `/api/auth/logout` | Logout dan menghapus session cookie. |
+| GET | `/api/auth/me` | Mengembalikan user, role, dan display name dari session aktif. |
+| GET | `/api/requests` | Daftar laporan dengan search dan filter. |
+| POST | `/api/requests` | Membuat laporan baru. |
+| GET | `/api/requests/:id` | Detail laporan, status history, komentar, dan catatan sesuai role. |
+| PATCH | `/api/requests/:id/review` | Review laporan oleh Administrator. |
+| PATCH | `/api/requests/:id/assignment` | Menugaskan Teknisi. |
+| PATCH | `/api/requests/:id/progress` | Mengubah status pengerjaan. |
+| PATCH | `/api/requests/:id/resolve` | Menandai laporan selesai dikerjakan. |
+| PATCH | `/api/requests/:id/close` | Menutup laporan. |
+| GET | `/api/dashboard/summary` | Ringkasan dashboard sesuai role. |
+
+## Dokumentasi Proyek
+
+- Requirements: `docs/requirements/`
+- Design: `docs/design/`
+- Testing: `docs/testing/`
+- Deployment: `docs/deployment/`
+- AI evidence dan human review: `evidence/`
+- Reusable AI skills: `skills/`
+
+## Catatan Keamanan
+
+- `.dev.vars` tidak boleh di-commit.
+- Secret environment production disimpan di Cloudflare, bukan di repository.
+- Dokumentasi ini hanya mencantumkan akun demo untuk kebutuhan penilaian.

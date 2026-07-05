@@ -1,0 +1,4 @@
+interface:
+  display_name: "08 UI Design"
+  short_description: "Design screens, flows, and wireframes."
+  default_prompt: "Use this skill to create the UI flow and wireframe document for the Campus Service Request and Maintenance System."

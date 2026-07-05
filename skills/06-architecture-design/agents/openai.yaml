@@ -1,0 +1,4 @@
+interface:
+  display_name: "06 Architecture Design"
+  short_description: "Design the project architecture."
+  default_prompt: "Use this skill to create the architecture design document for the Campus Service Request and Maintenance System."
