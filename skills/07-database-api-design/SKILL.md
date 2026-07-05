@@ -120,6 +120,7 @@ Gunakan referensi desain yang relevan dari `https://github.com/nextlevelbuilder/
    - `PATCH /api/requests/:id/review`
    - `PATCH /api/requests/:id/classification`
    - `PATCH /api/requests/:id/assignment`
+   - `GET /api/technicians`
    - `GET /api/technicians/:id/tasks`
    - `PATCH /api/requests/:id/accept`
    - `PATCH /api/requests/:id/progress`

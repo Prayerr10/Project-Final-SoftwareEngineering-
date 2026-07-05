@@ -114,7 +114,7 @@ Important boundary: disabled or hidden UI controls are usability support only. T
 | UI-02 | Request Workspace | All roles | RequestSearchFilter, RequestList, RequestDetailPanel, ActionPanel, EmptyState, LoadingState, ErrorState | API-02, API-04 |
 | UI-03 | Create Request | Pelapor | RequestForm, FeedbackMessage, LoadingState, ErrorState | API-03 |
 | UI-04 | Request Detail | All roles with visibility rules | RequestDetailPanel, StatusHistoryTimeline, CommentArea, InternalNoteArea, ActionPanel | API-04, API-12, API-13 |
-| UI-05 | Administrator Review/Classify/Assign | Administrator | ActionPanel, PriorityBadge, StatusBadge, FeedbackMessage | API-05, API-06, API-07, API-15, API-16 |
+| UI-05 | Administrator Review/Classify/Assign | Administrator | ActionPanel, PriorityBadge, StatusBadge, FeedbackMessage | API-05, API-06, API-07A, API-07, API-15, API-16 |
 | UI-06 | Technician Tasks | Teknisi, Administrator | RequestList, StatusBadge, PriorityBadge, ActionPanel | API-08, API-09, API-10, API-11 |
 | UI-07 | Dashboard Summary | Manajer Fasilitas, Administrator | DashboardCards, StatusBadge, PriorityBadge, EmptyState, ErrorState | API-17 |
 | UI-08 | Fallback Views | All roles | ErrorState variants for forbidden, not found, conflict, validation, and server error | Common error contract |
@@ -262,7 +262,7 @@ Structured layout:
 6. Reopen action: reopen note and confirmation design for eligible closed request.
 7. Feedback area: success/error from each API command.
 
-Data shown from Skill 07: API-05, API-06, API-07, API-15, API-16 contracts; priority values `LOW`, `MEDIUM`, `HIGH`, `URGENT`; status values strict 6.
+Data shown from Skill 07: API-05, API-06, API-07A, API-07, API-15, API-16 contracts; active technician list; priority values `LOW`, `MEDIUM`, `HIGH`, `URGENT`; status values strict 6.
 
 Primary actions: review, set category/priority, assign technician, close, reopen.
 
@@ -446,6 +446,7 @@ Reference note: Figma Community and UI UX Pro Max may inspire component inventor
 | Open request detail | `GET /api/requests/:id` | RequestDetailPanel, StatusHistoryTimeline, CommentArea, InternalNoteArea | Detail rendered by visibility. | Forbidden, not found, server error. |
 | Review submitted request | `PATCH /api/requests/:id/review` | ActionPanel | StatusBadge `UNDER_REVIEW`, timeline update. | Validation/conflict/forbidden. |
 | Set category/priority | `PATCH /api/requests/:id/classification` | ActionPanel, PriorityBadge | Category/priority refreshed. | Validation for category/priority; OPEN-05/OPEN-06 notes. |
+| Load active technicians | `GET /api/technicians` | ActionPanel | Technician selector populated. | Forbidden for non-Administrator. |
 | Assign technician | `PATCH /api/requests/:id/assignment` | ActionPanel | Assignment summary, status `ASSIGNED`. | Missing technician, conflict, not found. |
 | View technician tasks | `GET /api/technicians/:id/tasks` | TechnicianTasks, RequestList | Task list or EmptyState. | Forbidden, technician not found, invalid filter. |
 | Accept task | `PATCH /api/requests/:id/accept` | ActionPanel | Accepted state/timestamp shown. | Forbidden, conflict, missing technician. |
@@ -491,7 +492,7 @@ Bagian ini menuliskan cakupan eksplisit agar reviewer dapat mencocokkan setiap F
 | FR-08 | UI-05 classification action. | ActionPanel, API-06. | Category controlled vocabulary is represented; OPEN-05 preserved. |
 | FR-09 | UI-05 priority action. | ActionPanel, PriorityBadge, API-06. | Priority values LOW/MEDIUM/HIGH/URGENT represented without defining OPEN-06 criteria. |
 | FR-10 | UI-03/UI-05 lecturer priority suggestion display. | PriorityBadge, API-03, API-06. | Suggestion does not replace Administrator final decision. |
-| FR-11 | UI-05 assignment action. | ActionPanel, API-07. | Assignment follows review/classification surface. |
+| FR-11 | UI-05 assignment action. | ActionPanel, API-07A, API-07. | Assignment follows review/classification surface and uses active technician options. |
 | FR-12 | UI-06 Technician Tasks list. | RequestList, API-08. | Technician assigned task visibility represented. |
 | FR-13 | UI-06 accept task action. | ActionPanel, API-09. | Accept only; no reject/reassignment flow added due OPEN-08. |
 | FR-14 | UI-06 progress action. | ActionPanel, API-10. | Moves eligible assigned task to `IN_PROGRESS`. |
@@ -511,7 +512,7 @@ Bagian ini menuliskan cakupan eksplisit agar reviewer dapat mencocokkan setiap F
 | Requirement | UI/design representation | Notes |
 | --- | --- | --- |
 | NFR-01 | UI-01 through UI-10 define React-ready screens, components, state, accessibility, and tokens. | Design-only; no React code written. |
-| NFR-02 | API-to-UI Mapping covers Cloudflare Worker endpoints API-01 through API-17. | UI does not bypass Worker API. |
+| NFR-02 | API-to-UI Mapping covers Cloudflare Worker endpoints API-01 through API-17 plus API-07A. | UI does not bypass Worker API. |
 | NFR-03 | UI data fields are derived from Skill 07 D1-backed API contracts. | UI does not access D1 directly. |
 | NFR-04 | Scope/non-scope excludes paid/out-of-scope services and upload/storage features. | UI design remains compatible with free Cloudflare Workers/D1 baseline. |
 | NFR-05 | Skill 08 branch, commit, push, and PR workflow are captured outside UI surface. | Process requirement, not a UI component. |
@@ -548,7 +549,7 @@ Bagian ini menuliskan cakupan eksplisit agar reviewer dapat mencocokkan setiap F
 | US-05 | UI-02/UI-04 detail, history, visible comments. | OPEN-10 preserved for Manager boundary. |
 | US-06 | UI-05 review action and forbidden non-admin state. | API-05 is final validator. |
 | US-07 | UI-05 category, priority, Lecturer suggestion. | OPEN-05 and OPEN-06 preserved. |
-| US-08 | UI-05 assignment action and `ASSIGNED` success state. | API-07 maps assignment. |
+| US-08 | UI-05 technician lookup, assignment action, and `ASSIGNED` success state. | API-07A loads active technicians and API-07 maps assignment. |
 | US-09 | UI-06 task list and accept action. | OPEN-08 preserved; reject not added. |
 | US-10 | UI-06 progress/resolve actions and UI-04 status history. | Covers `IN_PROGRESS`, `RESOLVED`, and history display. |
 | US-11 | UI-04 CommentArea. | Public comment storage/display represented. |
@@ -588,7 +589,7 @@ Bagian ini menuliskan cakupan eksplisit agar reviewer dapat mencocokkan setiap F
 | Wireframes are descriptive text, not images or code. | PASS |
 | Required reusable components are covered. | PASS |
 | Role-based UI matrix does not replace API validation. | PASS |
-| API-to-UI mapping covers API-01 through API-17. | PASS |
+| API-to-UI mapping covers API-01 through API-17 plus API-07A. | PASS |
 | UI state coverage includes loading, empty, success, error, forbidden, not found, conflict/invalid transition, and server error. | PASS |
 | Form feedback covers visible labels, helper text, field error, form-level error, success feedback, and disabled/loading submit. | PASS |
 | Accessibility checklist includes semantic structure, keyboard navigation, visible focus, accessible form errors, WCAG AA contrast, and 44px touch target. | PASS |

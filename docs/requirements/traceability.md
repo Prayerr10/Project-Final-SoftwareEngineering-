@@ -31,7 +31,7 @@ Traceability ini mencatat relasi requirement ke user story dari Skill 03, priori
 | FR-08 | US-07 | ARCH-02, ARCH-04, ARCH-14 | DB-01, API-06 | UI-05, UI-09 | #16 | `worker/index.ts`, `src/App.tsx`, `src/App.css` | `tests/integration/admin-workflow.test.ts` | Selesai untuk Issue #16; Administrator stores category from the fixed app list |
 | FR-09 | US-07 | ARCH-02, ARCH-04, ARCH-14 | DB-01, API-06 | UI-05, UI-09 | #16 | `worker/index.ts`, `src/App.tsx`, `src/App.css` | `tests/integration/admin-workflow.test.ts` | Selesai untuk Issue #16; Administrator stores priority `LOW`, `MEDIUM`, `HIGH`, or `URGENT` |
 | FR-10 | US-07 | ARCH-02, ARCH-04, ARCH-14 | DB-01, API-03, API-06 | UI-03, UI-05, UI-09 | #14, #16 | `worker/index.ts`, `database/migrations/0002_create_request_identity_and_history.sql`, `src/App.tsx`, `src/App.css` | `tests/integration/request-create.test.ts`, `tests/integration/admin-workflow.test.ts`, `tests/integration/react-foundation.test.ts` | Selesai untuk Issue #16 continuation; Lecturer `HIGH` suggestion remains separate while Administrator final priority is stored |
-| FR-11 | US-08 | ARCH-02, ARCH-05 | DB-02, DB-03, DB-04, API-07 | UI-05 | #16 | `worker/index.ts`, `database/migrations/0003_create_technicians_and_assignments.sql`, `src/App.tsx`, `src/App.css` | `tests/integration/admin-workflow.test.ts` | Selesai untuk Issue #16; Administrator assigns active technician only after review and status becomes `ASSIGNED` |
+| FR-11 | US-08 | ARCH-02, ARCH-05 | DB-02, DB-03, DB-04, API-07A, API-07 | UI-05 | #16 | `worker/index.ts`, `database/migrations/0003_create_technicians_and_assignments.sql`, `src/App.tsx`, `src/App.css` | `tests/integration/admin-workflow.test.ts` | Selesai untuk Issue #16; Administrator lists active technicians, assigns one only after review, and status becomes `ASSIGNED` |
 | FR-12 | US-09 | ARCH-02, ARCH-04 | DB-02, DB-03, API-08 | UI-06 | #17 | `worker/index.ts`, `src/App.tsx`, `src/App.css` | `tests/integration/technician-workflow.test.ts`, `tests/integration/react-foundation.test.ts` | Selesai untuk Issue #17; Teknisi sees only assigned current task list for the active technician context |
 | FR-13 | US-09 | ARCH-02, ARCH-05 | DB-03, API-09 | UI-06 | #17 | `worker/index.ts`, `src/App.tsx`, `src/App.css` | `tests/integration/technician-workflow.test.ts`, `tests/integration/react-foundation.test.ts` | Selesai untuk Issue #17; accept records `accepted_at` while status remains `ASSIGNED` and no reject/reassignment path is added |
 | FR-14 | US-10 | ARCH-02, ARCH-05, ARCH-06 | DB-03, DB-04, API-10 | UI-06 | #17 | `worker/index.ts`, `src/App.tsx`, `src/App.css` | `tests/integration/technician-workflow.test.ts`, `tests/integration/react-foundation.test.ts` | Selesai untuk Issue #17; assigned technician moves `ASSIGNED` to `IN_PROGRESS` with status history |
@@ -113,6 +113,7 @@ Status: Human Reviewed & Approved. Link design berikut ditautkan dari `docs/desi
 | API-05 | `PATCH /api/requests/:id/review` | FR-07, FR-18, BR-02, BR-03, BR-08 | Approved Skill 07 |
 | API-06 | `PATCH /api/requests/:id/classification` | FR-08, FR-09, FR-10, BR-04, BR-05, BR-06, BR-07, OPEN-05, OPEN-06 | Approved Skill 07 |
 | API-07 | `PATCH /api/requests/:id/assignment` | FR-11, FR-18, BR-02, BR-03, BR-08 | Approved Skill 07 |
+| API-07A | `GET /api/technicians` active technician list | FR-11, DB-02, US-08 | Approved Skill 07 |
 | API-08 | `GET /api/technicians/:id/tasks` | FR-12, FR-23 | Approved Skill 07 |
 | API-09 | `PATCH /api/requests/:id/accept` | FR-13, OPEN-08 | Approved Skill 07 |
 | API-10 | `PATCH /api/requests/:id/progress` | FR-14, FR-18, BR-02, BR-08 | Approved Skill 07 |
@@ -261,7 +262,7 @@ Status: Human Reviewed & Approved. Validasi Skill 05 ditautkan dari `docs/requir
 | US-05 | FR-06, FR-18 | OPEN QUESTION: OPEN-10 | None | DB-01, DB-04, DB-05, DB-06, API-04 | UI-02, UI-04 | Approved through Skill 08 |
 | US-06 | FR-07, BR-03 | PASS | None | DB-01, DB-04, API-05 | UI-05 | Approved through Skill 08 |
 | US-07 | FR-08, FR-09, FR-10, BR-04, BR-05, BR-06, BR-07 | OPEN QUESTION: OPEN-05, OPEN-06 | None | DB-01, API-06 | UI-05 | Approved through Skill 08 |
-| US-08 | FR-11, BR-03 | PASS | None | DB-02, DB-03, DB-04, API-07 | UI-05 | Approved through Skill 08 |
+| US-08 | FR-11, BR-03 | PASS | None | DB-02, DB-03, DB-04, API-07A, API-07 | UI-05 | Approved through Skill 08 |
 | US-09 | FR-12, FR-13 | OPEN QUESTION: OPEN-08 | None | DB-02, DB-03, API-08, API-09 | UI-06 | Approved through Skill 08 |
 | US-10 | FR-14, FR-15, FR-18, BR-02, BR-08 | PASS | None | DB-03, DB-04, API-10, API-11 | UI-04, UI-06 | Approved through Skill 08 |
 | US-11 | FR-16, BR-09 | PASS | None | DB-05, API-12 | UI-04 | Approved through Skill 08 |

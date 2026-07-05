@@ -442,6 +442,7 @@ Common status codes: `200 OK`, `201 Created`, `400 Bad Request`, `403 Forbidden`
 | API-05 | PATCH | `/api/requests/:id/review` | ADMINISTRATOR | Move `SUBMITTED` to `UNDER_REVIEW`. | FR-07, BR-03 |
 | API-06 | PATCH | `/api/requests/:id/classification` | ADMINISTRATOR | Set category/priority and suggestion context. | FR-08, FR-09, FR-10 |
 | API-07 | PATCH | `/api/requests/:id/assignment` | ADMINISTRATOR | Assign technician and move to `ASSIGNED`. | FR-11, BR-03 |
+| API-07A | GET | `/api/technicians` | ADMINISTRATOR | List active technicians for assignment selection. | FR-11, DB-02, US-08 |
 | API-08 | GET | `/api/technicians/:id/tasks` | TECHNICIAN, ADMINISTRATOR | View assigned tasks. | FR-12 |
 | API-09 | PATCH | `/api/requests/:id/accept` | TECHNICIAN | Accept assigned task. | FR-13 |
 | API-10 | PATCH | `/api/requests/:id/progress` | TECHNICIAN | Move to `IN_PROGRESS`. | FR-14 |
@@ -620,6 +621,24 @@ Workflow validation:
 - Changes status to `ASSIGNED` and appends status history.
 
 Traceability: FR-11, FR-18, BR-02, BR-03, BR-08, US-08.
+
+### API-07A - `GET /api/technicians`
+
+Role: `ADMINISTRATOR`.
+
+Query: `role` required.
+
+Success `200`: list of active technicians with `id`, `name`, `specialization`, and `isActive`.
+
+Errors: `403` for non-Administrator role.
+
+Validation:
+
+- This endpoint is read-only support for assignment planning.
+- Only active technicians are returned.
+- It does not change request status and does not write status history.
+
+Traceability: FR-11, DB-02, US-08.
 
 ### API-08 - `GET /api/technicians/:id/tasks`
 
@@ -870,7 +889,7 @@ Needs Human Review:
 | DB-05 | Public comments. | FR-16, BR-09 |
 | DB-06 | Internal notes. | FR-17, BR-10 |
 | DB-07 | Reporter confirmation. | FR-19, FR-20, BR-11 |
-| API-01 sampai API-17 | API contract-first endpoints for all required workflows. | FR-01 sampai FR-24, NFR-02, NFR-03, BR-01 sampai BR-12, US-01 sampai US-17 |
+| API-01 sampai API-17 plus API-07A | API contract-first endpoints for all required workflows and assignment support. | FR-01 sampai FR-24, NFR-02, NFR-03, BR-01 sampai BR-12, US-01 sampai US-17 |
 
 ## Full Requirements Coverage Matrix
 
@@ -890,7 +909,7 @@ Bagian ini menuliskan cakupan eksplisit agar reviewer dapat mencocokkan setiap F
 | FR-08 | DB-01 | API-06 | Category controlled vocabulary; OPEN-05 preserved. |
 | FR-09 | DB-01 | API-06 | Priority controlled values; OPEN-06 preserved. |
 | FR-10 | DB-01 | API-03, API-06 | Lecturer HIGH suggestion without replacing Administrator final decision. |
-| FR-11 | DB-02, DB-03, DB-04 | API-07 | Assignment and status transition to `ASSIGNED`. |
+| FR-11 | DB-02, DB-03, DB-04 | API-07A, API-07 | Active technician list, assignment, and status transition to `ASSIGNED`. |
 | FR-12 | DB-02, DB-03 | API-08 | Technician assigned task list. |
 | FR-13 | DB-03 | API-09 | Acceptance timestamp; OPEN-08 preserved for rejection. |
 | FR-14 | DB-03, DB-04 | API-10 | Progress transition to `IN_PROGRESS`. |
@@ -910,7 +929,7 @@ Bagian ini menuliskan cakupan eksplisit agar reviewer dapat mencocokkan setiap F
 | Requirement | Covered by table/design | Covered by endpoint | Notes |
 | --- | --- | --- | --- |
 | NFR-01 | API response conventions and camelCase contract | API-02 sampai API-17 | Supports React data states without designing UI. |
-| NFR-02 | Cloudflare Workers API boundary | API-01 sampai API-17 | Worker endpoint contract. |
+| NFR-02 | Cloudflare Workers API boundary | API-01 sampai API-17 plus API-07A | Worker endpoint contract. |
 | NFR-03 | DB-01 sampai DB-07 | API handlers use D1 binding `DB` by design | Cloudflare D1 SQLite storage. |
 | NFR-04 | D1-only design; no paid storage tables | API contract avoids paid services | Cloudflare free-tier compatibility. |
 | NFR-05 | Branch/PR workflow captured in traceability and evidence | Not an endpoint concern | GitHub workflow is process-level, not data schema. |
@@ -947,7 +966,7 @@ Bagian ini menuliskan cakupan eksplisit agar reviewer dapat mencocokkan setiap F
 | US-05 | DB-01, DB-04, DB-05, DB-06 | API-04 | Detail, status history, visible comments. |
 | US-06 | DB-01, DB-04 | API-05 | Administrator review and forbidden non-admin action. |
 | US-07 | DB-01 | API-06 | Category, priority, Lecturer suggestion. |
-| US-08 | DB-02, DB-03, DB-04 | API-07 | Assignment and transition to `ASSIGNED`. |
+| US-08 | DB-02, DB-03, DB-04 | API-07A, API-07 | Active technician lookup, assignment, and transition to `ASSIGNED`. |
 | US-09 | DB-02, DB-03 | API-08, API-09 | View and accept assigned tasks. |
 | US-10 | DB-03, DB-04 | API-10, API-11 | Progress/resolved transitions and status history. |
 | US-11 | DB-05 | API-12 | Public comment storage and visibility. |
