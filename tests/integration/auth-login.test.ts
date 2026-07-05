@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import worker from "../../worker";
+import { hashPassword } from "../../worker/auth";
 
 const AUTH_SECRET = "test-only-secret-for-login-integration";
+const TEST_LOGIN_PASSWORD = "test-only-login-password";
 
 type UserRow = {
 	id: string;
@@ -17,17 +19,15 @@ class FakeAuthD1Database {
 	constructor(private readonly users: UserRow[]) {}
 
 	prepare(sql: string) {
-		const database = this;
-
 		return {
-			bind(...values: unknown[]) {
+			bind: (...values: unknown[]) => {
 				return {
-					async first() {
+					first: async () => {
 						if (sql.includes("FROM users")) {
 							const [username] = values as string[];
 
 							return (
-								database.users.find((user) => user.username === username) ??
+								this.users.find((user) => user.username === username) ??
 								null
 							);
 						}
@@ -40,17 +40,21 @@ class FakeAuthD1Database {
 	}
 }
 
-const users: UserRow[] = [
-	{
-		id: "user-admin-demo",
-		username: "admin_demo",
-		password_hash: "ORSsibBNIr66H8qitNUnEy6WUueSZcu551wCkX3ODEA",
-		salt: "XYdyt5D9Qb3Q_x1BBvGO-g",
-		role: "administrator",
-		display_name: "Administrator Demo",
-		created_at: "2026-07-05T00:00:00.000Z",
-	},
-];
+async function createTestUsers(): Promise<UserRow[]> {
+	const adminSalt = "test-admin-login-salt";
+
+	return [
+		{
+			id: "user-admin-demo",
+			username: "admin_demo",
+			password_hash: await hashPassword(TEST_LOGIN_PASSWORD, adminSalt),
+			salt: adminSalt,
+			role: "administrator",
+			display_name: "Administrator Demo",
+			created_at: "2026-07-05T00:00:00.000Z",
+		},
+	];
+}
 
 describe("POST /api/auth/login", () => {
 	it("sets an httpOnly session cookie and returns only public user fields", async () => {
@@ -60,11 +64,11 @@ describe("POST /api/auth/login", () => {
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
 					username: "admin_demo",
-					password: "admin123",
+					password: TEST_LOGIN_PASSWORD,
 				}),
 			}),
 			{
-				DB: new FakeAuthD1Database(users),
+				DB: new FakeAuthD1Database(await createTestUsers()),
 				AUTH_SECRET,
 			} as unknown as Env,
 		);
@@ -98,7 +102,7 @@ describe("POST /api/auth/login", () => {
 				}),
 			}),
 			{
-				DB: new FakeAuthD1Database(users),
+				DB: new FakeAuthD1Database(await createTestUsers()),
 				AUTH_SECRET,
 			} as unknown as Env,
 		);
@@ -119,11 +123,11 @@ describe("POST /api/auth/login", () => {
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
 					username: "missing_user",
-					password: "admin123",
+					password: TEST_LOGIN_PASSWORD,
 				}),
 			}),
 			{
-				DB: new FakeAuthD1Database(users),
+				DB: new FakeAuthD1Database(await createTestUsers()),
 				AUTH_SECRET,
 			} as unknown as Env,
 		);

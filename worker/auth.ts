@@ -1,6 +1,7 @@
 export const AUTH_COOKIE_NAME = "csr_session";
 export const PASSWORD_HASH_ALGORITHM = "PBKDF2-SHA256";
-export const PASSWORD_HASH_ITERATIONS = 120_000;
+// Cloudflare Workers WebCrypto currently supports PBKDF2 up to 100,000 iterations.
+export const PASSWORD_HASH_ITERATIONS = 100_000;
 export const PASSWORD_HASH_LENGTH_BITS = 256;
 export const SESSION_TTL_SECONDS = 8 * 60 * 60;
 

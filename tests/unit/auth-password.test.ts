@@ -9,7 +9,7 @@ import {
 describe("auth password hashing", () => {
 	it("uses PBKDF2-SHA256 with the configured iteration count", () => {
 		expect(PASSWORD_HASH_ALGORITHM).toBe("PBKDF2-SHA256");
-		expect(PASSWORD_HASH_ITERATIONS).toBe(120_000);
+		expect(PASSWORD_HASH_ITERATIONS).toBe(100_000);
 	});
 
 	it("hashes and verifies a password with a per-user salt", async () => {

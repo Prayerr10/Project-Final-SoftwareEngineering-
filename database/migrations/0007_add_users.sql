@@ -24,7 +24,7 @@ VALUES
 	(
 		'user-pelapor-demo',
 		'pelapor_demo',
-		'240NIkKr71Mnda-H_euwgc8ktfp8foWvyBVt9LLilu8',
+		'8RDVYQtGjnyq48wl7JnhpfKgcAf4bmx5g72VW4kLuOY',
 		'EYYBLk29Pg7AE1dXvllEwA',
 		'pelapor',
 		'Pelapor Demo',
@@ -33,7 +33,7 @@ VALUES
 	(
 		'user-admin-demo',
 		'admin_demo',
-		'ORSsibBNIr66H8qitNUnEy6WUueSZcu551wCkX3ODEA',
+		'2P-rEal2EXwTUUYFkEQcB0pfFBt8xVdGfLDeRTBrkYw',
 		'XYdyt5D9Qb3Q_x1BBvGO-g',
 		'administrator',
 		'Administrator Demo',
@@ -42,7 +42,7 @@ VALUES
 	(
 		'tech-audio-visual',
 		'teknisi_demo',
-		'zSWKGoXh-VtelcdR07Grp-uHZrKrcrLiLrgFN3jCMug',
+		'5x4qcS7gdBoJ8Bdhkfyu6M5O-mQE7mK9Mn7Y3Z9aXYY',
 		'Js15Vfweps9uWERKQPrUhA',
 		'teknisi',
 		'Nadia Teknisi',
@@ -51,7 +51,7 @@ VALUES
 	(
 		'user-manajer-demo',
 		'manajer_demo',
-		'84-mcPbBFycbnFduNf58uKpa79celUnK26Q5XOp8f_k',
+		'fZxV8CB6w9WaABM_NIx32To3bjNzYFJ3deIz6jf4Pr8',
 		'BEdZdpOTEOb8Jisd2SErew',
 		'manajer_fasilitas',
 		'Manajer Fasilitas Demo',
