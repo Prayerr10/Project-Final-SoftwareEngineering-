@@ -1,4 +1,17 @@
 import { useEffect, useState } from "react";
+import {
+	Activity,
+	BarChart3,
+	ClipboardCheck,
+	FileText,
+	LockKeyhole,
+	LogOut,
+	RefreshCw,
+	ShieldCheck,
+	Sparkles,
+	Wrench,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import "./App.css";
 
 type ServiceRequest = {
@@ -133,28 +146,28 @@ const roleOptions = [
 		dbRole: "pelapor",
 		label: "Pelapor",
 		hint: "Buat dan pantau laporan",
-		icon: "PL",
+		icon: FileText,
 	},
 	{
 		value: "ADMINISTRATOR",
 		dbRole: "administrator",
 		label: "Administrator",
 		hint: "Review, klasifikasi, assignment",
-		icon: "AD",
+		icon: ShieldCheck,
 	},
 	{
 		value: "TECHNICIAN",
 		dbRole: "teknisi",
 		label: "Teknisi",
 		hint: "Kerjakan tugas aktif",
-		icon: "TK",
+		icon: Wrench,
 	},
 	{
 		value: "FACILITY_MANAGER",
 		dbRole: "manajer_fasilitas",
 		label: "Manajer",
 		hint: "Pantau dashboard",
-		icon: "MF",
+		icon: BarChart3,
 	},
 ] as const;
 const emptyDashboardSummary: DashboardSummary = {
@@ -202,6 +215,10 @@ function roleActionSummary(role: string) {
 
 function badgeClass(kind: "status" | "priority", value: string) {
 	return `badge badge-${kind} badge-${value.toLowerCase().replace(/_/g, "-")}`;
+}
+
+function RoleIcon({ icon: Icon }: { icon: LucideIcon }) {
+	return <Icon aria-hidden="true" size={19} strokeWidth={2.15} />;
 }
 
 function SummaryList({
@@ -870,7 +887,7 @@ export default function App() {
 					</div>
 					<div className="hero-visual" aria-hidden="true">
 						<div className="hero-ticket">
-							<span>AUTH</span>
+							<span><LockKeyhole size={14} /> AUTH</span>
 							<strong>Loading</strong>
 							<small>Session check</small>
 						</div>
@@ -895,7 +912,7 @@ export default function App() {
 						</div>
 						<div className="hero-visual" aria-hidden="true">
 							<div className="hero-ticket">
-								<span>LOGIN</span>
+								<span><LockKeyhole size={14} /> LOGIN</span>
 								<strong>Protected</strong>
 								<small>Role session</small>
 							</div>
@@ -929,7 +946,7 @@ export default function App() {
 									}}
 								>
 									<span className="role-icon" aria-hidden="true">
-										{role.icon}
+										<RoleIcon icon={role.icon} />
 									</span>
 									<span className="role-copy">
 										<strong>{role.label}</strong>
@@ -972,11 +989,12 @@ export default function App() {
 								Password hanya dikirim ke endpoint auth backend.
 							</span>
 						</label>
-						<button type="submit">Masuk</button>
+						<button type="submit"><LockKeyhole size={16} /> Masuk</button>
 						{loginMessage && <p className="form-message">{loginMessage}</p>}
 					</form>
 
 					<section className="foundation-status" aria-live="polite">
+						<Activity aria-hidden="true" size={18} />
 						<h2>Status Fondasi</h2>
 						<p>{foundationStatus}</p>
 					</section>
@@ -999,7 +1017,7 @@ export default function App() {
 					</div>
 					<div className="hero-visual" aria-hidden="true">
 						<div className="hero-ticket">
-							<span>CSR</span>
+							<span><Sparkles size={14} /> CSR</span>
 							<strong>Submitted</strong>
 							<small>Under Review</small>
 						</div>
@@ -1024,7 +1042,7 @@ export default function App() {
 							.map((role) => (
 								<div key={role.value} className="role-tab active session-role-card">
 									<span className="role-icon" aria-hidden="true">
-										{role.icon}
+										<RoleIcon icon={role.icon} />
 									</span>
 									<span className="role-copy">
 										<strong>{role.label}</strong>
@@ -1033,6 +1051,7 @@ export default function App() {
 								</div>
 							))}
 						<button type="button" className="secondary-button" onClick={logout}>
+							<LogOut size={16} />
 							Logout
 						</button>
 					</div>
@@ -1046,6 +1065,7 @@ export default function App() {
 					</ul>
 				</section>
 				<section className="foundation-status" aria-live="polite">
+					<Activity aria-hidden="true" size={18} />
 					<h2>Status Fondasi</h2>
 					<p>{foundationStatus}</p>
 				</section>
@@ -1137,7 +1157,7 @@ export default function App() {
 							</select>
 						</label>
 
-						<button type="submit">Kirim Laporan</button>
+						<button type="submit"><ClipboardCheck size={16} /> Kirim Laporan</button>
 						{message && <p className="form-message">{message}</p>}
 					</form>
 				)}
@@ -1157,6 +1177,7 @@ export default function App() {
 								className="secondary-button"
 								onClick={loadTechnicianTasks}
 							>
+								<RefreshCw size={16} />
 								Refresh
 							</button>
 						</div>
@@ -1276,6 +1297,7 @@ export default function App() {
 							className="secondary-button"
 							onClick={loadDashboardSummary}
 						>
+							<RefreshCw size={16} />
 							Refresh
 						</button>
 					</div>
@@ -1350,6 +1372,7 @@ export default function App() {
 							<h2 id="workspace-title">Daftar dan Detail Laporan</h2>
 						</div>
 						<button type="button" className="secondary-button" onClick={loadRequests}>
+							<RefreshCw size={16} />
 							Refresh
 						</button>
 					</div>
