@@ -69,3 +69,7 @@ The deployed application was verified with the documented demo accounts.
 
 - The final source of truth for production submission is the merge from `development` to `main`.
 - Documentation-only changes after commit `4a61cf6` do not change backend, database schema, API contract, auth logic, role permissions, UI behavior, or business logic.
+
+## Verifikasi GitHub Integration
+
+Cloudflare Workers telah terhubung ke repository GitHub dengan branch `main` sebagai production branch. Deployment otomatis diverifikasi melalui perubahan dokumentasi ini. Perubahan yang telah di-merge ke `main` harus memicu Workers Builds tanpa menjalankan deployment manual dari terminal.
