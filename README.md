@@ -17,15 +17,36 @@ Sistem pelaporan dan pemeliharaan fasilitas kampus berbasis React, TypeScript, C
 
 Campus Service Request and Maintenance System membantu civitas kampus membuat laporan kerusakan fasilitas, lalu memprosesnya melalui Administrator, Teknisi, dan Manajer Fasilitas sampai laporan selesai dan ditutup.
 
-```mermaid
-flowchart LR
-  A["Pelapor"] -->|buat laporan| B["Submitted"]
-  B -->|review admin| C["Under Review"]
-  C -->|prioritas dan teknisi| D["Assigned"]
-  D -->|teknisi mulai kerja| E["In Progress"]
-  E -->|pekerjaan selesai| F["Resolved"]
-  F -->|konfirmasi dan close| G["Closed"]
-  G -->|reopen bila perlu| C
+```text
+Pelapor
+  |
+  | buat laporan
+  v
+SUBMITTED
+  |
+  | review Administrator
+  v
+UNDER_REVIEW
+  |
+  | prioritas + penugasan Teknisi
+  v
+ASSIGNED
+  |
+  | Teknisi mulai kerja
+  v
+IN_PROGRESS
+  |
+  | pekerjaan selesai
+  v
+RESOLVED
+  |
+  | konfirmasi Pelapor + close Administrator
+  v
+CLOSED
+  |
+  | reopen bila perlu
+  v
+UNDER_REVIEW
 ```
 
 ## Sorotan Fitur
@@ -123,14 +144,19 @@ Dokumen utama:
 - [`docs/design/database-api.md`](./docs/design/database-api.md)
 - [`docs/design/ui-flow.md`](./docs/design/ui-flow.md)
 
-```mermaid
-flowchart TD
-  R["Requirement Docs"] --> T["Traceability Matrix"]
-  T --> D["Design Docs"]
-  T --> I["GitHub Issues and PR"]
-  T --> C["Source Code"]
-  T --> X["Automated and Acceptance Tests"]
-  X --> E["Evidence and Human Review"]
+```text
+Requirement Docs
+      |
+      v
+Traceability Matrix
+      |
+      +--> Design Docs
+      +--> GitHub Issues and PR
+      +--> Source Code
+      +--> Automated and Acceptance Tests
+                |
+                v
+          Evidence and Human Review
 ```
 
 ## API Utama
@@ -259,21 +285,20 @@ Setiap work product penting mencatat:
 
 ## Branch dan Pull Request Workflow
 
-```mermaid
-gitGraph
-  commit id: "initial"
-  branch development
-  checkout development
-  commit id: "requirements"
-  branch feature
-  checkout feature
-  commit id: "implementation"
-  commit id: "tests"
-  checkout development
-  merge feature
-  commit id: "deployment"
-  checkout main
-  merge development
+```text
+main
+  |
+  +-- development
+        |
+        +-- feature/skill-xx atau feature/issue-xx
+        |     |
+        |     +-- commit kecil sesuai issue/skill
+        |     +-- test dan human review
+        |     +-- pull request
+        |
+        +-- merge PR ke development setelah CI PASS
+        |
+        +-- merge final ke main saat semua instruksi dosen sudah final
 ```
 
 Workflow yang digunakan:
